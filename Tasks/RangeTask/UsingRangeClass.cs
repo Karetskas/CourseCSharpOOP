@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Academits.Karetskas
+namespace Academits.Karetskas.RangeTask
 {
     public static class UsingRangeClass
     {
@@ -9,38 +9,67 @@ namespace Academits.Karetskas
             Console.WriteLine("The program for working with \"Range\" class.");
             Console.WriteLine();
 
-            Console.Write("Please, enter the first real number: ");
-            double from = Convert.ToDouble(Console.ReadLine());
-
-            Console.Write("Please, enter the second real number: ");
-            double to = Convert.ToDouble(Console.ReadLine());
-
-            const double epsilon = 1.0e-10;
-
-            if (from - to > epsilon)
+            Range[] rangesArray =
             {
-                double temp = to;
-                to = from;
-                from = temp;
+                new Range(5, 10),
+                new Range(-5, 10),
+                new Range(-10, -5)
+            };
+
+            double[] numbersArray =
+            {
+                3,
+                12,
+                7,
+                -3,
+                -12,
+                -7,
+                4.9_999_999_999,
+                4.99_999_999_999,
+                5.0_000_000_001,
+                5.00_000_000_001,
+                9.9_999_999_999,
+                9.99_999_999_999,
+                10.0_000_000_001,
+                10.00_000_000_001,
+                -4.9_999_999_999,
+                -4.99_999_999_999,
+                -5.0_000_000_001,
+                -5.00_000_000_001,
+                -9.9_999_999_999,
+                -9.99_999_999_999,
+                -10.0_000_000_001,
+                -10.00_000_000_001
+            };
+
+            Console.Write("{0, 18}", "Numbers / Ranges |");
+
+            for (int i = 0; i < rangesArray.Length; i++)
+            {
+                string rangeAsString = rangesArray[i].From.ToString() + "; " + rangesArray[i].To.ToString() + " |";
+                Console.Write("{0, 10}", rangeAsString);
             }
-
-            Range range = new Range(from, to);
-
-            Console.Write("Please, enter the real number: ");
-            double number = Convert.ToDouble(Console.ReadLine());
 
             Console.WriteLine();
 
-            Console.Write("The range has a size {0}. ", range.GetLength());
-
-            if (range.IsInside(number))
+            for (int i = 0; i < numbersArray.Length; i++)
             {
-                Console.WriteLine("Number {0} is part of range.", number);
+                Console.Write("{0, 18}", numbersArray[i] + " |");
 
-                return;
+                for (int j = 0; j < rangesArray.Length; j++)
+                {
+                    if (rangesArray[j].IsInside(numbersArray[i]))
+                    {
+                        Console.Write("{0, 10}", "+ |");
+
+                        continue;
+                    }
+
+                    Console.Write("{0, 10}", "- |");
+                }
+
+                Console.WriteLine();
             }
-
-            Console.WriteLine("Number {0} isn't part of range.", number);
         }
     }
 }
