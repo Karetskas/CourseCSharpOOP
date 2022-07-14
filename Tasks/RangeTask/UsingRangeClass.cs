@@ -44,21 +44,21 @@ namespace Academits.Karetskas.RangeTask
 
             Console.Write("{0, 18}", "Numbers / Ranges |");
 
-            for (int i = 0; i < rangesArray.Length; i++)
+            foreach (Range range in rangesArray)
             {
-                string rangeAsString = rangesArray[i].From.ToString() + "; " + rangesArray[i].To.ToString() + " |";
+                string rangeAsString = range.From + "; " + range.To + " |";
                 Console.Write("{0, 10}", rangeAsString);
             }
 
             Console.WriteLine();
 
-            for (int i = 0; i < numbersArray.Length; i++)
+            foreach(double number in numbersArray)
             {
-                Console.Write("{0, 18}", numbersArray[i] + " |");
+                Console.Write("{0, 18}", number + " |");
 
-                for (int j = 0; j < rangesArray.Length; j++)
+                foreach(Range range in rangesArray)
                 {
-                    if (rangesArray[j].IsInside(numbersArray[i]))
+                    if (range.IsInside(number))
                     {
                         Console.Write("{0, 10}", "+ |");
 
