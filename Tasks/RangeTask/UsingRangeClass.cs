@@ -170,6 +170,70 @@ namespace Academits.Karetskas.RangeTask
 
             table = new Table(columns, rows, dataArray);
             table.Output("Demonstration of the \"GetRangeDifference\" function.");
+
+            rangesArray = new Range[]
+            {
+                new Range(-8, -6),
+                new Range(-8, -5.0_000_000_001),
+                new Range(-8, -5),
+                new Range(-8, -4.9_999_999_999),
+                new Range(-8, -2),
+                new Range(-8, 0),
+                new Range(-8, 5),
+                new Range(-8, 9),
+                new Range(-8, 9.9_999_999_999),
+                new Range(-8, 10),
+                new Range(-8, 10.0_000_000_001),
+                new Range(-8, 12),
+                new Range(-5.0_000_000_001, 12),
+                new Range(-5, 12),
+                new Range(-4.9_999_999_999, 12),
+                new Range(-2, 12),
+                new Range(0, 12),
+                new Range(5, 12),
+                new Range(9, 12),
+                new Range(9.9_999_999_999, 12),
+                new Range(10, 12),
+                new Range(10.0_000_000_001, 12),
+                new Range(11, 12),
+                new Range(-5, -5),
+                new Range(10, 10),
+                new Range(-2, -2),
+                new Range(0, 0),
+                new Range(2, 2),
+                new Range(-2, 2)
+            };
+
+            range = new Range(-5, 10);
+
+            dataArray = new string[rangesArray.Length, 1];
+
+            for (int i = 0; i < rangesArray.Length; i++)
+            {
+                Range[] resultDifference = range.GetRangesDifference(rangesArray[i]);
+
+                if (resultDifference.Length == 2)
+                {
+                    dataArray[i, 0] = resultDifference[0].ToString() + ", " + resultDifference[1].ToString();
+
+                    continue;
+                }
+
+                if (resultDifference.Length == 1)
+                {
+                    dataArray[i, 0] = resultDifference[0].ToString();
+
+                    continue;
+                }
+
+                dataArray[i, 0] = "0";
+            }
+
+            columns = new string[] { range.ToString() };
+            rows = ConvertArrayToString(rangesArray);
+
+            table = new Table(columns, rows, dataArray);
+            table.Output("Demonstration of the \"GetRangeDifference\" function for negative and positive ranges.");
         }
 
         private static string[] ConvertArrayToString(double[] array)

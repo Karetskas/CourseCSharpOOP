@@ -2,20 +2,19 @@
 {
     public sealed class Range
     {
-        private const double minNumber = 1.0e-10;
         private double from;
         private double to;
 
         public double From
         {
             get => from;
-            set => from = value < minNumber ? 0 : value;
+            set => from = Math.Round(value, 10, MidpointRounding.AwayFromZero);
         }
 
         public double To
         {
             get => to;
-            set => to = value < minNumber ? 0 : value;
+            set => to = Math.Round(value, 10, MidpointRounding.AwayFromZero);
         }
 
         public Range(double from, double to)
@@ -67,7 +66,11 @@
         {
             if (To < otherRange.From || otherRange.To < From)
             {
-                return new Range[] { this, otherRange };
+                return new Range[]
+                {
+                    this,
+                    otherRange
+                };
             }
 
             double[] numbersArray = GetSortedElements(otherRange);
@@ -88,17 +91,23 @@
                 return new Range[] { this };
             }
 
+            const double minNumber = 1.0e-10;
+
             if (To > otherRange.From && To <= otherRange.To && otherRange.From > From)
             {
-                return new Range[] { new Range(From, otherRange.From - minNumber) };
+                return new Range[] { new Range(From, Math.Round(otherRange.From - minNumber, 10, MidpointRounding.AwayFromZero)) };
             }
 
             if (otherRange.To > From && otherRange.To < To && From >= otherRange.From)
             {
-                return new Range[] { new Range(otherRange.To + minNumber, To) };
+                return new Range[] { new Range(Math.Round(otherRange.To + minNumber, 10, MidpointRounding.AwayFromZero), To) };
             }
 
-            return new Range[] { new Range(From, otherRange.From - minNumber), new Range(otherRange.To + minNumber, To) };
+            return new Range[]
+            {
+                new Range(From, Math.Round(otherRange.From - minNumber, 10, MidpointRounding.AwayFromZero)),
+                new Range(Math.Round(otherRange.To + minNumber, 10, MidpointRounding.AwayFromZero), To)
+            };
         }
 
         public override string ToString()
