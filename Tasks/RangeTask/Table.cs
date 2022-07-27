@@ -67,29 +67,29 @@ namespace Academits.Karetskas.RangeTask
                 return (0, 0);
             }
 
-            int spacesAfteText = spacesCount / 2;
-            int spacesBeforeText = spacesCount - spacesAfteText;
+            int spacesAfterText = spacesCount / 2;
+            int spacesBeforeText = spacesCount - spacesAfterText;
 
-            return (spacesBeforeText, spacesAfteText);
+            return (spacesBeforeText, spacesAfterText);
         }
 
         public void Output(string tableName)
         {
             int maxRowLength = GetMaxArrayStringLength(table);
 
-            int maxTableWeidth = maxRowLength * table.GetLength(1);
-            int maxTableWeightAndSeparator = maxTableWeidth + table.GetLength(1) * 2;
+            int maxTableWidth = maxRowLength * table.GetLength(1);
+            int maxTableWeightAndSeparator = maxTableWidth + table.GetLength(1) * 2;
 
             if (maxTableWeightAndSeparator <= 200 && Console.WindowWidth < maxTableWeightAndSeparator)
             {
                 Console.WindowWidth = maxTableWeightAndSeparator;
             }
 
-            int spacesBeforeText = GetTextAlignmentCenter(maxTableWeidth, tableName.Length).Item1;
-            int spacesAfteText = GetTextAlignmentCenter(maxTableWeidth, tableName.Length).Item2;
+            int spacesBeforeText = GetTextAlignmentCenter(maxTableWidth, tableName.Length).Item1;
+            int spacesAfterText = GetTextAlignmentCenter(maxTableWidth, tableName.Length).Item2;
 
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine(new string(' ', spacesBeforeText) + tableName + new string(' ', spacesAfteText));
+            Console.WriteLine(new string(' ', spacesBeforeText) + tableName + new string(' ', spacesAfterText));
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine(new string('-', maxTableWeightAndSeparator));
@@ -97,9 +97,9 @@ namespace Academits.Karetskas.RangeTask
             for (int i = 0; i < table.GetLength(1); i++)
             {
                 spacesBeforeText = GetTextAlignmentCenter(maxRowLength, table[0, i].Length).Item1;
-                spacesAfteText = GetTextAlignmentCenter(maxRowLength, table[0, i].Length).Item2;
+                spacesAfterText = GetTextAlignmentCenter(maxRowLength, table[0, i].Length).Item2;
 
-                Console.Write(new string(' ', spacesBeforeText) + table[0, i] + new string(' ', spacesAfteText) + " |");
+                Console.Write(new string(' ', spacesBeforeText) + table[0, i] + new string(' ', spacesAfterText) + " |");
             }
 
             Console.WriteLine();
@@ -111,9 +111,9 @@ namespace Academits.Karetskas.RangeTask
                 for (int j = 0; j < table.GetLength(1); j++)
                 {
                     spacesBeforeText = GetTextAlignmentCenter(maxRowLength, table[i, j].Length).Item1;
-                    spacesAfteText = GetTextAlignmentCenter(maxRowLength, table[i, j].Length).Item2;
+                    spacesAfterText = GetTextAlignmentCenter(maxRowLength, table[i, j].Length).Item2;
 
-                    Console.Write(new string(' ', spacesBeforeText) + table[i, j] + new string(' ', spacesAfteText) + " |");
+                    Console.Write(new string(' ', spacesBeforeText) + table[i, j] + new string(' ', spacesAfterText) + " |");
                 }
 
                 Console.WriteLine();

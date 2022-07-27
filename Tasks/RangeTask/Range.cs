@@ -1,21 +1,12 @@
-﻿namespace Academits.Karetskas.RangeTask
+﻿using System;
+
+namespace Academits.Karetskas.RangeTask
 {
     public sealed class Range
     {
-        private double from;
-        private double to;
+        public double From { get; set; }
 
-        public double From
-        {
-            get => from;
-            set => from = Math.Round(value, 10, MidpointRounding.AwayFromZero);
-        }
-
-        public double To
-        {
-            get => to;
-            set => to = Math.Round(value, 10, MidpointRounding.AwayFromZero);
-        }
+        public double To { get; set; }
 
         public Range(double from, double to)
         {
@@ -35,78 +26,57 @@
             return number - From >= -epsilon && number - To <= epsilon;
         }
 
-        private double[] GetSortedElements(Range otherRange)
+        public Range? GetIntersection(Range range)
         {
-            double[] numbersArray =
-            {
-                From,
-                To,
-                otherRange.From,
-                otherRange.To
-            };
-
-            Array.Sort(numbersArray);
-
-            return numbersArray;
-        }
-
-        public Range? GetRangesIntersection(Range otherRange)
-        {
-            if (To <= otherRange.From || otherRange.To <= From)
+            if (To <= range.From || range.To <= From)
             {
                 return null;
             }
 
-            double[] numbersArray = GetSortedElements(otherRange);
-
-            return new Range(numbersArray[1], numbersArray[^2]);
+            return new Range(Math.Max(From, range.From), Math.Min(To, range.To));
         }
 
-        public Range[] GetRangesJoin(Range otherRange)
+        public Range[] GetUnion(Range range)
         {
-            if (To < otherRange.From || otherRange.To < From)
+            if (To < range.From || range.To < From)
             {
                 return new Range[]
                 {
-                    this,
-                    otherRange
+                    new Range(From, To),
+                    range
                 };
             }
 
-            double[] numbersArray = GetSortedElements(otherRange);
-
-            return new Range[] { new Range(numbersArray[0], numbersArray[^1]) };
+            return new Range[] { new Range(Math.Min(From, range.From), Math.Max(To, range.To)) };
         }
 
-        // In this function: Range - otherRange.
-        public Range[] GetRangesDifference(Range otherRange)
+        // In this function: this - range.
+        public Range[] GetDifference(Range range)
         {
-            if (From >= otherRange.From && To <= otherRange.To)
+            if (From >= range.From && To <= range.To)
             {
                 return new Range[0];
             }
 
-            if (To <= otherRange.From || From >= otherRange.To)
+            if (To <= range.From || From >= range.To)
             {
-                return new Range[] { this };
+                return new Range[] { new Range(From, To) };
             }
 
-            const double minNumber = 1.0e-10;
-
-            if (To > otherRange.From && To <= otherRange.To && otherRange.From > From)
+            if (To > range.From && To <= range.To && range.From > From)
             {
-                return new Range[] { new Range(From, Math.Round(otherRange.From - minNumber, 10, MidpointRounding.AwayFromZero)) };
+                return new Range[] { new Range(From, range.From) };
             }
 
-            if (otherRange.To > From && otherRange.To < To && From >= otherRange.From)
+            if (range.To > From && range.To < To && From >= range.From)
             {
-                return new Range[] { new Range(Math.Round(otherRange.To + minNumber, 10, MidpointRounding.AwayFromZero), To) };
+                return new Range[] { new Range(range.To, To) };
             }
 
             return new Range[]
             {
-                new Range(From, Math.Round(otherRange.From - minNumber, 10, MidpointRounding.AwayFromZero)),
-                new Range(Math.Round(otherRange.To + minNumber, 10, MidpointRounding.AwayFromZero), To)
+                new Range(From, range.From),
+                new Range(range.To, To)
             };
         }
 
