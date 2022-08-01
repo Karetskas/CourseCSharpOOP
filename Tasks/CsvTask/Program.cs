@@ -46,73 +46,73 @@ namespace Academits.Karetskas
                     return 1;
                 }
             }
-            catch(ObjectDisposedException e)
+            catch (ObjectDisposedException e)
             {
                 Console.WriteLine(e);
 
                 isError = true;
             }
-            catch(EncoderFallbackException e)
+            catch (EncoderFallbackException e)
             {
                 Console.WriteLine(e);
 
                 isError = true;
             }
-            catch(UnauthorizedAccessException e)
+            catch (UnauthorizedAccessException e)
             {
                 Console.WriteLine(e);
 
                 isError = true;
             }
-            catch(ArgumentNullException e)
+            catch (ArgumentNullException e)
             {
                 Console.WriteLine(e);
 
                 isError = true;
             }
-            catch(ArgumentException e)
+            catch (ArgumentException e)
             {
                 Console.WriteLine(e);
 
                 isError = true;
             }
-            catch(DirectoryNotFoundException e)
+            catch (DirectoryNotFoundException e)
             {
                 Console.WriteLine(e);
 
                 isError = true;
             }
-            catch(PathTooLongException e)
+            catch (PathTooLongException e)
             {
                 Console.WriteLine(e);
 
                 isError = true;
             }
-            catch(FileNotFoundException e)
+            catch (FileNotFoundException e)
             {
                 Console.WriteLine(e);
 
                 isError = true;
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 Console.WriteLine(e);
 
                 isError = true;
             }
-            catch(SecurityException e)
+            catch (SecurityException e)
             {
                 Console.WriteLine(e);
 
                 isError = true;
             }
-            catch(NotSupportedException e)
+            catch (NotSupportedException e)
             {
                 Console.WriteLine(e);
 
                 isError = true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
 
