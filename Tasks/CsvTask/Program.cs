@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Security;
+using System.Text;
 
 namespace Academits.Karetskas
 {
@@ -33,9 +35,93 @@ namespace Academits.Karetskas
 
             Console.WriteLine("Please, wait...");
 
-            if (!ConvertTableFromCsvFormatToHtml(args[0], args[1]))
+            bool isError = false;
+
+            try
             {
-                Console.WriteLine($"Error in the syntax of the file \"{Path.GetFileName(args[0])}\".");
+                if (!ConvertTableFromCsvFormatToHtml(args[0], args[1]))
+                {
+                    Console.WriteLine($"Error in the syntax of the file \"{Path.GetFileName(args[0])}\".");
+
+                    return 1;
+                }
+            }
+            catch(ObjectDisposedException e)
+            {
+                Console.WriteLine(e);
+
+                isError = true;
+            }
+            catch(EncoderFallbackException e)
+            {
+                Console.WriteLine(e);
+
+                isError = true;
+            }
+            catch(UnauthorizedAccessException e)
+            {
+                Console.WriteLine(e);
+
+                isError = true;
+            }
+            catch(ArgumentNullException e)
+            {
+                Console.WriteLine(e);
+
+                isError = true;
+            }
+            catch(ArgumentException e)
+            {
+                Console.WriteLine(e);
+
+                isError = true;
+            }
+            catch(DirectoryNotFoundException e)
+            {
+                Console.WriteLine(e);
+
+                isError = true;
+            }
+            catch(PathTooLongException e)
+            {
+                Console.WriteLine(e);
+
+                isError = true;
+            }
+            catch(FileNotFoundException e)
+            {
+                Console.WriteLine(e);
+
+                isError = true;
+            }
+            catch(IOException e)
+            {
+                Console.WriteLine(e);
+
+                isError = true;
+            }
+            catch(SecurityException e)
+            {
+                Console.WriteLine(e);
+
+                isError = true;
+            }
+            catch(NotSupportedException e)
+            {
+                Console.WriteLine(e);
+
+                isError = true;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+
+                isError = true;
+            }
+
+            if (isError)
+            {
+                Console.WriteLine("Tasks not completed :(");
 
                 return 1;
             }
