@@ -2,11 +2,11 @@
 
 namespace Academits.Karetskas.RangeTask
 {
-    public static class UsingRangeClass
+    public static class RangeTest
     {
         static void Main()
         {
-            Range[] rangesArray =
+            Range[] rangesArrayForTesting =
             {
                 new Range(5, 10),
                 new Range(-5, 10),
@@ -39,13 +39,13 @@ namespace Academits.Karetskas.RangeTask
                 -10.00_000_000_001
             };
 
-            string[,] dataArray = new string[numbersArray.Length, rangesArray.Length];
+            string[,] dataArray = new string[numbersArray.Length, rangesArrayForTesting.Length];
 
             for (int i = 0; i < numbersArray.Length; i++)
             {
-                for (int j = 0; j < rangesArray.Length; j++)
+                for (int j = 0; j < rangesArrayForTesting.Length; j++)
                 {
-                    if (rangesArray[j].IsInside(numbersArray[i]))
+                    if (rangesArrayForTesting[j].IsInside(numbersArray[i]))
                     {
                         dataArray[i, j] = "+";
 
@@ -56,15 +56,15 @@ namespace Academits.Karetskas.RangeTask
                 }
             }
 
-            string[] rows = ConvertArrayToStringsArray(numbersArray);
-            string[] columns = ConvertArrayToStringsArray(rangesArray);
+            string[] rows = ConvertToStringsArray(numbersArray);
+            string[] columns = ConvertToStringsArray(rangesArrayForTesting);
 
-            Table table = new Table(columns, rows, dataArray);
-            table.Output("Demonstration of the \"isInside\" function.");
+            Table rangesMembershipTable = new Table(columns, rows, dataArray);
+            rangesMembershipTable.PrintToConsole("Demonstration of the \"isInside\" function.");
 
             Console.WriteLine(Environment.NewLine);
 
-            rangesArray = new Range[]
+            Range[] rangesListForIntersection = new Range[]
             {
                 new Range(5, 10),
                 new Range(1, 3),
@@ -88,11 +88,11 @@ namespace Academits.Karetskas.RangeTask
 
             Range range = new Range(5, 10);
 
-            dataArray = new string[rangesArray.Length, 1];
+            dataArray = new string[rangesListForIntersection.Length, 1];
 
-            for (int i = 0; i < rangesArray.Length; i++)
+            for (int i = 0; i < rangesListForIntersection.Length; i++)
             {
-                Range? intersection = range.GetIntersection(rangesArray[i]);
+                Range? intersection = range.GetIntersection(rangesListForIntersection[i]);
 
                 if (intersection == null)
                 {
@@ -104,17 +104,21 @@ namespace Academits.Karetskas.RangeTask
                 dataArray[i, 0] = intersection.ToString();
             }
 
-            rows = ConvertArrayToStringsArray(rangesArray);
+            rows = ConvertToStringsArray(rangesListForIntersection);
             columns = new string[] { range.ToString() };
 
-            table = new Table(columns, rows, dataArray);
-            table.Output("Demonstration of the \"GetIntersection()\" function.");
+            Table rangesIntersectionsTable = new Table(columns, rows, dataArray);
+            rangesIntersectionsTable.PrintToConsole("Demonstration of the \"GetIntersection()\" function.");
 
             Console.WriteLine(Environment.NewLine);
 
-            for (int i = 0; i < rangesArray.Length; i++)
+            Range[] rangesListForUnion = new Range[rangesArrayForTesting.Length];
+
+            rangesArrayForTesting.CopyTo(rangesListForUnion, 0);
+
+            for (int i = 0; i < rangesListForUnion.Length; i++)
             {
-                Range[] union = range.GetUnion(rangesArray[i]);
+                Range[] union = range.GetUnion(rangesListForUnion[i]);
 
                 if (union.Length == 2)
                 {
@@ -126,12 +130,12 @@ namespace Academits.Karetskas.RangeTask
                 dataArray[i, 0] = "[" + union[0] + "]";
             }
 
-            table = new Table(columns, rows, dataArray);
-            table.Output("Demonstration of the \"GetUnion()\" function.");
+            Table rangesUnionTable = new Table(columns, rows, dataArray);
+            rangesUnionTable.PrintToConsole("Demonstration of the \"GetUnion()\" function.");
 
             Console.WriteLine(Environment.NewLine);
 
-            rangesArray = new Range[]
+            Range[] rangesListForDifference = new Range[]
             {
                 new Range(-8, -6),
                 new Range(-8, -5.0_000_000_001),
@@ -160,11 +164,11 @@ namespace Academits.Karetskas.RangeTask
 
             range = new Range(-5, 10);
 
-            dataArray = new string[rangesArray.Length, 1];
+            dataArray = new string[rangesListForDifference.Length, 1];
 
-            for (int i = 0; i < rangesArray.Length; i++)
+            for (int i = 0; i < rangesListForDifference.Length; i++)
             {
-                Range[] difference = range.GetDifference(rangesArray[i]);
+                Range[] difference = range.GetDifference(rangesListForDifference[i]);
 
                 if (difference.Length == 2)
                 {
@@ -184,13 +188,13 @@ namespace Academits.Karetskas.RangeTask
             }
 
             columns = new string[] { range.ToString() };
-            rows = ConvertArrayToStringsArray(rangesArray);
+            rows = ConvertToStringsArray(rangesListForDifference);
 
-            table = new Table(columns, rows, dataArray);
-            table.Output("Demonstration of the \"GetDifference\" function for negative and positive ranges.");
+            Table differencesInRangesTable = new Table(columns, rows, dataArray);
+            differencesInRangesTable.PrintToConsole("Demonstration of the \"GetDifference\" function for negative and positive ranges.");
         }
 
-        private static string[] ConvertArrayToStringsArray(double[] array)
+        private static string[] ConvertToStringsArray(double[] array)
         {
             string[] resultArray = new string[array.Length];
 
@@ -202,7 +206,7 @@ namespace Academits.Karetskas.RangeTask
             return resultArray;
         }
 
-        private static string[] ConvertArrayToStringsArray(Range[] array)
+        private static string[] ConvertToStringsArray(Range[] array)
         {
             string[] resultArray = new string[array.Length];
 

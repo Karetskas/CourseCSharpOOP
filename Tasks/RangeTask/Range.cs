@@ -43,7 +43,7 @@ namespace Academits.Karetskas.RangeTask
                 return new Range[]
                 {
                     new Range(From, To),
-                    range
+                    new Range(range.From, range.To)
                 };
             }
 

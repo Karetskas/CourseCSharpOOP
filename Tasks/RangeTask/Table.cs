@@ -73,7 +73,7 @@ namespace Academits.Karetskas.RangeTask
             return (spacesBeforeText, spacesAfterText);
         }
 
-        public void Output(string tableName)
+        public void PrintToConsole(string tableName)
         {
             int maxRowLength = GetMaxArrayStringLength(table);
 
