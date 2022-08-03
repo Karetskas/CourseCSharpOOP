@@ -1,4 +1,6 @@
 ﻿using System;
+using Academits.Karetskas.ShapesTask.Shapes;
+using Academits.Karetskas.ShapesTask.Comparers;
 
 namespace Academits.Karetskas.ShapesTask
 {
@@ -22,14 +24,22 @@ namespace Academits.Karetskas.ShapesTask
                 new Circle(7.301)
             };
 
-            IShape? shape = GetShapeMaxArea(shapesArray);
+            IShape? shape = GetShapeWithMaxArea(shapesArray);
 
-            Console.WriteLine($"The shape with the largest area is the {shape}.");
-            Console.WriteLine($"Its area is {shape.GetArea():f4} sentimeters square.");
+            if (shape is null)
+            {
+                Console.WriteLine($"Shape is null.");
+            }
+            else
+            {
+                Console.WriteLine($"The shape with the largest area is the {shape}.");
+                Console.WriteLine($"Its area is {shape.GetArea():f4} sentimeters square.");
+            }
+
             Console.WriteLine();
 
             const int secondPlace = 2;
-            shape = GetShapePerimeter(shapesArray, secondPlace);
+            shape = GetShapeWithPerimeter(shapesArray, secondPlace);
 
             if (shape is null)
             {
@@ -42,14 +52,19 @@ namespace Academits.Karetskas.ShapesTask
             }
         }
 
-        private static IShape GetShapeMaxArea(IShape[] shapesArray)
+        private static IShape? GetShapeWithMaxArea(IShape[] shapesArray)
         {
+            if (shapesArray.Length == 0)
+            {
+                return null;
+            }
+
             Array.Sort(shapesArray, new ShapesAreaComparer());
 
             return shapesArray[^1];
         }
 
-        private static IShape? GetShapePerimeter(IShape[] shapesArray, int ordinalNumberStartingFromLargest)
+        private static IShape? GetShapeWithPerimeter(IShape[] shapesArray, int ordinalNumberStartingFromLargest)
         {
             if (ordinalNumberStartingFromLargest > shapesArray.Length || ordinalNumberStartingFromLargest < 1)
             {

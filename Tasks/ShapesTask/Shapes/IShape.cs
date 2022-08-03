@@ -1,10 +1,13 @@
-﻿namespace Academits.Karetskas.ShapesTask
+﻿namespace Academits.Karetskas.ShapesTask.Shapes
 {
     public interface IShape
     {
         double GetWidth();
+
         double GetHeight();
+
         double GetArea();
+
         double GetPerimeter();
     }
 }

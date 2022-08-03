@@ -1,80 +1,71 @@
 ﻿using System;
 
-namespace Academits.Karetskas.ShapesTask
+namespace Academits.Karetskas.ShapesTask.Shapes
 {
     public sealed class Triangle : IShape
     {
-        private readonly double x1;
-        private readonly double y1;
-        private readonly double x2;
-        private readonly double y2;
-        private readonly double x3;
-        private readonly double y3;
+        public double X1 { get; set; }
 
-        private readonly double side1;
-        private readonly double side2;
-        private readonly double side3;
+        public double Y1 { get; set; }
+
+        public double X2 { get; set; }
+
+        public double Y2 { get; set; }
+
+        public double X3 { get; set; }
+
+        public double Y3 { get; set; }
 
         public Triangle(double x1, double y1, double x2, double y2, double x3, double y3)
         {
-            this.x1 = x1;
-            this.y1 = y1;
-            this.x2 = x2;
-            this.y2 = y2;
-            this.x3 = x3;
-            this.y3 = y3;
-
-            (double max, double min) numbersX = GetMaxAndMinNumber(x1, x2);
-            (double max, double min) numbersY = GetMaxAndMinNumber(y1, y2);
-
-            side1 = Math.Sqrt(Math.Pow(numbersX.max - numbersX.min, 2) + Math.Pow(numbersY.max - numbersY.min, 2));
-
-            numbersX = GetMaxAndMinNumber(x2, x3);
-            numbersY = GetMaxAndMinNumber(y2, y3);
-
-            side2 = Math.Sqrt(Math.Pow(numbersX.max - numbersX.min, 2) + Math.Pow(numbersY.max - numbersY.min, 2));
-
-            numbersX = GetMaxAndMinNumber(x1, x3);
-            numbersY = GetMaxAndMinNumber(y1, y3);
-
-            side3 = Math.Sqrt(Math.Pow(numbersX.max - numbersX.min, 2) + Math.Pow(numbersY.max - numbersY.min, 2));
+            X1 = x1;
+            Y1 = y1;
+            X2 = x2;
+            Y2 = y2;
+            X3 = x3;
+            Y3 = y3;
         }
 
-        private (double maxNumber, double minNumber) GetMaxAndMinNumber(double number1, double number2)
+        private (double, double, double) GetThreeSidesLengths()
         {
-            if (number1 > number2)
-            {
-                return (number1, number2);
-            }
+            double side1Length = Math.Sqrt(Math.Pow(X1 - X2, 2) + Math.Pow(Y1 - Y2, 2));
 
-            return (number2, number1);
+            double side2Length = Math.Sqrt(Math.Pow(X2 - X3, 2) + Math.Pow(Y2 - Y3, 2));
+
+            double side3Length = Math.Sqrt(Math.Pow(X1 - X3, 2) + Math.Pow(Y1 - Y3, 2));
+
+            return (side1Length, side2Length, side3Length);
         }
 
         public double GetWidth()
         {
-            return Math.Max(Math.Max(x1, x2), x3) - Math.Min(Math.Min(x1, x2), x3);
+            return Math.Max(Math.Max(X1, X2), X3) - Math.Min(Math.Min(X1, X2), X3);
         }
 
         public double GetHeight()
         {
-            return Math.Max(Math.Max(y1, y2), y3) - Math.Min(Math.Min(y1, y2), y3);
+            return Math.Max(Math.Max(Y1, Y2), Y3) - Math.Min(Math.Min(Y1, Y2), Y3);
         }
 
         public double GetArea()
         {
-            double perimeter = GetPerimeter() / 2;
+            (double side1Length, double side2Length, double side3Length) = GetThreeSidesLengths();
 
-            return Math.Sqrt(perimeter * (perimeter - side1) * (perimeter - side2) * (perimeter - side3));
+            double perimeter = (side1Length + side2Length + side3Length) / 2;
+
+            return Math.Sqrt(perimeter * (perimeter - side1Length) * (perimeter - side2Length) * (perimeter - side3Length));
         }
 
         public double GetPerimeter()
         {
-            return side1 + side2 + side3;
+            (double side1Length, double side2Length, double side3Length) = GetThreeSidesLengths();
+
+            return side1Length + side2Length + side3Length;
         }
 
         public override string ToString()
         {
-            return $"Triangle: x1 = {x1}, y1 = {y1}, x2 = {x2}, y2 = {y2}, x3 = {x3}, y3 = {y3}";
+            return $"Triangle: ({X1}; {Y1}), ({X2}; {Y2}), ({X3}; {Y3})";
         }
 
         public override bool Equals(object? obj)
@@ -91,7 +82,9 @@ namespace Academits.Karetskas.ShapesTask
 
             Triangle triangle = (Triangle)obj;
 
-            return x1 == triangle.x1 && y1 == triangle.y1 && x2 == triangle.x2 && y2 == triangle.y2 && x3 == triangle.x3 && y3 == triangle.y3;
+            return X1 == triangle.X1 && Y1 == triangle.Y1 &&
+                X2 == triangle.X2 && Y2 == triangle.Y2 &&
+                X3 == triangle.X3 && Y3 == triangle.Y3;
         }
 
         public override int GetHashCode()
@@ -99,12 +92,12 @@ namespace Academits.Karetskas.ShapesTask
             int prime = 53;
             int hash = 1;
 
-            hash = prime * hash + x1.GetHashCode();
-            hash = prime * hash + y1.GetHashCode();
-            hash = prime * hash + x2.GetHashCode();
-            hash = prime * hash + y2.GetHashCode();
-            hash = prime * hash + x3.GetHashCode();
-            return prime * hash + y3.GetHashCode();
+            hash = prime * hash + X1.GetHashCode();
+            hash = prime * hash + Y1.GetHashCode();
+            hash = prime * hash + X2.GetHashCode();
+            hash = prime * hash + Y2.GetHashCode();
+            hash = prime * hash + X3.GetHashCode();
+            return prime * hash + Y3.GetHashCode();
         }
     }
 }

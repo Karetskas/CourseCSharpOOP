@@ -1,39 +1,46 @@
 ﻿using System;
 
-namespace Academits.Karetskas.ShapesTask
+namespace Academits.Karetskas.ShapesTask.Shapes
 {
     public sealed class Circle : IShape
     {
-        private readonly double radius;
+        private double radius;
+
+        public double Radius
+        {
+            get => radius;
+
+            set => radius = value < 0 ? 0 : value;
+        }
 
         public Circle(double radius)
         {
-            this.radius = radius < 0 ? 0 : radius;
+            Radius = radius;
         }
 
         public double GetWidth()
         {
-            return Math.Pow(radius, 2);
+            return Radius + Radius;
         }
 
         public double GetHeight()
         {
-            return Math.Pow(radius, 2);
+            return Radius + Radius;
         }
 
         public double GetArea()
         {
-            return Math.PI * Math.Pow(radius, 2);
+            return Math.PI * Radius * Radius;
         }
 
         public double GetPerimeter()
         {
-            return 2 * Math.PI * radius;
+            return 2 * Math.PI * Radius;
         }
 
         public override string ToString()
         {
-            return $"Circle: radius = {radius}";
+            return $"Circle: radius = {Radius}";
         }
 
         public override bool Equals(object? obj)
@@ -50,7 +57,7 @@ namespace Academits.Karetskas.ShapesTask
 
             Circle circle = (Circle)obj;
 
-            return radius == circle.radius;
+            return Radius == circle.Radius;
         }
 
         public override int GetHashCode()
@@ -58,7 +65,7 @@ namespace Academits.Karetskas.ShapesTask
             int prime = 53;
             int hash = 1;
 
-            return prime * hash + radius.GetHashCode();
+            return prime * hash + Radius.GetHashCode();
         }
     }
 }

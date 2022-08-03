@@ -1,39 +1,53 @@
-﻿namespace Academits.Karetskas.ShapesTask
+﻿namespace Academits.Karetskas.ShapesTask.Shapes
 {
     public sealed class Rectangle : IShape
     {
-        private readonly double width;
-        private readonly double height;
+        private double width;
+        private double height;
+
+        public double Width
+        {
+            get => width;
+
+            set => width = value < 0 ? 0 : value;
+        }
+
+        public double Height
+        {
+            get => height;
+
+            set => height = value < 0 ? 0 : value;
+        }
 
         public Rectangle(double width, double height)
         {
-            this.width = width < 0 ? 0 : width;
-            this.height = height < 0 ? 0 : height;
+            Width = width;
+            Height = height;
         }
 
         public double GetWidth()
         {
-            return width;
+            return Width;
         }
 
         public double GetHeight()
         {
-            return height;
+            return Height;
         }
 
         public double GetArea()
         {
-            return width * height;
+            return Width * Height;
         }
 
         public double GetPerimeter()
         {
-            return 2 * width + 2 * height;
+            return 2 * (Width + Height);
         }
 
         public override string ToString()
         {
-            return $"Rectangle: width = {width}, height = {height}";
+            return $"Rectangle: width = {Width}, height = {Height}";
         }
 
         public override bool Equals(object? obj)
@@ -50,7 +64,7 @@
 
             Rectangle rectangle = (Rectangle)obj;
 
-            return width == rectangle.width && height == rectangle.height;
+            return Width == rectangle.Width && Height == rectangle.Height;
         }
 
         public override int GetHashCode()
@@ -58,8 +72,8 @@
             int prime = 53;
             int hash = 1;
 
-            hash = prime * hash + width.GetHashCode();
-            return prime * hash + width.GetHashCode();
+            hash = prime * hash + Width.GetHashCode();
+            return prime * hash + Width.GetHashCode();
         }
     }
 }
