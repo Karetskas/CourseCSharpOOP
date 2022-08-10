@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Security;
-using System.Text;
 
-namespace Academits.Karetskas
+namespace Academits.Karetskas.CsvTask
 {
     internal class Csv
     {
@@ -35,8 +33,6 @@ namespace Academits.Karetskas
 
             Console.WriteLine("Please, wait...");
 
-            bool isError = false;
-
             try
             {
                 if (!ConvertTableFromCsvFormatToHtml(args[0], args[1]))
@@ -45,90 +41,17 @@ namespace Academits.Karetskas
 
                     return 1;
                 }
+
+                Console.WriteLine("Tasks completed :)");
+
+                return 0;
             }
-            catch (ObjectDisposedException e)
+            catch (Exception)
             {
-                Console.WriteLine(e);
-
-                isError = true;
-            }
-            catch (EncoderFallbackException e)
-            {
-                Console.WriteLine(e);
-
-                isError = true;
-            }
-            catch (UnauthorizedAccessException e)
-            {
-                Console.WriteLine(e);
-
-                isError = true;
-            }
-            catch (ArgumentNullException e)
-            {
-                Console.WriteLine(e);
-
-                isError = true;
-            }
-            catch (ArgumentException e)
-            {
-                Console.WriteLine(e);
-
-                isError = true;
-            }
-            catch (DirectoryNotFoundException e)
-            {
-                Console.WriteLine(e);
-
-                isError = true;
-            }
-            catch (PathTooLongException e)
-            {
-                Console.WriteLine(e);
-
-                isError = true;
-            }
-            catch (FileNotFoundException e)
-            {
-                Console.WriteLine(e);
-
-                isError = true;
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine(e);
-
-                isError = true;
-            }
-            catch (SecurityException e)
-            {
-                Console.WriteLine(e);
-
-                isError = true;
-            }
-            catch (NotSupportedException e)
-            {
-                Console.WriteLine(e);
-
-                isError = true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-
-                isError = true;
+                Console.WriteLine("Error. Tasks not completed :(");
             }
 
-            if (isError)
-            {
-                Console.WriteLine("Tasks not completed :(");
-
-                return 1;
-            }
-
-            Console.WriteLine("Tasks completed :)");
-
-            return 0;
+            return 1;
         }
 
         public static void PrintHelp()
