@@ -64,7 +64,7 @@ namespace Academits.Karetskas.RangeTask
 
             Console.WriteLine(Environment.NewLine);
 
-            Range[] rangesListForIntersection = new Range[]
+            Range[] rangesForIntersection = new Range[]
             {
                 new Range(5, 10),
                 new Range(1, 3),
@@ -88,11 +88,11 @@ namespace Academits.Karetskas.RangeTask
 
             Range range = new Range(5, 10);
 
-            dataArray = new string[rangesListForIntersection.Length, 1];
+            dataArray = new string[rangesForIntersection.Length, 1];
 
-            for (int i = 0; i < rangesListForIntersection.Length; i++)
+            for (int i = 0; i < rangesForIntersection.Length; i++)
             {
-                Range? intersection = range.GetIntersection(rangesListForIntersection[i]);
+                Range? intersection = range.GetIntersection(rangesForIntersection[i]);
 
                 if (intersection == null)
                 {
@@ -104,7 +104,7 @@ namespace Academits.Karetskas.RangeTask
                 dataArray[i, 0] = intersection.ToString();
             }
 
-            rows = ConvertToStringsArray(rangesListForIntersection);
+            rows = ConvertToStringsArray(rangesForIntersection);
             columns = new string[] { range.ToString() };
 
             Table rangesIntersectionsTable = new Table(columns, rows, dataArray);
@@ -112,13 +112,13 @@ namespace Academits.Karetskas.RangeTask
 
             Console.WriteLine(Environment.NewLine);
 
-            Range[] rangesListForUnion = new Range[rangesArrayForTesting.Length];
+            Range[] rangesForUnion = new Range[rangesArrayForTesting.Length];
 
-            rangesArrayForTesting.CopyTo(rangesListForUnion, 0);
+            rangesArrayForTesting.CopyTo(rangesForUnion, 0);
 
-            for (int i = 0; i < rangesListForUnion.Length; i++)
+            for (int i = 0; i < rangesForUnion.Length; i++)
             {
-                Range[] union = range.GetUnion(rangesListForUnion[i]);
+                Range[] union = range.GetUnion(rangesForUnion[i]);
 
                 if (union.Length == 2)
                 {
@@ -135,7 +135,7 @@ namespace Academits.Karetskas.RangeTask
 
             Console.WriteLine(Environment.NewLine);
 
-            Range[] rangesListForDifference = new Range[]
+            Range[] rangesForDifference = new Range[]
             {
                 new Range(-8, -6),
                 new Range(-8, -5.0_000_000_001),
@@ -164,11 +164,11 @@ namespace Academits.Karetskas.RangeTask
 
             range = new Range(-5, 10);
 
-            dataArray = new string[rangesListForDifference.Length, 1];
+            dataArray = new string[rangesForDifference.Length, 1];
 
-            for (int i = 0; i < rangesListForDifference.Length; i++)
+            for (int i = 0; i < rangesForDifference.Length; i++)
             {
-                Range[] difference = range.GetDifference(rangesListForDifference[i]);
+                Range[] difference = range.GetDifference(rangesForDifference[i]);
 
                 if (difference.Length == 2)
                 {
@@ -188,10 +188,10 @@ namespace Academits.Karetskas.RangeTask
             }
 
             columns = new string[] { range.ToString() };
-            rows = ConvertToStringsArray(rangesListForDifference);
+            rows = ConvertToStringsArray(rangesForDifference);
 
-            Table differencesInRangesTable = new Table(columns, rows, dataArray);
-            differencesInRangesTable.PrintToConsole("Demonstration of the \"GetDifference\" function for negative and positive ranges.");
+            Table rangesDifferenceTable = new Table(columns, rows, dataArray);
+            rangesDifferenceTable.PrintToConsole("Demonstration of the \"GetDifference\" function for negative and positive ranges.");
         }
 
         private static string[] ConvertToStringsArray(double[] array)

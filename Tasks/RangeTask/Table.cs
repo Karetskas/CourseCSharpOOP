@@ -8,14 +8,14 @@ namespace Academits.Karetskas.RangeTask
 
         public Table(string[] columns, string[] rows, string[,] dataArray)
         {
-            int countRows = rows.Length + 1;
-            int countColumns = columns.Length + 1;
+            int rowsCount = rows.Length + 1;
+            int columnsCount = columns.Length + 1;
 
-            table = new string[countRows, countColumns];
+            table = new string[rowsCount, columnsCount];
 
-            for (int i = 0; i < countRows; i++)
+            for (int i = 0; i < rowsCount; i++)
             {
-                for (int j = 0; j < countColumns; j++)
+                for (int j = 0; j < columnsCount; j++)
                 {
                     if (i == 0 && j == 0)
                     {
