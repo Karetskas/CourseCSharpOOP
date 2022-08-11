@@ -27,27 +27,27 @@
 
         public double GetWidth()
         {
-            return Width;
+            return width;
         }
 
         public double GetHeight()
         {
-            return Height;
+            return height;
         }
 
         public double GetArea()
         {
-            return Width * Height;
+            return width * height;
         }
 
         public double GetPerimeter()
         {
-            return 2 * (Width + Height);
+            return 2 * (width + height);
         }
 
         public override string ToString()
         {
-            return $"Rectangle: width = {Width}, height = {Height}";
+            return $"Rectangle: width = {width}, height = {height}";
         }
 
         public override bool Equals(object? obj)
@@ -57,7 +57,7 @@
                 return true;
             }
 
-            if (ReferenceEquals(obj, null) || obj.GetType() != GetType())
+            if (obj is null || obj.GetType() != GetType())
             {
                 return false;
             }
@@ -72,8 +72,8 @@
             int prime = 53;
             int hash = 1;
 
-            hash = prime * hash + Width.GetHashCode();
-            return prime * hash + Width.GetHashCode();
+            hash = prime * hash + width.GetHashCode();
+            return prime * hash + height.GetHashCode();
         }
     }
 }

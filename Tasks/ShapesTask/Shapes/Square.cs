@@ -18,27 +18,27 @@
 
         public double GetWidth()
         {
-            return SideLength;
+            return sideLength;
         }
 
         public double GetHeight()
         {
-            return SideLength;
+            return sideLength;
         }
 
         public double GetArea()
         {
-            return SideLength * SideLength;
+            return sideLength * sideLength;
         }
 
         public double GetPerimeter()
         {
-            return 4 * SideLength;
+            return 4 * sideLength;
         }
 
         public override string ToString()
         {
-            return $"Square: Side length = {SideLength}";
+            return $"Square: Side length = {sideLength}";
         }
 
         public override bool Equals(object? obj)
@@ -48,7 +48,7 @@
                 return false;
             }
 
-            if (ReferenceEquals(obj, null) || obj.GetType() != GetType())
+            if (obj is null || obj.GetType() != GetType())
             {
                 return false;
             }
@@ -63,7 +63,7 @@
             int prime = 53;
             int hash = 1;
 
-            return prime * hash + SideLength.GetHashCode();
+            return prime * hash + sideLength.GetHashCode();
         }
     }
 }

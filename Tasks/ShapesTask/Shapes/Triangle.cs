@@ -26,15 +26,9 @@ namespace Academits.Karetskas.ShapesTask.Shapes
             Y3 = y3;
         }
 
-        private (double, double, double) GetThreeSidesLengths()
+        private static double GetSideLength(double x1, double y1, double x2, double y2)
         {
-            double side1Length = Math.Sqrt(Math.Pow(X1 - X2, 2) + Math.Pow(Y1 - Y2, 2));
-
-            double side2Length = Math.Sqrt(Math.Pow(X2 - X3, 2) + Math.Pow(Y2 - Y3, 2));
-
-            double side3Length = Math.Sqrt(Math.Pow(X1 - X3, 2) + Math.Pow(Y1 - Y3, 2));
-
-            return (side1Length, side2Length, side3Length);
+            return Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
         }
 
         public double GetWidth()
@@ -49,16 +43,24 @@ namespace Academits.Karetskas.ShapesTask.Shapes
 
         public double GetArea()
         {
-            (double side1Length, double side2Length, double side3Length) = GetThreeSidesLengths();
+            double side1Length = GetSideLength(X1, Y1, X2, Y2);
 
-            double perimeter = (side1Length + side2Length + side3Length) / 2;
+            double side2Length = GetSideLength(X2, Y2, X3, Y3);
 
-            return Math.Sqrt(perimeter * (perimeter - side1Length) * (perimeter - side2Length) * (perimeter - side3Length));
+            double side3Length = GetSideLength(X1, Y1, X3, Y3);
+
+            double semiPerimeter = (side1Length + side2Length + side3Length) / 2;
+
+            return Math.Sqrt(semiPerimeter * (semiPerimeter - side1Length) * (semiPerimeter - side2Length) * (semiPerimeter - side3Length));
         }
 
         public double GetPerimeter()
         {
-            (double side1Length, double side2Length, double side3Length) = GetThreeSidesLengths();
+            double side1Length = GetSideLength(X1, Y1, X2, Y2);
+
+            double side2Length = GetSideLength(X2, Y2, X3, Y3);
+
+            double side3Length = GetSideLength(X1, Y1, X3, Y3);
 
             return side1Length + side2Length + side3Length;
         }
@@ -75,16 +77,16 @@ namespace Academits.Karetskas.ShapesTask.Shapes
                 return true;
             }
 
-            if (ReferenceEquals(obj, null) || obj.GetType != GetType)
+            if (obj is null || obj.GetType != GetType)
             {
                 return false;
             }
 
             Triangle triangle = (Triangle)obj;
 
-            return X1 == triangle.X1 && Y1 == triangle.Y1 &&
-                X2 == triangle.X2 && Y2 == triangle.Y2 &&
-                X3 == triangle.X3 && Y3 == triangle.Y3;
+            return X1 == triangle.X1 && Y1 == triangle.Y1
+                && X2 == triangle.X2 && Y2 == triangle.Y2
+                && X3 == triangle.X3 && Y3 == triangle.Y3;
         }
 
         public override int GetHashCode()

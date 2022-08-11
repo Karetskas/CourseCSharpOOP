@@ -20,27 +20,27 @@ namespace Academits.Karetskas.ShapesTask.Shapes
 
         public double GetWidth()
         {
-            return Radius + Radius;
+            return radius + radius;
         }
 
         public double GetHeight()
         {
-            return Radius + Radius;
+            return radius + radius;
         }
 
         public double GetArea()
         {
-            return Math.PI * Radius * Radius;
+            return Math.PI * radius * radius;
         }
 
         public double GetPerimeter()
         {
-            return 2 * Math.PI * Radius;
+            return 2 * Math.PI * radius;
         }
 
         public override string ToString()
         {
-            return $"Circle: radius = {Radius}";
+            return $"Circle: radius = {radius}";
         }
 
         public override bool Equals(object? obj)
@@ -50,7 +50,7 @@ namespace Academits.Karetskas.ShapesTask.Shapes
                 return true;
             }
 
-            if (ReferenceEquals(obj, null) || obj.GetType() != GetType())
+            if (obj is null || obj.GetType() != GetType())
             {
                 return false;
             }
@@ -65,7 +65,7 @@ namespace Academits.Karetskas.ShapesTask.Shapes
             int prime = 53;
             int hash = 1;
 
-            return prime * hash + Radius.GetHashCode();
+            return prime * hash + radius.GetHashCode();
         }
     }
 }
