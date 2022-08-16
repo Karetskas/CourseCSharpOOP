@@ -46,9 +46,9 @@ namespace Academits.Karetskas.CsvTask
 
                 return 0;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Console.WriteLine("Error. Tasks not completed :(");
+                Console.WriteLine($"Error. The task was not completed for the following reason: \"{e.Message}\"");
             }
 
             return 1;
