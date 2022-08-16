@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShapesTask", "ShapesTask\Sh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvTask", "CsvTask\CsvTask.csproj", "{218AC8FE-F313-478B-84DE-BF157513294C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VectorTask", "VectorTask\VectorTask.csproj", "{BDE122B4-6653-430C-BAD1-4348FA6B089F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VectorTask", "VectorTask\VectorTask.csproj", "{BDE122B4-6653-430C-BAD1-4348FA6B089F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArrayListHomeTask", "ArrayListHomeTask\ArrayListHomeTask.csproj", "{8EBC0075-9C14-4379-BD1D-F7CCFF6FF1CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{BDE122B4-6653-430C-BAD1-4348FA6B089F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDE122B4-6653-430C-BAD1-4348FA6B089F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDE122B4-6653-430C-BAD1-4348FA6B089F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EBC0075-9C14-4379-BD1D-F7CCFF6FF1CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EBC0075-9C14-4379-BD1D-F7CCFF6FF1CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EBC0075-9C14-4379-BD1D-F7CCFF6FF1CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EBC0075-9C14-4379-BD1D-F7CCFF6FF1CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
