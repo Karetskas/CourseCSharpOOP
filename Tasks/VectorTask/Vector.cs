@@ -4,9 +4,9 @@ namespace Academits.Karetskas.VectorTask
 {
     public sealed class Vector
     {
-        public int Size { get; private set; }
+        private double[] components;
 
-        public double[] Components { get; private set; }
+        public int Size { get => components.Length; }
 
         public double Length
         {
@@ -14,7 +14,7 @@ namespace Academits.Karetskas.VectorTask
             {
                 double componentsSquaredSum = 0;
 
-                foreach (double component in Components)
+                foreach (double component in components)
                 {
                     componentsSquaredSum += component * component;
                 }
@@ -23,9 +23,42 @@ namespace Academits.Karetskas.VectorTask
             }
         }
 
-        public Vector(int size) : this(size, new double[1]) { }
+        public double this[int index]
+        {
+            get
+            {
+                if (index < 0 || index >= components.Length)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index), $"The \"{nameof(index)}\" = {index} argument is out of range of array. " +
+                        $"Valid range is 0 to {components.Length}.");
+                }
 
-        public Vector(double[] components) : this(1, components) { }
+                return components[index];
+            }
+
+            set
+            {
+                if (index < 0 || index >= components.Length)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index), $"The \"{nameof(index)}\" = {index} argument is out of range of array. " +
+                        $"Valid range is 0 to {components.Length}.");
+                }
+
+                components[index] = value;
+            }
+        }
+
+        public Vector(int size)
+        {
+            if (size < 0)
+            {
+                throw new ArgumentException($"Argument {nameof(size)} is less than 0.", nameof(size));
+            }
+
+            components = new double[size];
+        }
+
+        public Vector(double[] components) : this(components.Length, components) { }
 
         public Vector(int size, double[] components)
         {
@@ -34,28 +67,14 @@ namespace Academits.Karetskas.VectorTask
                 throw new ArgumentNullException(nameof(components), $"Argument of \"{nameof(components)}\" is null.");
             }
 
-            if (components.Length == 0)
-            {
-                throw new ArgumentException($"Argument of \"{nameof(components)}\" has length = 0.", nameof(components));
-            }
-
             if (size <= 0)
             {
                 throw new ArgumentException($"Argument \"{nameof(size)}\" <= 0.", nameof(size));
             }
 
-            if (components.Length > size)
-            {
-                Components = new double[components.Length];
-                Size = components.Length;
-            }
-            else
-            {
-                Components = new double[size];
-                Size = size;
-            }
+            this.components = components.Length > size ? new double[components.Length] : new double[size];
 
-            components.CopyTo(Components, 0);
+            components.CopyTo(this.components, 0);
         }
 
         public Vector(Vector vector)
@@ -65,10 +84,19 @@ namespace Academits.Karetskas.VectorTask
                 throw new ArgumentNullException(nameof(vector), $"Argument \"{nameof(vector)}\" is null.");
             }
 
-            Size = vector.Size;
+            components = GetArrayCopy(vector);
+        }
 
-            Components = new double[vector.Components.Length];
-            vector.Components.CopyTo(Components, 0);
+        private static double[] GetArrayCopy(Vector vector)
+        {
+            double[] array = new double[vector.Size];
+
+            for (int i = 0; i < vector.Size; i++)
+            {
+                array[i] = vector[i];
+            }
+
+            return array;
         }
 
         public void Add(Vector vector)
@@ -78,10 +106,15 @@ namespace Academits.Karetskas.VectorTask
                 throw new ArgumentNullException(nameof(vector), $"Argument \"{nameof(vector)}\" is null.");
             }
 
-            Vector resultAddition = this + vector;
+            if (components.Length < vector.Size)
+            {
+                Array.Resize(ref components, vector.Size);
+            }
 
-            Size = resultAddition.Size;
-            Components = resultAddition.Components;
+            for (int i = 0; i < vector.Size; i++)
+            {
+                components[i] += vector[i];
+            }
         }
 
         public void Subtract(Vector vector)
@@ -91,47 +124,46 @@ namespace Academits.Karetskas.VectorTask
                 throw new ArgumentNullException(nameof(vector), $"Argument \"{nameof(vector)}\" is null.");
             }
 
-            Vector resultSubtraction = this - vector;
+            int maxVectorSize;
 
-            Size = resultSubtraction.Size;
-            Components = resultSubtraction.Components;
+            if (components.Length >= vector.Size)
+            {
+                maxVectorSize = components.Length;
+            }
+            else
+            {
+                maxVectorSize = vector.Size;
+
+                Array.Resize(ref components, maxVectorSize);
+            }
+
+            for (int i = 0; i < maxVectorSize; i++)
+            {
+                if (i >= vector.Size)
+                {
+                    break;
+                }
+
+                components[i] -= vector[i];
+            }
         }
 
         public void MultiplyByScalar(double number)
         {
-            Vector resultMultiplication = this * number;
-
-            Components = resultMultiplication.Components;
+            for (int i = 0; i < components.Length; i++)
+            {
+                components[i] *= number;
+            }
         }
 
         public void Reverse()
         {
             Vector resultMultiplication = this * -1;
 
-            Components = resultMultiplication.Components;
+            components = GetArrayCopy(resultMultiplication);
         }
 
-        public void SetComponentValue(int index, double number)
-        {
-            if (index >= Components.Length || index < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index), $"The \"{nameof(index)}\" argument is out of range of array.");
-            }
-
-            Components[index] = number;
-        }
-
-        public double GetComponentValue(int index)
-        {
-            if (index >= Components.Length || index < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index), $"The \"{nameof(index)}\" argument is out of range of array.");
-            }
-
-            return Components[index];
-        }
-
-        public static Vector GetAdditionVectors(Vector vector1, Vector vector2)
+        public static Vector GetSum(Vector vector1, Vector vector2)
         {
             if (vector1 is null)
             {
@@ -146,7 +178,7 @@ namespace Academits.Karetskas.VectorTask
             return vector1 + vector2;
         }
 
-        public static Vector GetSubtractVectors(Vector vector1, Vector vector2)
+        public static Vector GetDifference(Vector vector1, Vector vector2)
         {
             if (vector1 is null)
             {
@@ -173,12 +205,12 @@ namespace Academits.Karetskas.VectorTask
                 throw new ArgumentNullException(nameof(vector2), $"Argument \"{nameof(vector2)}\" is null.");
             }
 
-            int minLengthArray = vector1.Components.Length < vector2.Components.Length ? vector1.Components.Length : vector2.Components.Length;
+            int minVectorSize = Math.Min(vector1.Size, vector2.Size);
             double scalarProduct = 0;
 
-            for (int i = 0; i < minLengthArray; i++)
+            for (int i = 0; i < minVectorSize; i++)
             {
-                scalarProduct += vector1.Components[i] * vector2.Components[i];
+                scalarProduct += vector1[i] * vector2[i];
             }
 
             return scalarProduct;
@@ -196,29 +228,11 @@ namespace Academits.Karetskas.VectorTask
                 throw new ArgumentNullException(nameof(vector2), $"Argument \"{nameof(vector2)}\" is null.");
             }
 
-            double[] arrayWithMaxLength = vector1.Components;
-            double[] arrayWithMinLenght = vector2.Components;
+            Vector vectorsSum = new Vector(vector1);
 
-            if (arrayWithMaxLength.Length < arrayWithMinLenght.Length)
-            {
-                arrayWithMaxLength = vector2.Components;
-                arrayWithMinLenght = vector1.Components;
-            }
+            vectorsSum.Add(vector2);
 
-            double[] arraysAdditionResult = new double[arrayWithMaxLength.Length];
-
-            int index = 0;
-
-            while (index < arrayWithMinLenght.Length)
-            {
-                arraysAdditionResult[index] = arrayWithMaxLength[index] + arrayWithMinLenght[index];
-
-                index++;
-            }
-
-            Array.Copy(arrayWithMaxLength, index, arraysAdditionResult, index, arrayWithMaxLength.Length - index);
-
-            return new Vector(arraysAdditionResult.Length, arraysAdditionResult);
+            return vectorsSum;
         }
 
         public static Vector operator -(Vector vector1, Vector vector2)
@@ -233,30 +247,11 @@ namespace Academits.Karetskas.VectorTask
                 throw new ArgumentNullException(nameof(vector2), $"Argument \"{nameof(vector2)}\" is null.");
             }
 
-            bool isMaxLengthVector = true;
-            double[] arrayWithMaxLenght = vector1.Components;
+            Vector vectorsDifference = new Vector(vector1);
 
-            if (vector1.Size < vector2.Size)
-            {
-                isMaxLengthVector = false;
-                arrayWithMaxLenght = vector2.Components;
-            }
+            vectorsDifference.Subtract(vector2);
 
-            double[] arraysSubtractionResult = new double[arrayWithMaxLenght.Length];
-
-            for (int i = 0; i < arrayWithMaxLenght.Length; i++)
-            {
-                if (isMaxLengthVector && i >= vector2.Size)
-                {
-                    Array.Copy(arrayWithMaxLenght, i, arraysSubtractionResult, i, arrayWithMaxLenght.Length - i);
-
-                    break;
-                }
-
-                arraysSubtractionResult[i] = i < vector1.Size ? vector1.Components[i] - vector2.Components[i] : 0 - vector2.Components[i];
-            }
-
-            return new Vector(arraysSubtractionResult.Length, arraysSubtractionResult);
+            return vectorsDifference;
         }
 
         public static Vector operator *(Vector vector, double number)
@@ -266,9 +261,9 @@ namespace Academits.Karetskas.VectorTask
                 throw new ArgumentNullException(nameof(vector), $"Argument \"{nameof(vector)}\" is null.");
             }
 
-            double[] multiplyingResult = GetArrayMultiplyiedByNumber(vector.Components, number);
+            vector.MultiplyByScalar(number);
 
-            return new Vector(multiplyingResult.Length, multiplyingResult);
+            return vector;
         }
 
         public static Vector operator *(double number, Vector vector)
@@ -278,26 +273,14 @@ namespace Academits.Karetskas.VectorTask
                 throw new ArgumentNullException(nameof(vector), $"Argument \"{nameof(vector)}\" is null.");
             }
 
-            double[] multiplyingResult = GetArrayMultiplyiedByNumber(vector.Components, number);
+            vector.MultiplyByScalar(number);
 
-            return new Vector(multiplyingResult.Length, multiplyingResult);
-        }
-
-        private static double[] GetArrayMultiplyiedByNumber(double[] array, double number)
-        {
-            double[] multiplyingResult = new double[array.Length];
-
-            for (int i = 0; i < array.Length; i++)
-            {
-                multiplyingResult[i] = array[i] * number;
-            }
-
-            return multiplyingResult;
+            return vector;
         }
 
         public override string ToString()
         {
-            return $"{{ {string.Join(", ", Components)} }}";
+            return $"{{{string.Join(", ", components)}}}";
         }
 
         public override bool Equals(object? obj)
@@ -314,14 +297,14 @@ namespace Academits.Karetskas.VectorTask
 
             Vector vector = (Vector)obj;
 
-            if (vector.Size != Size || Components.Length != vector.Components.Length)
+            if (components.Length != vector.Size)
             {
                 return false;
             }
 
-            for (int i = 0; i < Components.Length; i++)
+            for (int i = 0; i < components.Length; i++)
             {
-                if (Components[i] != vector.Components[i])
+                if (components[i] != vector[i])
                 {
                     return false;
                 }
@@ -335,9 +318,9 @@ namespace Academits.Karetskas.VectorTask
             int prime = 53;
             int hash = 1;
 
-            hash = prime * hash + Size;
+            hash = prime * hash + components.Length;
 
-            foreach (double component in Components)
+            foreach (double component in components)
             {
                 hash = prime * hash + component.GetHashCode();
             }

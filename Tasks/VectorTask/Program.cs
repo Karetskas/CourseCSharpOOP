@@ -83,12 +83,12 @@ namespace Academits.Karetskas.VectorTask
             title = "Get length of the vector:";
             PrintToConsole(ConsoleColor.Blue, title, stringsArray);
 
-            stringsArray = new string[mainVector.Components.Length];
+            stringsArray = new string[mainVector.Size];
             Vector vectorToSetComponents = new Vector(mainVector);
 
-            for (int i = 0; i < vectorToSetComponents.Components.Length; i++)
+            for (int i = 0; i < vectorToSetComponents.Size; i++)
             {
-                vectorToSetComponents.SetComponentValue(i, 3);
+                vectorToSetComponents[i] = 3;
 
                 stringsArray[i] = $"The index [{i}] in the {vectorToSetComponents} vector has been changed.";
             }
@@ -98,9 +98,9 @@ namespace Academits.Karetskas.VectorTask
 
             Vector vectorToGetComponents = new Vector(mainVector);
 
-            for (int i = 0; i < vectorToGetComponents.Components.Length; i++)
+            for (int i = 0; i < vectorToGetComponents.Size; i++)
             {
-                stringsArray[i] = $"In the {vectorToGetComponents} vector: index [{i}] = {vectorToGetComponents.GetComponentValue(i)}";
+                stringsArray[i] = $"In the {vectorToGetComponents} vector: index [{i}] = {vectorToGetComponents[i]}";
             }
 
             title = "Get vector components by index:";
@@ -126,7 +126,7 @@ namespace Academits.Karetskas.VectorTask
 
             for (int i = 0; i < vectors.Length; i++)
             {
-                stringsArray[i] = $"{mainVector} + {vectors[i],27} = {Vector.GetAdditionVectors(mainVector, vectors[i])}";
+                stringsArray[i] = $"{mainVector} + {vectors[i],27} = {Vector.GetSum(mainVector, vectors[i])}";
             }
 
             title = "Addition of two vectors:";
@@ -134,7 +134,7 @@ namespace Academits.Karetskas.VectorTask
 
             for (int i = 0; i < vectors.Length; i++)
             {
-                stringsArray[i] = $"{mainVector} - {vectors[i],27} = {Vector.GetSubtractVectors(mainVector, vectors[i])}";
+                stringsArray[i] = $"{mainVector} - {vectors[i],27} = {Vector.GetDifference(mainVector, vectors[i])}";
             }
 
             title = "Subtraction of two vectors:";
