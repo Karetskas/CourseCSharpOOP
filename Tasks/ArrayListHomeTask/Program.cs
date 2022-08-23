@@ -8,46 +8,20 @@ namespace Academits.Karetskas.ArrayListHomeTask
     {
         static void Main()
         {
-            const int listLength = 10;
-
-            List<int> list = new List<int>(listLength);
-            
-            for (int i = 0; i < listLength; i++)
-            {
-                list.Add(i);
-            }
-
-            list.Add(3);
-            list.Add(3);
-            list.Add(7);
-            list.Add(4);
-
             try
             {
+                List<int> list = GetElementsList();
+
                 const string path = @"..\\..\\..\\List.txt";
 
                 if (!WriteListToFile(path, list))
                 {
                     Console.WriteLine("The path to the file is not specified or there is no data to write.");
                 }
-
-                List<int>? listFromFile = ReadFileToList(path);
-
-                Console.WriteLine($"Read from file: {string.Join(", ", list)}. Capasity: {list.Capacity}. Count: {list.Count}");
-
-                RemoveEvenNumbersFromList(list);
-
-                Console.WriteLine($"List without even numbers: {string.Join(", ", list)}. Capasity: {list.Capacity}. Count: {list.Count}");
-
-                List<int>? listWithoutDublicateElements = RemoveAllDublicateElements(list);
-
-                if(listWithoutDublicateElements is null)
+                else
                 {
-                    return;
+                    Console.WriteLine("List has been written to a file.");
                 }
-
-                Console.WriteLine($"List without dublicates: {string.Join(", ", listWithoutDublicateElements)}. " 
-                    + $"Capasity: {listWithoutDublicateElements.Capacity}. Count: {listWithoutDublicateElements.Count}");
 
                 File.Delete(path);
             }
@@ -57,33 +31,85 @@ namespace Academits.Karetskas.ArrayListHomeTask
                 Console.WriteLine($"An error has occurred: {e.Message}");
                 Console.ResetColor();
             }
+
+            try
+            {
+                const string path = @"..\\..\\..\\MyList.txt";
+
+                List<int>? listFromFile = GetListFromFile(path);
+
+                if (listFromFile is null)
+                {
+                    Console.WriteLine($"Read from file: List \"{nameof(listFromFile)}\" does not contain elements.");
+                }
+                else
+                {
+                    Console.WriteLine($"Read from file: {string.Join(", ", listFromFile)}. Capacity: {listFromFile.Capacity}. Count: {listFromFile.Count}");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"An error has occurred: {e.Message}");
+                Console.ResetColor();
+            }
+
+            List<int> listFromRemoveEvenNumber = GetElementsList();
+
+            RemoveEvenNumbers(listFromRemoveEvenNumber);
+
+            Console.WriteLine($"List without even numbers: {string.Join(", ", listFromRemoveEvenNumber)}. " +
+                $"Capacity: {listFromRemoveEvenNumber.Capacity}. Count: {listFromRemoveEvenNumber.Count}");
+
+            List<int>? listWithoutDuplicateElements = GetListWithoutDuplicates(GetElementsList());
+
+            if (listWithoutDuplicateElements is null)
+            {
+                return;
+            }
+
+            Console.WriteLine($"List without duplicates: {string.Join(", ", listWithoutDuplicateElements)}. "
+                + $"Capacity: {listWithoutDuplicateElements.Capacity}. Count: {listWithoutDuplicateElements.Count}");
         }
 
-        public static List<int>? RemoveAllDublicateElements(List<int> list)
+        public static List<int> GetElementsList()
         {
-            if(list is null)
+            const int listLength = 10;
+
+            List<int> list = new List<int>(listLength);
+
+            for (int i = 0; i < listLength; i++)
+            {
+                list.Add(i);
+                list.Add(i);
+            }
+
+            return list;
+        }
+
+        public static List<int>? GetListWithoutDuplicates(List<int> list)
+        {
+            if (list is null)
             {
                 return null;
             }
 
-            List<int> listWithoutDublicateElements = new List<int>(list.Capacity);
+            List<int> listWithoutDuplicateElements = new List<int>(list.Count);
 
             foreach (int number in list)
             {
-                if(listWithoutDublicateElements.IndexOf(number, 0) == -1)
+                if (listWithoutDuplicateElements.Contains(number))
                 {
-                    listWithoutDublicateElements.Add(number);
+                    listWithoutDuplicateElements.Add(number);
                 }
             }
 
-            listWithoutDublicateElements.TrimExcess();
-
-            return listWithoutDublicateElements;
+            return listWithoutDuplicateElements;
         }
 
-        public static void RemoveEvenNumbersFromList(List<int> list)
+        public static void RemoveEvenNumbers(List<int> list)
         {
-            if(list is null)
+            if (list is null)
             {
                 return;
             }
@@ -92,11 +118,11 @@ namespace Academits.Karetskas.ArrayListHomeTask
             {
                 if (list[i] % 2 == 0)
                 {
-                    list.Remove(list[i]);
+                    list.RemoveAt(i);
+
+                    i--;
                 }
             }
-
-            list.TrimExcess();
         }
 
         public static bool WriteListToFile(string path, List<int> list)
@@ -116,7 +142,7 @@ namespace Academits.Karetskas.ArrayListHomeTask
             return true;
         }
 
-        public static List<int> ReadFileToList(string path)
+        public static List<int> GetListFromFile(string path)
         {
             using StreamReader reader = new StreamReader(path);
 
@@ -124,15 +150,10 @@ namespace Academits.Karetskas.ArrayListHomeTask
 
             List<int> list = new List<int>(listLength);
 
-            while(reader.Peek() != -1)
+            while (reader.Peek() != -1)
             {
-                int number;
+                int number = int.Parse(reader.ReadLine() ?? "");
 
-                if(!int.TryParse(reader.ReadLine(), out number))
-                {
-                    throw new ArgumentException("The data in the file is not an integer.", nameof(number));
-                }
-                
                 list.Add(number);
             }
 
