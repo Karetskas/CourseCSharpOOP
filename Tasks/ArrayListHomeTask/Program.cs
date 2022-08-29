@@ -10,7 +10,7 @@ namespace Academits.Karetskas.ArrayListHomeTask
         {
             try
             {
-                List<int> list = GetElementsList();
+                List<int> list = GetElementsList(10);
 
                 const string path = @"..\\..\\..\\List.txt";
 
@@ -36,7 +36,7 @@ namespace Academits.Karetskas.ArrayListHomeTask
             {
                 const string path = @"..\\..\\..\\MyList.txt";
 
-                List<int>? listFromFile = GetListFromFile(path);
+                List<int>? listFromFile = GetListFromFile(path, 10);
 
                 if (listFromFile is null)
                 {
@@ -54,14 +54,14 @@ namespace Academits.Karetskas.ArrayListHomeTask
                 Console.ResetColor();
             }
 
-            List<int> listFromRemoveEvenNumber = GetElementsList();
+            List<int> evenNumbersList = GetElementsList(10);
 
-            RemoveEvenNumbers(listFromRemoveEvenNumber);
+            RemoveEvenNumbers(evenNumbersList);
 
-            Console.WriteLine($"List without even numbers: {string.Join(", ", listFromRemoveEvenNumber)}. " +
-                $"Capacity: {listFromRemoveEvenNumber.Capacity}. Count: {listFromRemoveEvenNumber.Count}");
+            Console.WriteLine($"List without even numbers: {string.Join(", ", evenNumbersList)}. " +
+                $"Capacity: {evenNumbersList.Capacity}. Count: {evenNumbersList.Count}");
 
-            List<int>? listWithoutDuplicateElements = GetListWithoutDuplicates(GetElementsList());
+            List<int>? listWithoutDuplicateElements = GetListWithoutDuplicates(GetElementsList(10));
 
             if (listWithoutDuplicateElements is null)
             {
@@ -72,13 +72,11 @@ namespace Academits.Karetskas.ArrayListHomeTask
                 + $"Capacity: {listWithoutDuplicateElements.Capacity}. Count: {listWithoutDuplicateElements.Count}");
         }
 
-        public static List<int> GetElementsList()
+        public static List<int> GetElementsList(int initialCapacity)
         {
-            const int listLength = 10;
+            List<int> list = new List<int>(initialCapacity);
 
-            List<int> list = new List<int>(listLength);
-
-            for (int i = 0; i < listLength; i++)
+            for (int i = 0; i < initialCapacity; i++)
             {
                 list.Add(i);
                 list.Add(i);
@@ -98,7 +96,7 @@ namespace Academits.Karetskas.ArrayListHomeTask
 
             foreach (int number in list)
             {
-                if (listWithoutDuplicateElements.Contains(number))
+                if (!listWithoutDuplicateElements.Contains(number))
                 {
                     listWithoutDuplicateElements.Add(number);
                 }
@@ -142,17 +140,15 @@ namespace Academits.Karetskas.ArrayListHomeTask
             return true;
         }
 
-        public static List<int> GetListFromFile(string path)
+        public static List<int> GetListFromFile(string path, int initialCapacity)
         {
             using StreamReader reader = new StreamReader(path);
 
-            const int listLength = 10;
-
-            List<int> list = new List<int>(listLength);
+            List<int> list = new List<int>(initialCapacity);
 
             while (reader.Peek() != -1)
             {
-                int number = int.Parse(reader.ReadLine() ?? "");
+                int number = int.Parse(reader.ReadLine()!);
 
                 list.Add(number);
             }
