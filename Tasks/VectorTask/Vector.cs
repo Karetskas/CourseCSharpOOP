@@ -6,7 +6,7 @@ namespace Academits.Karetskas.VectorTask
     {
         private double[] components;
 
-        public int Size { get => components.Length; }
+        public int Size => components.Length;
 
         public double Length
         {
@@ -30,7 +30,7 @@ namespace Academits.Karetskas.VectorTask
                 if (index < 0 || index >= components.Length)
                 {
                     throw new ArgumentOutOfRangeException(nameof(index), $"The \"{nameof(index)}\" = {index} argument is out of range of array. " +
-                        $"Valid range is 0 to {components.Length}.");
+                        $"Valid range is from 0 to {components.Length - 1}.");
                 }
 
                 return components[index];
@@ -41,7 +41,7 @@ namespace Academits.Karetskas.VectorTask
                 if (index < 0 || index >= components.Length)
                 {
                     throw new ArgumentOutOfRangeException(nameof(index), $"The \"{nameof(index)}\" = {index} argument is out of range of array. " +
-                        $"Valid range is 0 to {components.Length}.");
+                        $"Valid range is from 0 to {components.Length - 1}.");
                 }
 
                 components[index] = value;
@@ -50,21 +50,41 @@ namespace Academits.Karetskas.VectorTask
 
         public Vector(int size)
         {
-            if (size < 0)
+            if (size <= 0)
             {
-                throw new ArgumentException($"Argument {nameof(size)} is less than 0.", nameof(size));
+                throw new ArgumentException($"Argument \"{nameof(size)}\" <= 0.", nameof(size));
             }
 
             components = new double[size];
         }
 
-        public Vector(double[] components) : this(components.Length, components) { }
+        public Vector(double[] components)
+        {
+            if (components is null)
+            {
+                throw new ArgumentNullException($"{nameof(components)}", $"Argument of \"{nameof(components)}\" is null.");
+            }
+
+            if (components.Length == 0)
+            {
+                throw new ArgumentException($"Argument \"{nameof(components)}.{nameof(components.Length)}\" is 0.");
+            }
+
+            this.components = new double[components.Length];
+
+            components.CopyTo(this.components, 0);
+        }
 
         public Vector(int size, double[] components)
         {
             if (components is null)
             {
                 throw new ArgumentNullException(nameof(components), $"Argument of \"{nameof(components)}\" is null.");
+            }
+
+            if (components.Length == 0)
+            {
+                throw new ArgumentException($"Argument \"{nameof(components)}.{nameof(components.Length)}\" is 0.");
             }
 
             if (size <= 0)
@@ -84,19 +104,9 @@ namespace Academits.Karetskas.VectorTask
                 throw new ArgumentNullException(nameof(vector), $"Argument \"{nameof(vector)}\" is null.");
             }
 
-            components = GetArrayCopy(vector);
-        }
+            components = new double[vector.Size];
 
-        private static double[] GetArrayCopy(Vector vector)
-        {
-            double[] array = new double[vector.Size];
-
-            for (int i = 0; i < vector.Size; i++)
-            {
-                array[i] = vector[i];
-            }
-
-            return array;
+            vector.components.CopyTo(components, 0);
         }
 
         public void Add(Vector vector)
@@ -124,26 +134,13 @@ namespace Academits.Karetskas.VectorTask
                 throw new ArgumentNullException(nameof(vector), $"Argument \"{nameof(vector)}\" is null.");
             }
 
-            int maxVectorSize;
-
-            if (components.Length >= vector.Size)
+            if (components.Length < vector.Size)
             {
-                maxVectorSize = components.Length;
-            }
-            else
-            {
-                maxVectorSize = vector.Size;
-
-                Array.Resize(ref components, maxVectorSize);
+                Array.Resize(ref components, vector.Size);
             }
 
-            for (int i = 0; i < maxVectorSize; i++)
+            for (int i = 0; i < vector.Size; i++)
             {
-                if (i >= vector.Size)
-                {
-                    break;
-                }
-
                 components[i] -= vector[i];
             }
         }
@@ -158,38 +155,16 @@ namespace Academits.Karetskas.VectorTask
 
         public void Reverse()
         {
-            Vector resultMultiplication = this * -1;
-
-            components = GetArrayCopy(resultMultiplication);
+            MultiplyByScalar(-1);
         }
 
         public static Vector GetSum(Vector vector1, Vector vector2)
         {
-            if (vector1 is null)
-            {
-                throw new ArgumentNullException(nameof(vector1), $"Argument \"{nameof(vector1)}\" is null.");
-            }
-
-            if (vector2 is null)
-            {
-                throw new ArgumentNullException(nameof(vector2), $"Argument \"{nameof(vector2)}\" is null.");
-            }
-
             return vector1 + vector2;
         }
 
         public static Vector GetDifference(Vector vector1, Vector vector2)
         {
-            if (vector1 is null)
-            {
-                throw new ArgumentNullException(nameof(vector1), $"Argument \"{nameof(vector1)}\" is null.");
-            }
-
-            if (vector2 is null)
-            {
-                throw new ArgumentNullException(nameof(vector2), $"Argument \"{nameof(vector2)}\" is null.");
-            }
-
             return vector1 - vector2;
         }
 
@@ -261,9 +236,11 @@ namespace Academits.Karetskas.VectorTask
                 throw new ArgumentNullException(nameof(vector), $"Argument \"{nameof(vector)}\" is null.");
             }
 
-            vector.MultiplyByScalar(number);
+            Vector newVector = new Vector(vector);
 
-            return vector;
+            newVector.MultiplyByScalar(number);
+
+            return newVector;
         }
 
         public static Vector operator *(double number, Vector vector)
@@ -273,9 +250,11 @@ namespace Academits.Karetskas.VectorTask
                 throw new ArgumentNullException(nameof(vector), $"Argument \"{nameof(vector)}\" is null.");
             }
 
-            vector.MultiplyByScalar(number);
+            Vector newVector = new Vector(vector);
 
-            return vector;
+            newVector.MultiplyByScalar(number);
+
+            return newVector;
         }
 
         public override string ToString()
@@ -297,7 +276,7 @@ namespace Academits.Karetskas.VectorTask
 
             Vector vector = (Vector)obj;
 
-            if (components.Length != vector.Size)
+            if (components.Length != vector.components.Length)
             {
                 return false;
             }
