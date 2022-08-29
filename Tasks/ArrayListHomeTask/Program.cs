@@ -36,16 +36,9 @@ namespace Academits.Karetskas.ArrayListHomeTask
             {
                 const string path = @"..\\..\\..\\MyList.txt";
 
-                List<int>? listFromFile = GetListFromFile(path, 10);
+                List<int> listFromFile = GetListFromFile(path, 10);
 
-                if (listFromFile is null)
-                {
-                    Console.WriteLine($"Read from file: List \"{nameof(listFromFile)}\" does not contain elements.");
-                }
-                else
-                {
-                    Console.WriteLine($"Read from file: {string.Join(", ", listFromFile)}. Capacity: {listFromFile.Capacity}. Count: {listFromFile.Count}");
-                }
+                Console.WriteLine($"Read from file: {string.Join(", ", listFromFile)}. Capacity: {listFromFile.Capacity}. Count: {listFromFile.Count}");
             }
             catch (Exception e)
             {
