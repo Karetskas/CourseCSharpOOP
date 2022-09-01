@@ -65,11 +65,11 @@ namespace Academits.Karetskas.ArrayListHomeTask
                 + $"Capacity: {listWithoutDuplicateElements.Capacity}. Count: {listWithoutDuplicateElements.Count}");
         }
 
-        public static List<int> GetElementsList(int initialCapacity)
+        public static List<int> GetElementsList(int elementPairsCount)
         {
-            List<int> list = new List<int>(initialCapacity);
+            List<int> list = new List<int>(elementPairsCount + elementPairsCount);
 
-            for (int i = 0; i < initialCapacity; i++)
+            for (int i = 0; i < elementPairsCount; i++)
             {
                 list.Add(i);
                 list.Add(i);
