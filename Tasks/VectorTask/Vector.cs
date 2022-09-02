@@ -82,19 +82,14 @@ namespace Academits.Karetskas.VectorTask
                 throw new ArgumentNullException(nameof(components), $"Argument of \"{nameof(components)}\" is null.");
             }
 
-            if (components.Length == 0)
-            {
-                throw new ArgumentException($"Argument \"{nameof(components)}.{nameof(components.Length)}\" is 0.");
-            }
-
             if (size <= 0)
             {
                 throw new ArgumentException($"Argument \"{nameof(size)}\" <= 0.", nameof(size));
             }
 
-            this.components = components.Length > size ? new double[components.Length] : new double[size];
+            this.components = new double[size];
 
-            components.CopyTo(this.components, 0);
+            Array.Copy(components, this.components, size);
         }
 
         public Vector(Vector vector)
