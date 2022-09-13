@@ -7,108 +7,114 @@ namespace Academits.Karetskas.ListTask
 {
     internal sealed class SinglyLinkedList<T> : IEnumerable<T>
     {
-        private int count;
-        private static int modCount;
+        private int modCount;
         private ListItem<T>? head;
 
-        public ListItem<T>? Head
+        public int Count { get; private set; }
+
+        public T? First => Get(0);
+
+        private ListItem<T>? GetAt(int index)
         {
-            get => head;
+            ListItem<T>? listItem = head;
 
-            set
+            for (int currentIndex = 0; currentIndex < Count; currentIndex++, listItem = listItem!.Next)
             {
-                if (value is null)
+                if (currentIndex == index)
                 {
-                    count = 0;
+                    break;
                 }
-
-                head = value;
             }
+
+            return listItem;
         }
 
-        public int Count => count;
-
-        public T? FirstItemData => GetData(0);
-
-        private ListItem<T> GetItem(int index)
+        public T? Get(int index)
         {
             if (head is null)
             {
-                throw new ArgumentNullException($"{nameof(head)}", $"SinglyLinkedList<T> has no items.");
+                throw new InvalidOperationException("SinglyLinkedList<T> has no items.");
             }
 
-            if (index < 0 || index >= count)
+            if (index < 0 || index >= Count)
             {
                 throw new ArgumentOutOfRangeException(nameof(index), $"Argument \"{nameof(index)}\" out of range \"ListTask\". " +
-                    $"Valid range is from 0 to {count - 1}}}.");
+                    $"Valid range is from 0 to {Count - 1}.");
             }
 
-            int itemsNumber = 0;
+            ListItem<T>? listItem = GetAt(index);
 
-            for (ListItem<T>? listItem = head; listItem is not null; listItem = listItem.Next)
+            return listItem!.Data;
+        }
+
+        public T? Set(int index, T? data)
+        {
+            if (head is null)
             {
-                if (itemsNumber == index)
-                {
-                    return listItem;
-                }
-
-                itemsNumber++;
+                throw new InvalidOperationException("SinglyLinkedList<T> has no items.");
             }
 
-            throw new ArgumentException($"The \"{nameof(count)}\" = {count} property does not correspond to the number of items which is {index}.");
-        }
+            if (index < 0 || index >= Count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), $"Argument \"{nameof(index)}\" out of range \"ListTask\". " +
+                    $"Valid range is from 0 to {Count - 1}.");
+            }
 
-        public T? GetData(int index)
-        {
-            return GetItem(index).Data;
-        }
+            ListItem<T>? listItem = GetAt(index);
 
-        public T? SetData(int index, T? data)
-        {
-            ListItem<T> listItem = GetItem(index);
-
-            T? previousValue = listItem.Data;
+            T? previousValue = listItem!.Data;
             listItem.Data = data;
+
+            modCount++;
 
             return previousValue;
         }
 
-        public void AddFirst(ListItem<T> item)
+        public void AddFirst(T? data)
         {
-            Add(0, item);
+            Add(0, data);
         }
 
-        public void Add(int index, ListItem<T> item)
+        public void Add(int index, T? data)
         {
-            if (item is null)
-            {
-                throw new ArgumentNullException(nameof(item), $"Argument \"{nameof(item)}\" is null.");
-            }
+            ListItem<T> newItem = new ListItem<T>(data);
 
             if (index == 0)
             {
-                item.Next = head;
-                Head = item;
+                newItem.Next = head;
+                head = newItem;
             }
             else
             {
-                ListItem<T> listItem = GetItem(index - 1);
+                if (index < 0 || index >= Count)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index), $"Argument \"{nameof(index)}\" out of range \"ListTask\". " +
+                        $"Valid range is from 0 to {Count - 1}.");
+                }
 
-                item.Next = listItem.Next;
-                listItem.Next = item;
+                ListItem<T>? listItem = GetAt(index - 1);
+
+                newItem.Next = listItem!.Next;
+                listItem.Next = newItem;
             }
 
-            count++;
+            Count++;
             modCount++;
         }
 
         public T? RemoveFirst()
         {
-            return RemoveItem(0);
+            return RemoveAt(0);
         }
 
-        public T? RemoveItem(int index)
+        public T? RemoveAt(int index)
         {
+            if (index < 0 || index >= Count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), $"Argument \"{nameof(index)}\" out of range \"ListTask\". " +
+                    $"Valid range is from 0 to {Count - 1}.");
+            }
+
             T? data;
 
             if (index == 0)
@@ -119,23 +125,23 @@ namespace Academits.Karetskas.ListTask
                 }
 
                 data = head.Data;
-                Head = head.Next;
+                head = head.Next;
             }
             else
             {
-                ListItem<T> previousItem = GetItem(index - 1);
+                ListItem<T>? previousItem = GetAt(index - 1);
 
-                data = previousItem.Next!.Data;
+                data = previousItem!.Next!.Data;
                 previousItem.Next = previousItem.Next.Next;
             }
 
-            count--;
+            Count--;
             modCount++;
 
             return data;
         }
 
-        public bool IsRemoveItem(T data)
+        public bool Remove(T data)
         {
             ListItem<T>? previousItem = null;
 
@@ -145,14 +151,14 @@ namespace Academits.Karetskas.ListTask
                 {
                     if (previousItem is null)
                     {
-                        Head = head!.Next;
+                        head = head!.Next;
                     }
                     else
                     {
                         previousItem.Next = previousItem.Next!.Next;
                     }
 
-                    count--;
+                    Count--;
                     modCount++;
 
                     return true;
@@ -164,65 +170,106 @@ namespace Academits.Karetskas.ListTask
             return false;
         }
 
-        public static void Reverse(SinglyLinkedList<T> linkedList)
+        public void Reverse()
         {
-            if (linkedList is null)
+            if (head is null)
             {
-                throw new ArgumentNullException($"{nameof(linkedList)}", $"Argument \"{nameof(linkedList)}\" is null.");
+                throw new InvalidOperationException("SinglyLinkedList<T> has no items.");
+            }
+
+            if (Count == 1 || IsSymmetric())
+            {
+                return;
             }
 
             ListItem<T>? previousItem = null;
             ListItem<T>? nextItem;
 
-            for (ListItem<T>? currentItem = linkedList.head; currentItem is not null; currentItem = nextItem)
+            for (ListItem<T>? currentItem = head; currentItem is not null; currentItem = nextItem)
             {
                 nextItem = currentItem.Next;
                 currentItem.Next = previousItem;
                 previousItem = currentItem;
             }
 
-            linkedList.Head = previousItem;
+            head = previousItem;
 
             modCount++;
+        }
+
+        private bool IsSymmetric()
+        {
+            SinglyLinkedList<T> linkedListClone = new SinglyLinkedList<T>();
+            ListItem<T>? listItemclone = null;
+
+            bool isEvenItemCount = Count % 2 == 0;
+            int listMiddle = Count / 2;
+            int index = 0;
+
+            for (ListItem<T>? listItem = head; index < Count; index++, listItem = listItem!.Next)
+            {
+                if (index < listMiddle)
+                {
+                    linkedListClone.AddFirst(listItem!.Data);
+
+                    continue;
+                }
+
+                if (index == listMiddle)
+                {
+                    listItemclone = linkedListClone.head!;
+
+                    if (!isEvenItemCount)
+                    {
+                        index++;
+                        listItem = listItem!.Next;
+                    }
+                }
+
+                if (!Equals(listItem!.Data, listItemclone!.Data))
+                {
+                    return false;
+                }
+
+                listItemclone = listItemclone.Next;
+            }
+
+            return true;
         }
 
         public override string ToString()
         {
             if (head is null)
             {
-                return "LIST EMPTY";
+                return "[]";
             }
 
-            StringBuilder text = new StringBuilder(count);
+            StringBuilder stringBuilder = new StringBuilder(Count);
+
+            stringBuilder.Append('[');
 
             foreach (T? data in this)
             {
                 if (data is null)
                 {
-                    text.Append("NULL")
+                    stringBuilder.Append("NULL")
                         .Append(", ");
 
                     continue;
                 }
 
-                if ((data.GetType() == typeof(string) || data.GetType() == typeof(StringBuilder)) && data.ToString() == "")
-                {
-                    text.Append("EMPTY")
-                        .Append(", ");
-
-                    continue;
-                }
-
-                text.Append(data.ToString())
+                stringBuilder.Append(data)
                     .Append(", ");
             }
 
-            if (text.Length > 0)
+            if (stringBuilder.Length > 2)
             {
-                text.Remove(text.Length - 2, 2);
+                stringBuilder.Remove(stringBuilder.Length - 2, 2);
             }
 
-            return text.ToString();
+            stringBuilder.Append(']');
+
+            return stringBuilder.ToString();
         }
 
         public SinglyLinkedList<T> GetCopy()
@@ -231,30 +278,21 @@ namespace Academits.Karetskas.ListTask
 
             if (head is null)
             {
-                linkedListClone.head = null;
-
                 return linkedListClone;
             }
 
-            ListItem<T> previousItem = new ListItem<T>(default, null);
+            ListItem<T> previousItem = new ListItem<T>(head.Data);
 
-            linkedListClone.Head = previousItem;
+            linkedListClone.head = previousItem;
 
-            for (ListItem<T>? listItem = head; listItem is not null; listItem = listItem.Next)
+            for (ListItem<T>? listItem = head.Next; listItem is not null; listItem = listItem.Next)
             {
-                previousItem.Data = listItem.Data;
+                previousItem.Next = new ListItem<T>(listItem.Data);
 
-                if (listItem.Next is null)
-                {
-                    previousItem.Next = null;
-                    break;
-                }
-
-                ListItem<T> emptyListItem = new ListItem<T>(default, null);
-
-                previousItem.Next = emptyListItem;
-                previousItem = emptyListItem;
+                previousItem = previousItem.Next;
             }
+
+            linkedListClone.Count = Count;
 
             return linkedListClone;
         }
