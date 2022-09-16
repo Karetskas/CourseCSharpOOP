@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArrayListHomeTask", "ArrayL
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ListTask", "ListTask\ListTask.csproj", "{03A95FAB-4143-4B53-9786-F87A2EC0B976}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatrixTask", "MatrixTask\MatrixTask.csproj", "{D9CBBF8B-F666-4E30-8E6E-6824ACFCF615}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatrixTask", "MatrixTask\MatrixTask.csproj", "{D9CBBF8B-F666-4E30-8E6E-6824ACFCF615}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArrayListTask", "ArrayListTask\ArrayListTask.csproj", "{4F2F3C57-6828-454D-BCD9-4E9B3C786B6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{D9CBBF8B-F666-4E30-8E6E-6824ACFCF615}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9CBBF8B-F666-4E30-8E6E-6824ACFCF615}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9CBBF8B-F666-4E30-8E6E-6824ACFCF615}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F2F3C57-6828-454D-BCD9-4E9B3C786B6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F2F3C57-6828-454D-BCD9-4E9B3C786B6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F2F3C57-6828-454D-BCD9-4E9B3C786B6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F2F3C57-6828-454D-BCD9-4E9B3C786B6E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
