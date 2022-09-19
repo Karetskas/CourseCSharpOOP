@@ -6,98 +6,64 @@ namespace Academits.Karetskas.MatrixTask
 {
     public sealed class Matrix
     {
-        private Vector[] _vectorsMatrix;
+        private Vector[] _rows;
 
-        public int Rows => _vectorsMatrix?.Length ?? 0;
+        public int RowsCount => _rows.Length;
 
-        public int Columns => _vectorsMatrix?[0].Size ?? 0;
+        public int ColumnsCount => _rows[0].Size;
 
-        public Vector this[int index, ElementsOrder elementsOrder]
+        public Vector this[int index]
         {
             get
             {
-                if (elementsOrder == ElementsOrder.horizontal)
+                if (index < 0 || index >= _rows.Length)
                 {
-                    if (index < 0 || index >= _vectorsMatrix.Length)
-                    {
-                        throw new ArgumentOutOfRangeException(nameof(index), $"Index out of range of array. " +
-                            $"Valid range is from 0 to {_vectorsMatrix.Length - 1}.");
-                    }
-
-                    return new Vector(_vectorsMatrix[index]);
+                    throw new ArgumentOutOfRangeException(nameof(index), "The index is out of range for the count of matrix rows. "
+                        + $"Valid range is from 0 to {_rows.Length - 1}.");
                 }
 
-                if (index < 0 || index >= _vectorsMatrix[0].Size)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index), $"Index out of range of array. " +
-                        $"Valid range is from 0 to {_vectorsMatrix[0].Size - 1}.");
-                }
-
-                Vector vector = new Vector(_vectorsMatrix.Length);
-
-                for (int i = 0; i < _vectorsMatrix.Length; i++)
-                {
-                    vector[i] = _vectorsMatrix[i][index];
-                }
-
-                return vector;
+                return new Vector(_rows[index]);
             }
 
             set
             {
                 if (value is null)
                 {
-                    throw new ArgumentNullException(nameof(value), $"Argument vector is null.");
+                    throw new ArgumentNullException(nameof(value), "Argument vector is null.");
                 }
 
-                if (elementsOrder == ElementsOrder.horizontal)
+                if (index < 0 || index >= _rows.Length)
                 {
-                    if (index < 0 || index >= _vectorsMatrix.Length)
-                    {
-                        throw new ArgumentOutOfRangeException(nameof(index), $"Index out of range of array. " +
-                            $"Valid range is from 0 to {_vectorsMatrix.Length - 1}.");
-                    }
-
-                    if (value.Size != _vectorsMatrix[0].Size)
-                    {
-                        throw new ArgumentException($"Argument \"{nameof(value)}.{nameof(value.Size)}\" is the wrong size.", nameof(value));
-                    }
-
-                    _vectorsMatrix[index] = new Vector(value);
-
-                    return;
+                    throw new ArgumentOutOfRangeException(nameof(index), "The index is out of range for the count of matrix rows. "
+                        + $"Valid range is from 0 to {_rows.Length - 1}.");
                 }
 
-                if (index < 0 || index >= _vectorsMatrix[0].Size)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index), $"Index out of range of array. " +
-                        $"Valid range is from 0 to {_vectorsMatrix[0].Size - 1}.");
-                }
-
-                if (value.Size != _vectorsMatrix.Length)
+                if (value.Size != ColumnsCount)
                 {
                     throw new ArgumentException($"Argument \"{nameof(value)}.{nameof(value.Size)}\" is the wrong size.", nameof(value));
                 }
 
-                for (int i = 0; i < _vectorsMatrix.Length; i++)
-                {
-                    _vectorsMatrix[i][index] = value[i];
-                }
+                _rows[index] = new Vector(value);
             }
         }
 
-        public Matrix(int rows, int columns)
+        public Matrix(int rowsCount, int columnsCount)
         {
-            if (rows == 0)
+            if (rowsCount <= 0)
             {
-                throw new ArgumentException($"Argument \"{nameof(rows)}\" = 0.", nameof(rows));
+                throw new ArgumentException("The count of rows in the matrix must not be <= 0.", nameof(rowsCount));
             }
 
-            _vectorsMatrix = new Vector[rows];
-
-            for (int i = 0; i < _vectorsMatrix.Length; i++)
+            if (columnsCount <= 0)
             {
-                _vectorsMatrix[i] = new Vector(columns);
+                throw new ArgumentException("The count of columns in the matrix must not be <= 0.", nameof(columnsCount));
+            }
+
+            _rows = new Vector[rowsCount];
+
+            for (int i = 0; i < _rows.Length; i++)
+            {
+                _rows[i] = new Vector(columnsCount);
             }
         }
 
@@ -111,22 +77,31 @@ namespace Academits.Karetskas.MatrixTask
             const int firstDimension = 0;
             const int secondDimension = 1;
 
-            int firstDimensionLength = array.GetLength(firstDimension);
-            int secondDimensionLength = array.GetLength(secondDimension);
+            int rowsCount = array.GetLength(firstDimension);
+            int columnsCount = array.GetLength(secondDimension);
 
-            if (firstDimensionLength == 0)
+            if (rowsCount == 0)
             {
-                throw new ArgumentException($"Argument \"{nameof(firstDimensionLength)}\" = 0.", nameof(array));
+                throw new ArgumentException("The first dimension of array must not be 0.", nameof(array));
             }
 
-            _vectorsMatrix = new Matrix(firstDimensionLength, secondDimensionLength)._vectorsMatrix;
-
-            for (int i = 0; i < firstDimensionLength; i++)
+            if (columnsCount == 0)
             {
-                for (int j = 0; j < secondDimensionLength; j++)
+                throw new ArgumentException("The second dimension of array must not be 0.", nameof(array));
+            }
+
+            _rows = new Vector[rowsCount];
+
+            for (int i = 0; i < rowsCount; i++)
+            {
+                Vector vector = new Vector(columnsCount);
+
+                for (int j = 0; j < columnsCount; j++)
                 {
-                    _vectorsMatrix[i][j] = array[i, j];
+                    vector[j] = array[i, j];
                 }
+
+                _rows[i] = vector;
             }
         }
 
@@ -137,24 +112,29 @@ namespace Academits.Karetskas.MatrixTask
                 throw new ArgumentNullException(nameof(matrix), $"Argument \"{nameof(matrix)}\" is null.");
             }
 
-            _vectorsMatrix = new Vector[matrix._vectorsMatrix.Length];
+            _rows = new Vector[matrix._rows.Length];
 
-            for (int i = 0; i < matrix._vectorsMatrix.Length; i++)
+            for (int i = 0; i < matrix._rows.Length; i++)
             {
-                _vectorsMatrix[i] = new Vector(matrix._vectorsMatrix[i]);
+                _rows[i] = new Vector(matrix._rows[i]);
             }
         }
 
-        public Matrix(Vector[]? vectorsArray)
+        public Matrix(Vector[] vectorsArray)
         {
             if (vectorsArray is null)
             {
                 throw new ArgumentNullException(nameof(vectorsArray), $"Argument \"{nameof(vectorsArray)}\" is null.");
             }
 
-            _vectorsMatrix = new Vector[vectorsArray.Length];
+            if (vectorsArray.Length == 0)
+            {
+                throw new ArgumentException(nameof(vectorsArray), "The array of vectors must not be 0.");
+            }
 
-            int maxSize = int.MinValue;
+            _rows = new Vector[vectorsArray.Length];
+
+            int maxSize = 0;
 
             foreach (Vector vector in vectorsArray)
             {
@@ -163,52 +143,104 @@ namespace Academits.Karetskas.MatrixTask
 
             Vector maxSizeVector = new Vector(maxSize);
 
-            for (int i = 0; i < _vectorsMatrix.Length; i++)
+            for (int i = 0; i < _rows.Length; i++)
             {
-                _vectorsMatrix[i] = maxSizeVector + vectorsArray[i];
+                _rows[i] = maxSizeVector + vectorsArray[i];
+            }
+        }
+
+        public Vector GetColumnVector(int index)
+        {
+            if (index < 0 || index >= ColumnsCount)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), "The index is out of range for the count of matrix columns. "
+                    + $"Valid range is from 0 to {ColumnsCount - 1}.");
+            }
+
+            Vector vector = new Vector(_rows.Length);
+
+            for (int i = 0; i < _rows.Length; i++)
+            {
+                vector[i] = _rows[i][index];
+            }
+
+            return vector;
+        }
+
+        public void SetColumnVector(int index, Vector vector)
+        {
+            if (vector is null)
+            {
+                throw new ArgumentNullException(nameof(vector), "Argument vector is null.");
+            }
+
+            if (index < 0 || index >= ColumnsCount)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), "The index is out of range for the count of matrix columns. "
+                    + $"Valid range is from 0 to {ColumnsCount - 1}.");
+            }
+
+            if (vector.Size != _rows.Length)
+            {
+                throw new ArgumentException($"Argument \"{nameof(vector)}.{nameof(vector.Size)}\" is the wrong size.", nameof(vector));
+            }
+
+            for (int i = 0; i < _rows.Length; i++)
+            {
+                _rows[i][index] = vector[i];
             }
         }
 
         public void Transpose()
         {
-            Matrix matrix = new Matrix(Columns, Rows);
+            Vector[] vectors = new Vector[ColumnsCount];
 
-            for (int i = 0; i < _vectorsMatrix.Length; i++)
+            for (int i = 0; i < ColumnsCount; i++)
             {
-                matrix[i, ElementsOrder.vertical] = _vectorsMatrix[i];
+                vectors[i] = GetColumnVector(i);
             }
 
-            _vectorsMatrix = matrix._vectorsMatrix;
+            _rows = vectors;
         }
 
         public void MultiplyByScalar(double number)
         {
-            for (int i = 0; i < Rows; i++)
+            for (int i = 0; i < RowsCount; i++)
             {
-                _vectorsMatrix[i] *= number;
+                _rows[i].MultiplyByScalar(number);
             }
         }
 
-        public Vector GetProductOnVector(Vector vector)
+        public void GetProduct(Vector vector)
         {
             if (vector is null)
             {
                 throw new ArgumentNullException(nameof(vector), $"Argument \"{nameof(vector)}\" is null.");
             }
 
-            if (vector.Size != _vectorsMatrix[0].Size)
+            if (vector.Size != ColumnsCount)
             {
-                throw new ArgumentException($"Count of rows of the vector is not equal to count of columns of the matrix.", nameof(vector));
+                throw new ArgumentException("Count of rows of the vector is not equal to count of columns of the matrix. "
+                    + $"The size of vector = {vector.Size} and count of columns of the matrix = {ColumnsCount}.", nameof(vector));
             }
 
-            Vector columnVector = new Vector(_vectorsMatrix.Length);
-
-            for (int i = 0; i < _vectorsMatrix.Length; i++)
+            for (int i = 0; i < _rows.Length; i++)
             {
-                columnVector[i] = Vector.GetScalarProduct(_vectorsMatrix[i], vector);
+                _rows[i] = new Vector(new double[1]
+                {
+                    Vector.GetScalarProduct(_rows[i], vector)
+                });
+            }
+        }
+
+        private bool AreSameSize(Matrix matrix)
+        {
+            if (matrix.ColumnsCount != ColumnsCount || matrix.RowsCount != RowsCount)
+            {
+                return false;
             }
 
-            return columnVector;
+            return true;
         }
 
         public void Add(Matrix matrix)
@@ -218,19 +250,15 @@ namespace Academits.Karetskas.MatrixTask
                 throw new ArgumentNullException(nameof(matrix), $"Argument \"{nameof(matrix)}\" is null.");
             }
 
-            if (matrix.Columns != Columns)
+            if (!AreSameSize(matrix))
             {
-                throw new ArgumentException($"Count of columns of the matriсes is not equal.", nameof(matrix));
+                throw new ArgumentException($"The matrix has different sizes. The current size matrix ({RowsCount}x{ColumnsCount}) "
+                    + $"and the size argument matrix ({matrix.RowsCount}x{matrix.ColumnsCount}).", nameof(matrix));
             }
 
-            if (matrix.Rows != Rows)
+            for (int i = 0; i < _rows.Length; i++)
             {
-                throw new ArgumentException($"Count of rows of the matrices is not equal.", nameof(matrix));
-            }
-
-            for (int i = 0; i < _vectorsMatrix.Length; i++)
-            {
-                _vectorsMatrix[i] += matrix._vectorsMatrix[i];
+                _rows[i].Add(matrix._rows[i]);
             }
         }
 
@@ -241,38 +269,35 @@ namespace Academits.Karetskas.MatrixTask
                 throw new ArgumentNullException(nameof(matrix), $"Argument \"{nameof(matrix)}\" is null.");
             }
 
-            if (matrix.Columns != Columns)
+            if (!AreSameSize(matrix))
             {
-                throw new ArgumentException($"Count of columns of the matriсes is not equal.", nameof(matrix));
+                throw new ArgumentException($"The matrix has different sizes. The current size matrix ({RowsCount}x{ColumnsCount}) "
+                    + $"and the size argument matrix ({matrix.RowsCount}x{matrix.ColumnsCount}).", nameof(matrix));
             }
 
-            if (matrix.Rows != Rows)
+            for (int i = 0; i < _rows.Length; i++)
             {
-                throw new ArgumentException($"Count of rows of the matrices is not equal.", nameof(matrix));
-            }
-
-            for (int i = 0; i < _vectorsMatrix.Length; i++)
-            {
-                _vectorsMatrix[i] -= matrix._vectorsMatrix[i];
+                _rows[i].Subtract(matrix._rows[i]);
             }
         }
 
         public double GetDeterminant()
         {
-            if (Rows != Columns)
+            if (RowsCount != ColumnsCount)
             {
-                throw new ArgumentException($"The \"{nameof(Rows)}\" and \"{nameof(Columns)}\" properties are not equal.", $"{nameof(Rows)}, {nameof(Columns)}");
+                throw new InvalidOperationException($"The \"{nameof(RowsCount)}\" = {RowsCount} "
+                    + $"and \"{nameof(ColumnsCount)}\" = {ColumnsCount} properties are not equal.");
             }
 
-            Matrix matrix = new Matrix(_vectorsMatrix);
+            Matrix matrix = new Matrix(_rows);
 
             double determinant = 1;
 
             const double epsilon = 1.0e-10;
 
-            for (int diagonalMatrixIndex = 0; diagonalMatrixIndex < matrix.Rows; diagonalMatrixIndex++)
+            for (int diagonalMatrixIndex = 0; diagonalMatrixIndex < matrix.RowsCount; diagonalMatrixIndex++)
             {
-                if (Math.Abs(matrix[diagonalMatrixIndex, ElementsOrder.horizontal][diagonalMatrixIndex]) <= epsilon)
+                if (Math.Abs(matrix[diagonalMatrixIndex][diagonalMatrixIndex]) <= epsilon)
                 {
                     if (!IsChangeInMatrixColumns(matrix, diagonalMatrixIndex, diagonalMatrixIndex))
                     {
@@ -282,37 +307,37 @@ namespace Academits.Karetskas.MatrixTask
                     determinant *= -1;
                 }
 
-                for (int rowIndex = diagonalMatrixIndex + 1; rowIndex < matrix.Rows; rowIndex++)
+                for (int rowIndex = diagonalMatrixIndex + 1; rowIndex < matrix.RowsCount; rowIndex++)
                 {
-                    double commonMultiple = matrix[rowIndex, ElementsOrder.horizontal][diagonalMatrixIndex]
-                        / matrix[diagonalMatrixIndex, ElementsOrder.horizontal][diagonalMatrixIndex];
+                    double commonMultiple = matrix[rowIndex][diagonalMatrixIndex]
+                        / matrix[diagonalMatrixIndex][diagonalMatrixIndex];
 
-                    matrix[rowIndex, ElementsOrder.horizontal] = matrix[rowIndex, ElementsOrder.horizontal]
-                        - matrix[diagonalMatrixIndex, ElementsOrder.horizontal] * commonMultiple;
+                    matrix[rowIndex] = matrix[rowIndex]
+                        - matrix[diagonalMatrixIndex] * commonMultiple;
                 }
             }
 
-            for (int i = 0; i < matrix.Rows; i++)
+            for (int i = 0; i < matrix.RowsCount; i++)
             {
-                determinant *= matrix[i, ElementsOrder.horizontal][i];
+                determinant *= matrix[i][i];
             }
 
             return determinant;
         }
 
-        private bool IsChangeInMatrixColumns(Matrix matrix, int row, int column)
+        private static bool IsChangeInMatrixColumns(Matrix matrix, int rowIndex, int columnIndex)
         {
             const double epsilon = 1.0e-10;
 
-            for (int j = column + 1; j < matrix!.Columns; j++)
+            for (int currentRowIndex = rowIndex; currentRowIndex < matrix._rows.Length; currentRowIndex++)
             {
-                if (Math.Abs(matrix[row, ElementsOrder.horizontal][j]) > epsilon)
+                if (Math.Abs(matrix._rows[currentRowIndex][columnIndex]) > epsilon)
                 {
-                    Vector temp = matrix[row, ElementsOrder.vertical];
-
-                    matrix[row, ElementsOrder.vertical] = matrix[j, ElementsOrder.vertical];
-
-                    matrix[j, ElementsOrder.vertical] = temp;
+                    for (int currentColumnIndex = 0; currentColumnIndex < matrix.ColumnsCount; currentColumnIndex++)
+                    {
+                        (matrix._rows[rowIndex][currentColumnIndex], matrix._rows[currentRowIndex][currentColumnIndex])
+                            = (matrix._rows[currentRowIndex][currentColumnIndex], matrix._rows[rowIndex][currentColumnIndex]);
+                    }
 
                     return true;
                 }
@@ -348,21 +373,17 @@ namespace Academits.Karetskas.MatrixTask
                 throw new ArgumentNullException(nameof(matrix2), $"Argument \"{nameof(matrix2)}\" is null.");
             }
 
-            if (matrix1.Rows != matrix2.Rows)
+            if (!matrix1.AreSameSize(matrix2))
             {
-                throw new ArgumentException($"Count of rows of the matrices is not equal.", $"{nameof(matrix1)}, {nameof(matrix2)}");
+                throw new ArgumentException($"The matrix has different sizes. The \"{nameof(matrix1)}\" = ({matrix1.RowsCount}x{matrix1.ColumnsCount}) "
+                    + $"and the \"{matrix2}\" = ({matrix2.RowsCount}x{matrix2.ColumnsCount}).", $"{nameof(matrix1)}, {nameof(matrix2)}");
             }
 
-            if (matrix1.Columns != matrix2.Columns)
-            {
-                throw new ArgumentException($"Count of columns of the matrices is not equal.", $"{nameof(matrix1)}, {nameof(matrix2)}");
-            }
+            Matrix matricesSum = new Matrix(matrix1);
 
-            Matrix matrixSum = new Matrix(matrix1);
+            matricesSum.Add(matrix2);
 
-            matrixSum.Add(matrix2);
-
-            return matrixSum;
+            return matricesSum;
         }
 
         public static Matrix operator -(Matrix matrix1, Matrix matrix2)
@@ -377,21 +398,17 @@ namespace Academits.Karetskas.MatrixTask
                 throw new ArgumentNullException(nameof(matrix2), $"Argument \"{nameof(matrix2)}\" is null.");
             }
 
-            if (matrix1.Rows != matrix2.Rows)
+            if (!matrix1.AreSameSize(matrix2))
             {
-                throw new ArgumentException($"Count of rows of the matrices is not equal.", $"{nameof(matrix1)}, {nameof(matrix2)}");
+                throw new ArgumentException($"The matrix has different sizes. The \"{nameof(matrix1)}\" = ({matrix1.RowsCount}x{matrix1.ColumnsCount}) "
+                    + $"and the \"{matrix2}\" = ({matrix2.RowsCount}x{matrix2.ColumnsCount}).", $"{nameof(matrix1)}, {nameof(matrix2)}");
             }
 
-            if (matrix1.Columns != matrix2.Columns)
-            {
-                throw new ArgumentException($"Count of columns of the matrices is not equal.", $"{nameof(matrix1)}, {nameof(matrix2)}");
-            }
+            Matrix matricesDifference = new Matrix(matrix1);
 
-            Matrix matrixDifference = new Matrix(matrix1);
+            matricesDifference.Subtract(matrix2);
 
-            matrixDifference.Subtract(matrix2);
-
-            return matrixDifference;
+            return matricesDifference;
         }
 
         public static Matrix operator *(Matrix matrix1, Matrix matrix2)
@@ -406,23 +423,23 @@ namespace Academits.Karetskas.MatrixTask
                 throw new ArgumentNullException(nameof(matrix2), $"Argument \"{nameof(matrix2)}\" is null.");
             }
 
-            if (matrix1.Columns != matrix2.Rows)
+            if (matrix1.ColumnsCount != matrix2.RowsCount)
             {
-                throw new ArgumentException($"Count of rows of the \"{nameof(matrix1)}\" is not equal to count of columns of the \"{nameof(matrix2)}\".",
-                    $"{nameof(matrix1)}, {nameof(matrix2)}");
+                throw new ArgumentException($"Count of rows of the \"{nameof(matrix1)}\" = {matrix1.ColumnsCount} is not equal to"
+                    + $" count of columns of the \"{nameof(matrix2)}\" = {matrix2.RowsCount}.", $"{nameof(matrix1)}, {nameof(matrix2)}");
             }
 
-            Matrix resultMatrix = new Matrix(matrix1.Rows, matrix2.Columns);
+            Matrix matricesProduct = new Matrix(matrix1.RowsCount, matrix2.ColumnsCount);
 
-            for (int i = 0; i < matrix1.Columns; i++)
+            for (int i = 0; i < matrix1.ColumnsCount; i++)
             {
-                for (int j = 0; j < matrix2.Rows; j++)
+                for (int j = 0; j < matrix2.RowsCount; j++)
                 {
-                    resultMatrix._vectorsMatrix[j][i] = Vector.GetScalarProduct(matrix1[j, ElementsOrder.horizontal], matrix2[i, ElementsOrder.vertical]);
+                    matricesProduct._rows[j][i] = Vector.GetScalarProduct(matrix1[j], matrix2.GetColumnVector(i));
                 }
             }
 
-            return resultMatrix;
+            return matricesProduct;
         }
 
         public static Matrix operator *(Matrix matrix, double number)
@@ -453,7 +470,7 @@ namespace Academits.Karetskas.MatrixTask
             return resultMatrix;
         }
 
-        public static Vector operator *(Matrix matrix, Vector vector)
+        public static Matrix operator *(Matrix matrix, Vector vector)
         {
             if (matrix is null)
             {
@@ -465,12 +482,16 @@ namespace Academits.Karetskas.MatrixTask
                 throw new ArgumentNullException(nameof(vector), $"Argument \"{nameof(vector)}\" is null.");
             }
 
-            return matrix.GetProductOnVector(vector);
+            Matrix newMatrix = new Matrix(matrix);
+
+            newMatrix.GetProduct(vector);
+
+            return newMatrix;
         }
 
         public override string ToString()
         {
-            return _vectorsMatrix is null ? "NULL" : $"{{{string.Join(", ", (IEnumerable<Vector>)_vectorsMatrix)}}}";
+            return $"{{{string.Join(", ", (IEnumerable<Vector>)_rows)}}}";
         }
     }
 }

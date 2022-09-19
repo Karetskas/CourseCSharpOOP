@@ -11,14 +11,14 @@ namespace Academits.Karetskas.MatrixTask
             WriteLine
         }
 
-        static void Main(string[] args)
+        static void Main()
         {
             Matrix zeroMatrix = new Matrix(3, 4);
 
             PrintToConsole(ConsoleColor.Yellow, "Create zero matrix:", $"{nameof(zeroMatrix)} = {zeroMatrix}.", PrintType.WriteLine);
 
             PrintToConsole(ConsoleColor.Yellow, "Print count of columns and rows in the zero matrix:",
-                $"{nameof(zeroMatrix.Columns)} = {zeroMatrix.Columns}; {nameof(zeroMatrix.Rows)} = {zeroMatrix.Rows}.", PrintType.WriteLine);
+                $"{nameof(zeroMatrix.ColumnsCount)} = {zeroMatrix.ColumnsCount}; {nameof(zeroMatrix.RowsCount)} = {zeroMatrix.RowsCount}.", PrintType.WriteLine);
 
             Vector[] vectorsArray =
             {
@@ -82,38 +82,34 @@ namespace Academits.Karetskas.MatrixTask
 
             PrintToConsole(ConsoleColor.DarkYellow, "Get vertical and horizontal vectors of matrix:", "", PrintType.Write);
 
-            for (ElementsOrder elementsOrder = ElementsOrder.vertical; elementsOrder <= ElementsOrder.horizontal; elementsOrder++)
+            PrintToConsole(ConsoleColor.DarkYellow, "", "{", PrintType.Write);
+
+            for (int i = 0; i < matrixForGetData.RowsCount; i++)
             {
-                int limit;
-                ConsoleColor color;
+                PrintToConsole(ConsoleColor.DarkYellow, "", $"{matrixForGetData[i]}", PrintType.Write);
 
-                if (elementsOrder == ElementsOrder.horizontal)
+                if (i + 1 != matrixForGetData.RowsCount)
                 {
-                    limit = matrixForGetData.Rows;
-                    color = ConsoleColor.DarkYellow;
-                }
-                else
-                {
-                    limit = matrixForGetData.Columns;
-                    color = ConsoleColor.Yellow;
-                }
-
-                PrintToConsole(color, "", "{", PrintType.Write);
-
-                for (int i = 0; i < limit; i++)
-                {
-                    PrintToConsole(color, "", matrixForGetData[i, elementsOrder], PrintType.Write);
-                }
-
-                PrintToConsole(color, "", "}", PrintType.Write);
-
-                if (elementsOrder == ElementsOrder.vertical)
-                {
-                    Console.WriteLine();
+                    PrintToConsole(ConsoleColor.DarkYellow, "", ", ", PrintType.Write);
                 }
             }
 
-            PrintToConsole(ConsoleColor.Yellow, "", "", PrintType.WriteLine);
+            PrintToConsole(ConsoleColor.DarkYellow, "", "}", PrintType.Write);
+            Console.WriteLine();
+
+            PrintToConsole(ConsoleColor.Yellow, "", "{", PrintType.Write);
+
+            for (int i = 0; i < matrixForGetData.ColumnsCount; i++)
+            {
+                PrintToConsole(ConsoleColor.Yellow, "", $"{matrixForGetData.GetColumnVector(i)}", PrintType.Write);
+
+                if (i + 1 != matrixForGetData.ColumnsCount)
+                {
+                    PrintToConsole(ConsoleColor.Yellow, "", ", ", PrintType.Write);
+                }
+            }
+
+            PrintToConsole(ConsoleColor.Yellow, "", "}", PrintType.WriteLine);
 
             double[,] array4 =
             {
@@ -128,12 +124,12 @@ namespace Academits.Karetskas.MatrixTask
                 $"Matrix before the change: {matrixForSetData}.", PrintType.Write);
             Console.WriteLine();
 
-            matrixForSetData[1, ElementsOrder.vertical] = new Vector(new double[] { 7, 7, 7 });
+            matrixForSetData.SetColumnVector(1, new Vector(new double[] { 7, 7, 7 }));
 
             PrintToConsole(ConsoleColor.Yellow, "", $"Set vertical vector to matrix: {matrixForSetData}.", PrintType.Write);
             Console.WriteLine();
 
-            matrixForSetData[2, ElementsOrder.horizontal] = new Vector(new double[] { -9, -9, -9, -9 });
+            matrixForSetData[2] = new Vector(new double[] { -9, -9, -9, -9 });
 
             PrintToConsole(ConsoleColor.Yellow, "", $"Set horizontal vector to matrix: {matrixForSetData}.", PrintType.WriteLine);
 
@@ -185,14 +181,14 @@ namespace Academits.Karetskas.MatrixTask
 
             double[,] array8 =
             {
-                { 1, 2, 3 },
-                { 4, 5, 6 },
-                { 7, 8, 9 }
+                { 2, -1, 3 },
+                { 4, 2, 0 },
+                { -1, 1, 1 }
             };
 
             Matrix matrixForMultiplyByVector = new Matrix(array8);
 
-            Vector columnVector = new Vector(new double[] { 1, 2, 3 });
+            Vector columnVector = new Vector(new double[] { 1, 2, -1 });
 
             PrintToConsole(ConsoleColor.DarkYellow, "Matrix * vector:", $"{matrixForMultiplyByVector} * {columnVector} = ", PrintType.Write);
             PrintToConsole(ConsoleColor.Yellow, "", matrixForMultiplyByVector * columnVector, PrintType.WriteLine);
