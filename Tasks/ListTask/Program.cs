@@ -127,7 +127,7 @@ namespace Academits.Karetskas.ListTask
             PrintToConsole(ConsoleColor.DarkBlue, "Adding last item to the list using the \"Add\" function:",
                 $"\"{nameof(linkedList)}\" before the changed: {linkedList}.{Environment.NewLine}", PrintType.Write);
 
-            linkedList.Add(linkedList.Count - 1, 15);
+            linkedList.Add(linkedList.Count, 15);
 
             PrintToConsole(ConsoleColor.Blue, "", $"\"{nameof(linkedList)}\" after the changed: {linkedList}.", PrintType.WriteLine);
 

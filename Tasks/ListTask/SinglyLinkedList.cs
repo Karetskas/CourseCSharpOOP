@@ -12,91 +12,110 @@ namespace Academits.Karetskas.ListTask
 
         public int Count { get; private set; }
 
-        public T? First => Get(0);
+        public T? First
+        {
+            get
+            {
+                CheckListExistence();
 
-        private ListItem<T>? GetAt(int index)
+                return head!.Data;
+            }
+        }
+
+        private ListItem<T> GetIndex(int index)
         {
             ListItem<T>? listItem = head;
 
-            for (int currentIndex = 0; currentIndex < Count; currentIndex++, listItem = listItem!.Next)
+            for (int i = 0; i != index; i++)
             {
-                if (currentIndex == index)
-                {
-                    break;
-                }
+                listItem = listItem!.Next;
             }
 
-            return listItem;
+            return listItem!;
+        }
+
+        private void CheckIndex(int index)
+        {
+            if (index < 0 || index >= Count)
+            {
+                if (Count == 0)
+                {
+                    throw new ArgumentException($"Any \"{nameof(index)}\" value is invalid because the list is empty.", nameof(index));
+                }
+
+                throw new ArgumentOutOfRangeException(nameof(index), $"Argument \"{nameof(index)}\" out of range \"ListTask\". "
+                    + $"Valid range is from 0 to {Count - 1}.");
+            }
+        }
+
+        private void CheckListExistence()
+        {
+            if (head is null)
+            {
+                throw new InvalidOperationException($"SinglyLinkedList<{typeof(T).Name}> has no items.");
+            }
         }
 
         public T? Get(int index)
         {
-            if (head is null)
-            {
-                throw new InvalidOperationException("SinglyLinkedList<T> has no items.");
-            }
+            CheckIndex(index);
 
-            if (index < 0 || index >= Count)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index), $"Argument \"{nameof(index)}\" out of range \"ListTask\". " +
-                    $"Valid range is from 0 to {Count - 1}.");
-            }
+            ListItem<T>? listItem = GetIndex(index);
 
-            ListItem<T>? listItem = GetAt(index);
-
-            return listItem!.Data;
+            return listItem.Data;
         }
 
         public T? Set(int index, T? data)
         {
-            if (head is null)
-            {
-                throw new InvalidOperationException("SinglyLinkedList<T> has no items.");
-            }
+            CheckIndex(index);
 
-            if (index < 0 || index >= Count)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index), $"Argument \"{nameof(index)}\" out of range \"ListTask\". " +
-                    $"Valid range is from 0 to {Count - 1}.");
-            }
+            ListItem<T>? listItem = GetIndex(index);
 
-            ListItem<T>? listItem = GetAt(index);
-
-            T? previousValue = listItem!.Data;
+            T? oldData = listItem.Data;
             listItem.Data = data;
 
             modCount++;
 
-            return previousValue;
+            return oldData;
         }
 
         public void AddFirst(T? data)
         {
-            Add(0, data);
-        }
-
-        public void Add(int index, T? data)
-        {
             ListItem<T> newItem = new ListItem<T>(data);
 
-            if (index == 0)
+            if (head is null)
             {
-                newItem.Next = head;
                 head = newItem;
             }
             else
             {
-                if (index < 0 || index >= Count)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index), $"Argument \"{nameof(index)}\" out of range \"ListTask\". " +
-                        $"Valid range is from 0 to {Count - 1}.");
-                }
-
-                ListItem<T>? listItem = GetAt(index - 1);
-
-                newItem.Next = listItem!.Next;
-                listItem.Next = newItem;
+                newItem.Next = head;
+                head = newItem;
             }
+
+            Count++;
+            modCount++;
+        }
+
+        public void Add(int index, T? data)
+        {
+            if (index == 0)
+            {
+                AddFirst(data);
+
+                return;
+            }
+
+            if (index != Count)
+            {
+                CheckIndex(index);
+            }
+
+            ListItem<T> newItem = new ListItem<T>(data);
+            ListItem<T>? previousItem = GetIndex(index - 1);
+
+            newItem.Next = previousItem.Next;
+            previousItem.Next = newItem;
 
             Count++;
             modCount++;
@@ -104,36 +123,30 @@ namespace Academits.Karetskas.ListTask
 
         public T? RemoveFirst()
         {
-            return RemoveAt(0);
+            CheckListExistence();
+
+            T? data = head!.Data;
+            head = head.Next;
+
+            Count--;
+            modCount++;
+
+            return data;
         }
 
         public T? RemoveAt(int index)
         {
-            if (index < 0 || index >= Count)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index), $"Argument \"{nameof(index)}\" out of range \"ListTask\". " +
-                    $"Valid range is from 0 to {Count - 1}.");
-            }
-
-            T? data;
-
             if (index == 0)
             {
-                if (head is null)
-                {
-                    return default;
-                }
-
-                data = head.Data;
-                head = head.Next;
+                return RemoveFirst();
             }
-            else
-            {
-                ListItem<T>? previousItem = GetAt(index - 1);
 
-                data = previousItem!.Next!.Data;
-                previousItem.Next = previousItem.Next.Next;
-            }
+            CheckIndex(index);
+
+            ListItem<T>? previousItem = GetIndex(index - 1);
+
+            T? data = previousItem.Next!.Data;
+            previousItem.Next = previousItem.Next.Next;
 
             Count--;
             modCount++;
@@ -172,12 +185,7 @@ namespace Academits.Karetskas.ListTask
 
         public void Reverse()
         {
-            if (head is null)
-            {
-                throw new InvalidOperationException("SinglyLinkedList<T> has no items.");
-            }
-
-            if (Count == 1 || IsSymmetric())
+            if (head is null || Count == 1)
             {
                 return;
             }
@@ -197,46 +205,6 @@ namespace Academits.Karetskas.ListTask
             modCount++;
         }
 
-        private bool IsSymmetric()
-        {
-            SinglyLinkedList<T> linkedListClone = new SinglyLinkedList<T>();
-            ListItem<T>? listItemclone = null;
-
-            bool isEvenItemCount = Count % 2 == 0;
-            int listMiddle = Count / 2;
-            int index = 0;
-
-            for (ListItem<T>? listItem = head; index < Count; index++, listItem = listItem!.Next)
-            {
-                if (index < listMiddle)
-                {
-                    linkedListClone.AddFirst(listItem!.Data);
-
-                    continue;
-                }
-
-                if (index == listMiddle)
-                {
-                    listItemclone = linkedListClone.head!;
-
-                    if (!isEvenItemCount)
-                    {
-                        index++;
-                        listItem = listItem!.Next;
-                    }
-                }
-
-                if (!Equals(listItem!.Data, listItemclone!.Data))
-                {
-                    return false;
-                }
-
-                listItemclone = listItemclone.Next;
-            }
-
-            return true;
-        }
-
         public override string ToString()
         {
             if (head is null)
@@ -252,8 +220,7 @@ namespace Academits.Karetskas.ListTask
             {
                 if (data is null)
                 {
-                    stringBuilder.Append("NULL")
-                        .Append(", ");
+                    stringBuilder.Append("NULL, ");
 
                     continue;
                 }
@@ -262,10 +229,7 @@ namespace Academits.Karetskas.ListTask
                     .Append(", ");
             }
 
-            if (stringBuilder.Length > 2)
-            {
-                stringBuilder.Remove(stringBuilder.Length - 2, 2);
-            }
+            stringBuilder.Remove(stringBuilder.Length - 2, 2);
 
             stringBuilder.Append(']');
 
