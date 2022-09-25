@@ -60,49 +60,49 @@ namespace Academits.Karetskas.ArrayListTask
             PrintToConsole(ConsoleColor.DarkYellow, "Copying list to array:", $"List: {listToCopying}", PrintType.Write);
             Console.WriteLine();
 
-            string[] stringsArray = new string[list.Count];
+            string[] stringsArray = new string[list.Count + 2];
 
-            list.CopyTo(stringsArray, 2);
+            listToCopying.CopyTo(stringsArray, 2);
 
             PrintToConsole(ConsoleColor.Yellow, "", $"Array: {string.Join(", ", stringsArray)}.");
 
-            ArrayList<string> listForInsertingEtem = new ArrayList<string>(0);
+            ArrayList<string> listForInsertingItem = new ArrayList<string>(0);
 
             PrintToConsole(ConsoleColor.DarkYellow, "Insert item into the list:",
-                $"List before change: {listForInsertingEtem}. Capacity = {listForInsertingEtem.Capacity}; Count = {listForInsertingEtem.Count}.", PrintType.Write);
+                $"List before change: {listForInsertingItem}. Capacity = {listForInsertingItem.Capacity}; Count = {listForInsertingItem.Count}.", PrintType.Write);
             Console.WriteLine();
 
             for (int i = 0; i < 4; i++)
             {
-                listForInsertingEtem.Insert(i, Convert.ToString(i + 1));
+                listForInsertingItem.Insert(i, Convert.ToString(i + 1));
             }
 
-            listForInsertingEtem.Insert(3, "5");
+            listForInsertingItem.Insert(3, "5");
 
-            PrintToConsole(ConsoleColor.Yellow, "", $"List after change: {listForInsertingEtem}. " +
-                $"Capacity = {listForInsertingEtem.Capacity}; Count = {listForInsertingEtem.Count}.");
+            PrintToConsole(ConsoleColor.Yellow, "", $"List after change: {listForInsertingItem}. "
+                + $"Capacity = {listForInsertingItem.Capacity}; Count = {listForInsertingItem.Count}.");
 
             ArrayList<string> listToRemoveByIndex = GetItemsList();
 
-            PrintToConsole(ConsoleColor.DarkYellow, "Deleting item that has index 3:", $"List before change: {listToRemoveByIndex}. " +
-                $"Capacity = {listToRemoveByIndex.Capacity}; Count = {listToRemoveByIndex.Count}.", PrintType.Write);
+            PrintToConsole(ConsoleColor.DarkYellow, "Deleting item that has index 3:", $"List before change: {listToRemoveByIndex}. "
+                + $"Capacity = {listToRemoveByIndex.Capacity}; Count = {listToRemoveByIndex.Count}.", PrintType.Write);
             Console.WriteLine();
 
             listToRemoveByIndex.RemoveAt(3);
 
-            PrintToConsole(ConsoleColor.Yellow, "", $"List after removal item: {listToRemoveByIndex}. " +
-                $"Capacity = {listToRemoveByIndex.Capacity}; Count = {listToRemoveByIndex.Count}.");
+            PrintToConsole(ConsoleColor.Yellow, "", $"List after removal item: {listToRemoveByIndex}. "
+                + $"Capacity = {listToRemoveByIndex.Capacity}; Count = {listToRemoveByIndex.Count}.");
 
-            ArrayList<string> ListToRemoveByItem = GetItemsList();
+            ArrayList<string> listToRemoveByItem = GetItemsList();
 
-            PrintToConsole(ConsoleColor.DarkYellow, "Deleting item that has number 16:", $"List before change: {ListToRemoveByItem}. " +
-                $"Capacity = {ListToRemoveByItem.Capacity}; Count = {ListToRemoveByItem.Count}.", PrintType.Write);
+            PrintToConsole(ConsoleColor.DarkYellow, "Deleting item that has number 16:", $"List before change: {listToRemoveByItem}. "
+                + $"Capacity = {listToRemoveByItem.Capacity}; Count = {listToRemoveByItem.Count}.", PrintType.Write);
             Console.WriteLine();
 
-            ListToRemoveByItem.Remove("16");
+            listToRemoveByItem.Remove("16");
 
-            PrintToConsole(ConsoleColor.Yellow, "", $"List after removal item: {ListToRemoveByItem}. " +
-                $"Capacity = {ListToRemoveByItem.Capacity}; Count = {ListToRemoveByItem.Count}.");
+            PrintToConsole(ConsoleColor.Yellow, "", $"List after removal item: {listToRemoveByItem}. "
+                + $"Capacity = {listToRemoveByItem.Capacity}; Count = {listToRemoveByItem.Count}.");
 
             ArrayList<string> listForTrimExcess = GetItemsList(11);
 
@@ -117,16 +117,16 @@ namespace Academits.Karetskas.ArrayListTask
 
             listForTrimExcess.TrimExcess();
 
-            PrintToConsole(ConsoleColor.Yellow, "", $"List after change: {listForTrimExcess}. " +
-                $"Capacity: {listForTrimExcess.Capacity}. Count: {listForTrimExcess.Count}.");
+            PrintToConsole(ConsoleColor.Yellow, "", $"List after change: {listForTrimExcess}. "
+                + $"Capacity: {listForTrimExcess.Capacity}. Count: {listForTrimExcess.Count}.");
         }
 
         private static ArrayList<string> GetItemsList(int itemsCount = 7)
         {
             if (itemsCount < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(itemsCount), $"The \"{nameof(itemsCount)}\" argument out of range of array. " +
-                    $"Valid range from 0 to {int.MaxValue}.");
+                throw new ArgumentOutOfRangeException(nameof(itemsCount), $"The \"{nameof(itemsCount)}\" argument out of range of array. "
+                    + $"Valid range from 0 to {int.MaxValue}.");
             }
 
             ArrayList<string> list = new ArrayList<string>(itemsCount);

@@ -7,11 +7,11 @@ namespace Academits.Karetskas.ArrayListTask
 {
     public sealed class ArrayList<T> : IList<T>
     {
-        private T[] items;
-        private int length;
+        const int initialCapacity = 10;
+        private T?[] items;
         private int modCount;
 
-        public int Count => length;
+        public int Count { get; private set; }
 
         public int Capacity
         {
@@ -19,10 +19,10 @@ namespace Academits.Karetskas.ArrayListTask
 
             set
             {
-                if (value < length)
+                if (value < Count)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(value), $"The \"{nameof(value)}\" argument out of range of array. " +
-                        $"Valid range from {length} to {int.MaxValue}.");
+                    throw new ArgumentOutOfRangeException(nameof(value), $"The argument \"{nameof(value)}\" = {value} is out of range of array. "
+                        + $"Valid value must be greater than {Count}.");
                 }
 
                 if (value == items.Length)
@@ -30,13 +30,7 @@ namespace Academits.Karetskas.ArrayListTask
                     return;
                 }
 
-                T[] oldArray = items;
-
-                items = new T[value];
-
-                Array.Copy(oldArray, 0, items, 0, length);
-
-                modCount++;
+                Array.Resize(ref items, value);
             }
         }
 
@@ -46,32 +40,14 @@ namespace Academits.Karetskas.ArrayListTask
         {
             get
             {
-                if (length == 0)
-                {
-                    throw new InvalidOperationException("There are no items in the list.");
-                }
+                CheckIndex(index);
 
-                if (index < 0 || index >= length)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index), $"The \"{nameof(index)}\" argument out of range of array. " +
-                        $"Valid range from 0 to {length - 1}.");
-                }
-
-                return items[index];
+                return items[index]!;
             }
 
             set
             {
-                if (length == 0)
-                {
-                    throw new InvalidOperationException("There are no items in the list.");
-                }
-
-                if (index < 0 || index >= length)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index), $"The \"{nameof(index)}\" argument out of range of array. " +
-                        $"Valid range from 0 to {length - 1}.");
-                }
+                CheckIndex(index);
 
                 items[index] = value;
 
@@ -83,118 +59,102 @@ namespace Academits.Karetskas.ArrayListTask
         {
             if (capacity < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(capacity), $"The \"{nameof(capacity)}\" argument out of range of array. " +
-                    $"Valid range from 0 to {int.MaxValue}.");
+                throw new ArgumentOutOfRangeException(nameof(capacity), $"The argument \"{nameof(capacity)}\" = {capacity} is out of range of array. "
+                    + "Valid value must be greater than 0.");
             }
 
             items = new T[capacity];
+        }
+
+        public ArrayList()
+        {
+            items = new T[initialCapacity];
+        }
+
+        private void CheckIndex(int index)
+        {
+            if (index < 0 || index >= Count)
+            {
+                if (Count == 0)
+                {
+                    throw new ArgumentException($"Any \"{nameof(index)}\" value is invalid because the arrayList is empty.", nameof(index));
+                }
+
+                throw new ArgumentOutOfRangeException(nameof(index), $"The argument \"{nameof(index)}\" = {index} is out of range of array. "
+                    + "Valid value must be greater than 0.");
+            }
         }
 
         private void IncreaseCapacity()
         {
             if (items.Length == 0)
             {
-                items = new T[1];
+                Capacity = initialCapacity;
 
                 return;
             }
 
-            T[] oldArray = items;
-
-            items = length >= int.MaxValue / 2 ? new T[int.MaxValue]
-                                               : new T[length * 2];
-
-            Array.Copy(oldArray, 0, items, 0, length);
+            Capacity = Count * 2;
         }
 
         public int IndexOf(T item)
         {
-            return Array.IndexOf(items, item, 0, length);
+            return Array.IndexOf(items, item, 0, Count);
         }
 
         public void Insert(int index, T item)
         {
-            if (index < 0 || index > length || length == int.MaxValue)
+            if (index != Count)
             {
-                throw new ArgumentOutOfRangeException(nameof(index), $"The \"{nameof(index)}\" argument out of range of array. " +
-                    $"Valid range from 0 to {length}.");
+                CheckIndex(index);
             }
 
-            if (index == items.Length)
-            {
-                Add(item);
-
-                return;
-            }
-
-            if (length + 1 > items.Length)
+            if (index == items.Length || Count + 1 > items.Length)
             {
                 IncreaseCapacity();
             }
 
-            Array.Copy(items, index, items, index + 1, length - index);
+            Array.Copy(items, index, items, index + 1, Count - index);
 
             items[index] = item;
 
-            length++;
+            Count++;
             modCount++;
         }
 
         public void RemoveAt(int index)
         {
-            if (length == 0)
-            {
-                throw new InvalidOperationException("There are no items in the list.");
-            }
+            CheckIndex(index);
 
-            if (index < 0 || index >= length)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index), $"The \"{nameof(index)}\" argument out of range of array. " +
-                    $"Valid range from 0 to {length - 1}.");
-            }
+            Array.Copy(items, index + 1, items, index, Count - (index + 1));
 
-            Array.Copy(items, index + 1, items, index, length - (index + 1));
+            items[Count - 1] = default;
 
-            length--;
+            Count--;
             modCount++;
         }
 
         public void Add(T item)
         {
-            if (length == int.MaxValue)
-            {
-                throw new ArgumentOutOfRangeException(nameof(length), $"The \"{nameof(length)}\" argument out of range of array. " +
-                    $"Valid range from 0 to {length}.");
-            }
-
-            if (length == items.Length)
-            {
-                IncreaseCapacity();
-            }
-
-            items[length] = item;
-
-            length++;
-            modCount++;
+            Insert(Count, item);
         }
 
         public void Clear()
         {
-            length = 0;
+            if (Count == 0)
+            {
+                return;
+            }
+
+            Array.Clear(items);
+
+            Count = 0;
             modCount++;
         }
 
         public bool Contains(T item)
         {
-            for (int i = 0; i < length; i++)
-            {
-                if (Equals(item, items[i]))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return IndexOf(item) >= 0;
         }
 
         public void CopyTo(T[] array, int arrayIndex)
@@ -204,18 +164,9 @@ namespace Academits.Karetskas.ArrayListTask
                 throw new ArgumentNullException(nameof(array), $"Argument \"{nameof(array)}\" is null.");
             }
 
-            if (length == 0)
-            {
-                throw new InvalidOperationException("There are no items in the list.");
-            }
+            CheckIndex(arrayIndex);
 
-            if (arrayIndex < 0 || arrayIndex >= length)
-            {
-                throw new ArgumentOutOfRangeException(nameof(arrayIndex), $"The \"{nameof(arrayIndex)}\" argument out of range of array. " +
-                    $"Valid range from 0 to {length - 1}.");
-            }
-
-            Array.Copy(items, arrayIndex, array, 0, length - arrayIndex);
+            items.CopyTo(array, arrayIndex);
         }
 
         public bool Remove(T item)
@@ -234,19 +185,17 @@ namespace Academits.Karetskas.ArrayListTask
 
         public void TrimExcess()
         {
-            const double epsilon = 1.0e-10;
+            double listFullness = (double)Count / items.Length * 100;
 
-            double listFullness = (double)length / items.Length * 100;
-
-            if (90 - listFullness > -epsilon)
+            if (90 > listFullness)
             {
-                Array.Resize(ref items, length);
+                Capacity = Count;
             }
         }
 
         public override string ToString()
         {
-            if (length == 0)
+            if (Count == 0)
             {
                 return "[]";
             }
@@ -259,13 +208,12 @@ namespace Academits.Karetskas.ArrayListTask
             {
                 if (item is null)
                 {
-                    stringBuilder.Append("null")
-                        .Append(", ");
+                    stringBuilder.Append("null, ");
 
                     continue;
                 }
 
-                stringBuilder.Append(item.ToString())
+                stringBuilder.Append(item)
                     .Append(", ");
             }
 
@@ -279,14 +227,14 @@ namespace Academits.Karetskas.ArrayListTask
         {
             int currentModCount = modCount;
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (currentModCount != modCount)
                 {
                     throw new InvalidOperationException("The list has been modified during the iteration.");
                 }
 
-                yield return items[i];
+                yield return items[i]!;
             }
         }
 
