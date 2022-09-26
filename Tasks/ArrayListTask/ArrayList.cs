@@ -109,12 +109,15 @@ namespace Academits.Karetskas.ArrayListTask
                 CheckIndex(index);
             }
 
-            if (index == items.Length || Count + 1 > items.Length)
+            if (index == items.Length || Count >= items.Length)
             {
                 IncreaseCapacity();
             }
 
-            Array.Copy(items, index, items, index + 1, Count - index);
+            if (index < Count)
+            {
+                Array.Copy(items, index, items, index + 1, Count - index);
+            }
 
             items[index] = item;
 
