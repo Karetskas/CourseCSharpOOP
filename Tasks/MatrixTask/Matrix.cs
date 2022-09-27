@@ -16,32 +16,16 @@ namespace Academits.Karetskas.MatrixTask
         {
             get
             {
-                if (index < 0 || index >= _rows.Length)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index), "The index is out of range for the count of matrix rows. "
-                        + $"Valid range is from 0 to {_rows.Length - 1}.");
-                }
+                CheckIndex(index, _rows.Length);
 
                 return new Vector(_rows[index]);
             }
 
             set
             {
-                if (value is null)
-                {
-                    throw new ArgumentNullException(nameof(value), "Argument vector is null.");
-                }
-
-                if (index < 0 || index >= _rows.Length)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index), "The index is out of range for the count of matrix rows. "
-                        + $"Valid range is from 0 to {_rows.Length - 1}.");
-                }
-
-                if (value.Size != ColumnsCount)
-                {
-                    throw new ArgumentException($"Argument \"{nameof(value)}.{nameof(value.Size)}\" is the wrong size.", nameof(value));
-                }
+                CheckForNull(value);
+                CheckIndex(index, _rows.Length);
+                CheckVectorsSize(value, ColumnsCount);
 
                 _rows[index] = new Vector(value);
             }
@@ -51,12 +35,12 @@ namespace Academits.Karetskas.MatrixTask
         {
             if (rowsCount <= 0)
             {
-                throw new ArgumentException("The count of rows in the matrix must not be <= 0.", nameof(rowsCount));
+                throw new ArgumentException($"The count of rows in the matrix must not be <= 0. Now the count of rows = {rowsCount}.", nameof(rowsCount));
             }
 
             if (columnsCount <= 0)
             {
-                throw new ArgumentException("The count of columns in the matrix must not be <= 0.", nameof(columnsCount));
+                throw new ArgumentException($"The count of columns in the matrix must not be <= 0. Now the count of columns = {columnsCount}", nameof(columnsCount));
             }
 
             _rows = new Vector[rowsCount];
@@ -69,10 +53,7 @@ namespace Academits.Karetskas.MatrixTask
 
         public Matrix(double[,] array)
         {
-            if (array is null)
-            {
-                throw new ArgumentNullException(nameof(array), $"Argument \"{nameof(array)}\" is null.");
-            }
+            CheckForNull(array);
 
             const int firstDimension = 0;
             const int secondDimension = 1;
@@ -82,12 +63,12 @@ namespace Academits.Karetskas.MatrixTask
 
             if (rowsCount == 0)
             {
-                throw new ArgumentException("The first dimension of array must not be 0.", nameof(array));
+                throw new ArgumentException($"The first dimension of array must not be 0. Now the first dimension = {rowsCount}.", nameof(array));
             }
 
             if (columnsCount == 0)
             {
-                throw new ArgumentException("The second dimension of array must not be 0.", nameof(array));
+                throw new ArgumentException($"The second dimension of array must not be 0. Now the first dimension = {columnsCount}.", nameof(array));
             }
 
             _rows = new Vector[rowsCount];
@@ -107,10 +88,7 @@ namespace Academits.Karetskas.MatrixTask
 
         public Matrix(Matrix matrix)
         {
-            if (matrix is null)
-            {
-                throw new ArgumentNullException(nameof(matrix), $"Argument \"{nameof(matrix)}\" is null.");
-            }
+            CheckForNull(matrix);
 
             _rows = new Vector[matrix._rows.Length];
 
@@ -122,14 +100,11 @@ namespace Academits.Karetskas.MatrixTask
 
         public Matrix(Vector[] vectorsArray)
         {
-            if (vectorsArray is null)
-            {
-                throw new ArgumentNullException(nameof(vectorsArray), $"Argument \"{nameof(vectorsArray)}\" is null.");
-            }
+            CheckForNull(vectorsArray);
 
             if (vectorsArray.Length == 0)
             {
-                throw new ArgumentException(nameof(vectorsArray), "The array of vectors must not be 0.");
+                throw new ArgumentException(nameof(vectorsArray), $"The array of vectors must not be 0. Now the array of vectors = {vectorsArray.Length}.");
             }
 
             _rows = new Vector[vectorsArray.Length];
@@ -151,11 +126,7 @@ namespace Academits.Karetskas.MatrixTask
 
         public Vector GetColumnVector(int index)
         {
-            if (index < 0 || index >= ColumnsCount)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index), "The index is out of range for the count of matrix columns. "
-                    + $"Valid range is from 0 to {ColumnsCount - 1}.");
-            }
+            CheckIndex(index, ColumnsCount);
 
             Vector vector = new Vector(_rows.Length);
 
@@ -169,21 +140,9 @@ namespace Academits.Karetskas.MatrixTask
 
         public void SetColumnVector(int index, Vector vector)
         {
-            if (vector is null)
-            {
-                throw new ArgumentNullException(nameof(vector), "Argument vector is null.");
-            }
-
-            if (index < 0 || index >= ColumnsCount)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index), "The index is out of range for the count of matrix columns. "
-                    + $"Valid range is from 0 to {ColumnsCount - 1}.");
-            }
-
-            if (vector.Size != _rows.Length)
-            {
-                throw new ArgumentException($"Argument \"{nameof(vector)}.{nameof(vector.Size)}\" is the wrong size.", nameof(vector));
-            }
+            CheckForNull(vector);
+            CheckIndex(index, ColumnsCount);
+            CheckVectorsSize(vector, _rows.Length);
 
             for (int i = 0; i < _rows.Length; i++)
             {
@@ -193,30 +152,27 @@ namespace Academits.Karetskas.MatrixTask
 
         public void Transpose()
         {
-            Vector[] vectors = new Vector[ColumnsCount];
+            Vector[] columns = new Vector[ColumnsCount];
 
             for (int i = 0; i < ColumnsCount; i++)
             {
-                vectors[i] = GetColumnVector(i);
+                columns[i] = GetColumnVector(i);
             }
 
-            _rows = vectors;
+            _rows = columns;
         }
 
         public void MultiplyByScalar(double number)
         {
-            for (int i = 0; i < RowsCount; i++)
+            foreach (Vector vector in _rows)
             {
-                _rows[i].MultiplyByScalar(number);
+                vector.MultiplyByScalar(number);
             }
         }
 
-        public void GetProduct(Vector vector)
+        public Vector GetProduct(Vector vector)
         {
-            if (vector is null)
-            {
-                throw new ArgumentNullException(nameof(vector), $"Argument \"{nameof(vector)}\" is null.");
-            }
+            CheckForNull(vector);
 
             if (vector.Size != ColumnsCount)
             {
@@ -224,37 +180,54 @@ namespace Academits.Karetskas.MatrixTask
                     + $"The size of vector = {vector.Size} and count of columns of the matrix = {ColumnsCount}.", nameof(vector));
             }
 
+            Vector columnVector = new Vector(_rows.Length);
+
             for (int i = 0; i < _rows.Length; i++)
             {
-                _rows[i] = new Vector(new double[1]
-                {
-                    Vector.GetScalarProduct(_rows[i], vector)
-                });
+                columnVector[i] = Vector.GetScalarProduct(_rows[i], vector);
             }
+
+            return columnVector;
         }
 
-        private bool AreSameSize(Matrix matrix)
+        private static void CheckVectorsSize(Vector vector, int vectorSize)
         {
-            if (matrix.ColumnsCount != ColumnsCount || matrix.RowsCount != RowsCount)
+            if (vector.Size != vectorSize)
             {
-                return false;
+                throw new ArgumentException($"Argument \"{nameof(vector)}.{nameof(vector.Size)}\" = {vector.Size} is not the correct size. "
+                    + $"Сorrect size = {vectorSize}.", nameof(vector));
             }
-
-            return true;
         }
 
+        private static void CheckMatricesSize(Matrix matrix1, Matrix matrix2)
+        {
+            if (matrix1.ColumnsCount != matrix2.ColumnsCount || matrix1.RowsCount != matrix2.RowsCount)
+            {
+                throw new ArgumentException($"The matrix has different sizes. The \"{nameof(matrix1)}\" = ({matrix1.RowsCount}x{matrix1.ColumnsCount}) "
+                + $"and the \"{matrix2}\" = ({matrix2.RowsCount}x{matrix2.ColumnsCount}).", $"{nameof(matrix1)}, {nameof(matrix2)}");
+            }
+        }
+
+        private static void CheckForNull<T>(T obj)
+        {
+            if (obj is null)
+            {
+                throw new ArgumentNullException(nameof(obj), $"The \"{typeof(T).Name}\" type argument is null.");
+            }
+        }
+
+        private static void CheckIndex(int index, int maxRangeValue)
+        {
+            if (index < 0 || index >= maxRangeValue)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index), $"The argument \"{nameof(index)}\" = {index} is out of range. "
+                + $"Valid range is from 0 to {maxRangeValue - 1}.");
+            }
+        }
         public void Add(Matrix matrix)
         {
-            if (matrix is null)
-            {
-                throw new ArgumentNullException(nameof(matrix), $"Argument \"{nameof(matrix)}\" is null.");
-            }
-
-            if (!AreSameSize(matrix))
-            {
-                throw new ArgumentException($"The matrix has different sizes. The current size matrix ({RowsCount}x{ColumnsCount}) "
-                    + $"and the size argument matrix ({matrix.RowsCount}x{matrix.ColumnsCount}).", nameof(matrix));
-            }
+            CheckForNull(matrix);
+            CheckMatricesSize(matrix, this);
 
             for (int i = 0; i < _rows.Length; i++)
             {
@@ -264,16 +237,8 @@ namespace Academits.Karetskas.MatrixTask
 
         public void Subtract(Matrix matrix)
         {
-            if (matrix is null)
-            {
-                throw new ArgumentNullException(nameof(matrix), $"Argument \"{nameof(matrix)}\" is null.");
-            }
-
-            if (!AreSameSize(matrix))
-            {
-                throw new ArgumentException($"The matrix has different sizes. The current size matrix ({RowsCount}x{ColumnsCount}) "
-                    + $"and the size argument matrix ({matrix.RowsCount}x{matrix.ColumnsCount}).", nameof(matrix));
-            }
+            CheckForNull(matrix);
+            CheckMatricesSize(matrix, this);
 
             for (int i = 0; i < _rows.Length; i++)
             {
@@ -363,21 +328,9 @@ namespace Academits.Karetskas.MatrixTask
 
         public static Matrix operator +(Matrix matrix1, Matrix matrix2)
         {
-            if (matrix1 is null)
-            {
-                throw new ArgumentNullException(nameof(matrix1), $"Argument \"{nameof(matrix1)}\" is null.");
-            }
-
-            if (matrix2 is null)
-            {
-                throw new ArgumentNullException(nameof(matrix2), $"Argument \"{nameof(matrix2)}\" is null.");
-            }
-
-            if (!matrix1.AreSameSize(matrix2))
-            {
-                throw new ArgumentException($"The matrix has different sizes. The \"{nameof(matrix1)}\" = ({matrix1.RowsCount}x{matrix1.ColumnsCount}) "
-                    + $"and the \"{matrix2}\" = ({matrix2.RowsCount}x{matrix2.ColumnsCount}).", $"{nameof(matrix1)}, {nameof(matrix2)}");
-            }
+            CheckForNull(matrix1);
+            CheckForNull(matrix2);
+            CheckMatricesSize(matrix1, matrix2);
 
             Matrix matricesSum = new Matrix(matrix1);
 
@@ -388,21 +341,9 @@ namespace Academits.Karetskas.MatrixTask
 
         public static Matrix operator -(Matrix matrix1, Matrix matrix2)
         {
-            if (matrix1 is null)
-            {
-                throw new ArgumentNullException(nameof(matrix1), $"Argument \"{nameof(matrix1)}\" is null.");
-            }
-
-            if (matrix2 is null)
-            {
-                throw new ArgumentNullException(nameof(matrix2), $"Argument \"{nameof(matrix2)}\" is null.");
-            }
-
-            if (!matrix1.AreSameSize(matrix2))
-            {
-                throw new ArgumentException($"The matrix has different sizes. The \"{nameof(matrix1)}\" = ({matrix1.RowsCount}x{matrix1.ColumnsCount}) "
-                    + $"and the \"{matrix2}\" = ({matrix2.RowsCount}x{matrix2.ColumnsCount}).", $"{nameof(matrix1)}, {nameof(matrix2)}");
-            }
+            CheckForNull(matrix1);
+            CheckForNull(matrix2);
+            CheckMatricesSize(matrix1, matrix2);
 
             Matrix matricesDifference = new Matrix(matrix1);
 
@@ -413,15 +354,8 @@ namespace Academits.Karetskas.MatrixTask
 
         public static Matrix operator *(Matrix matrix1, Matrix matrix2)
         {
-            if (matrix1 is null)
-            {
-                throw new ArgumentNullException(nameof(matrix1), $"Argument \"{nameof(matrix1)}\" is null.");
-            }
-
-            if (matrix2 is null)
-            {
-                throw new ArgumentNullException(nameof(matrix2), $"Argument \"{nameof(matrix2)}\" is null.");
-            }
+            CheckForNull(matrix1);
+            CheckForNull(matrix2);
 
             if (matrix1.ColumnsCount != matrix2.RowsCount)
             {
@@ -431,11 +365,11 @@ namespace Academits.Karetskas.MatrixTask
 
             Matrix matricesProduct = new Matrix(matrix1.RowsCount, matrix2.ColumnsCount);
 
-            for (int i = 0; i < matrix1.ColumnsCount; i++)
+            for (int i = 0; i < matrix1.RowsCount; i++)
             {
-                for (int j = 0; j < matrix2.RowsCount; j++)
+                for (int j = 0; j < matrix2.ColumnsCount; j++)
                 {
-                    matricesProduct._rows[j][i] = Vector.GetScalarProduct(matrix1[j], matrix2.GetColumnVector(i));
+                    matricesProduct._rows[i][j] = Vector.GetScalarProduct(matrix1[i], matrix2.GetColumnVector(j));
                 }
             }
 
@@ -444,10 +378,7 @@ namespace Academits.Karetskas.MatrixTask
 
         public static Matrix operator *(Matrix matrix, double number)
         {
-            if (matrix is null)
-            {
-                throw new ArgumentNullException(nameof(matrix), $"Argument \"{nameof(matrix)}\" is null.");
-            }
+            CheckForNull(matrix);
 
             Matrix resultMatrix = new Matrix(matrix);
 
@@ -458,10 +389,7 @@ namespace Academits.Karetskas.MatrixTask
 
         public static Matrix operator *(double number, Matrix matrix)
         {
-            if (matrix is null)
-            {
-                throw new ArgumentNullException(nameof(matrix), $"Argument \"{nameof(matrix)}\" is null.");
-            }
+            CheckForNull(matrix);
 
             Matrix resultMatrix = new Matrix(matrix);
 
@@ -470,23 +398,12 @@ namespace Academits.Karetskas.MatrixTask
             return resultMatrix;
         }
 
-        public static Matrix operator *(Matrix matrix, Vector vector)
+        public static Vector operator *(Matrix matrix, Vector vector)
         {
-            if (matrix is null)
-            {
-                throw new ArgumentNullException(nameof(matrix), $"Argument \"{nameof(matrix)}\" is null.");
-            }
+            CheckForNull(matrix);
+            CheckForNull(vector);
 
-            if (vector is null)
-            {
-                throw new ArgumentNullException(nameof(vector), $"Argument \"{nameof(vector)}\" is null.");
-            }
-
-            Matrix newMatrix = new Matrix(matrix);
-
-            newMatrix.GetProduct(vector);
-
-            return newMatrix;
+            return matrix.GetProduct(vector);
         }
 
         public override string ToString()
