@@ -16,17 +16,17 @@ namespace Academits.Karetskas.ListTask
         {
             get
             {
-                CheckListExistence();
+                CheckThatListEmpty();
 
                 return head!.Data;
             }
         }
 
-        private ListItem<T> GetIndex(int index)
+        private ListItem<T> GetItem(int index)
         {
             ListItem<T>? listItem = head;
 
-            for (int i = 0; i != index; i++)
+            for (int i = 0; i < index; i++)
             {
                 listItem = listItem!.Next;
             }
@@ -40,7 +40,7 @@ namespace Academits.Karetskas.ListTask
             {
                 if (Count == 0)
                 {
-                    throw new ArgumentException($"Any \"{nameof(index)}\" value is invalid because the list is empty.", nameof(index));
+                    throw new ArgumentOutOfRangeException(nameof(index), $"Any \"{nameof(index)}\" value is invalid because the list is empty.");
                 }
 
                 throw new ArgumentOutOfRangeException(nameof(index), $"Argument \"{nameof(index)}\" out of range \"ListTask\". "
@@ -48,7 +48,7 @@ namespace Academits.Karetskas.ListTask
             }
         }
 
-        private void CheckListExistence()
+        private void CheckThatListEmpty()
         {
             if (head is null)
             {
@@ -60,16 +60,14 @@ namespace Academits.Karetskas.ListTask
         {
             CheckIndex(index);
 
-            ListItem<T>? listItem = GetIndex(index);
-
-            return listItem.Data;
+            return GetItem(index).Data;
         }
 
         public T? Set(int index, T? data)
         {
             CheckIndex(index);
 
-            ListItem<T>? listItem = GetIndex(index);
+            ListItem<T> listItem = GetItem(index);
 
             T? oldData = listItem.Data;
             listItem.Data = data;
@@ -81,17 +79,7 @@ namespace Academits.Karetskas.ListTask
 
         public void AddFirst(T? data)
         {
-            ListItem<T> newItem = new ListItem<T>(data);
-
-            if (head is null)
-            {
-                head = newItem;
-            }
-            else
-            {
-                newItem.Next = head;
-                head = newItem;
-            }
+            head = new ListItem<T>(data, head);
 
             Count++;
             modCount++;
@@ -106,16 +94,15 @@ namespace Academits.Karetskas.ListTask
                 return;
             }
 
-            if (index != Count)
+            if (index < 0 || index > Count)
             {
-                CheckIndex(index);
+                throw new ArgumentOutOfRangeException(nameof(index), $"Argument \"{nameof(index)}\" out of range \"ListTask\". "
+                    + $"Valid range is from 0 to {Count}.");
             }
 
-            ListItem<T> newItem = new ListItem<T>(data);
-            ListItem<T>? previousItem = GetIndex(index - 1);
+            ListItem<T> previousItem = GetItem(index - 1);
 
-            newItem.Next = previousItem.Next;
-            previousItem.Next = newItem;
+            previousItem.Next = new ListItem<T>(data, previousItem.Next);
 
             Count++;
             modCount++;
@@ -123,7 +110,7 @@ namespace Academits.Karetskas.ListTask
 
         public T? RemoveFirst()
         {
-            CheckListExistence();
+            CheckThatListEmpty();
 
             T? data = head!.Data;
             head = head.Next;
@@ -136,14 +123,14 @@ namespace Academits.Karetskas.ListTask
 
         public T? RemoveAt(int index)
         {
+            CheckIndex(index);
+
             if (index == 0)
             {
                 return RemoveFirst();
             }
 
-            CheckIndex(index);
-
-            ListItem<T>? previousItem = GetIndex(index - 1);
+            ListItem<T> previousItem = GetItem(index - 1);
 
             T? data = previousItem.Next!.Data;
             previousItem.Next = previousItem.Next.Next;
@@ -156,11 +143,9 @@ namespace Academits.Karetskas.ListTask
 
         public bool Remove(T data)
         {
-            ListItem<T>? previousItem = null;
-
-            for (ListItem<T>? listItem = head; listItem is not null; listItem = listItem.Next)
+            for (ListItem<T>? currentItem = head, previousItem = null; currentItem is not null; previousItem = currentItem, currentItem = currentItem.Next)
             {
-                if (Equals(listItem.Data, data))
+                if (Equals(currentItem.Data, data))
                 {
                     if (previousItem is null)
                     {
@@ -176,8 +161,6 @@ namespace Academits.Karetskas.ListTask
 
                     return true;
                 }
-
-                previousItem = listItem;
             }
 
             return false;
@@ -185,7 +168,7 @@ namespace Academits.Karetskas.ListTask
 
         public void Reverse()
         {
-            if (head is null || Count == 1)
+            if (Count < 2)
             {
                 return;
             }
@@ -249,9 +232,9 @@ namespace Academits.Karetskas.ListTask
 
             linkedListClone.head = previousItem;
 
-            for (ListItem<T>? listItem = head.Next; listItem is not null; listItem = listItem.Next)
+            for (ListItem<T>? currentItem = head.Next; currentItem is not null; currentItem = currentItem.Next)
             {
-                previousItem.Next = new ListItem<T>(listItem.Data);
+                previousItem.Next = new ListItem<T>(currentItem.Data);
 
                 previousItem = previousItem.Next;
             }
@@ -263,11 +246,11 @@ namespace Academits.Karetskas.ListTask
 
         public IEnumerator<T> GetEnumerator()
         {
-            int itemsCurrentCount = modCount;
+            int currentModCount = modCount;
 
             for (ListItem<T>? listItem = head; listItem is not null; listItem = listItem.Next)
             {
-                if (itemsCurrentCount != modCount)
+                if (currentModCount != modCount)
                 {
                     throw new InvalidOperationException("The list has been modified during the iteration.");
                 }
