@@ -25,7 +25,7 @@ namespace Academits.Karetskas.MatrixTask
             {
                 CheckForNull(value);
                 CheckIndex(index, _rows.Length);
-                CheckVectorsSize(value, ColumnsCount);
+                CheckVectorSize(value, ColumnsCount);
 
                 _rows[index] = new Vector(value);
             }
@@ -142,7 +142,7 @@ namespace Academits.Karetskas.MatrixTask
         {
             CheckForNull(vector);
             CheckIndex(index, ColumnsCount);
-            CheckVectorsSize(vector, _rows.Length);
+            CheckVectorSize(vector, _rows.Length);
 
             for (int i = 0; i < _rows.Length; i++)
             {
@@ -190,7 +190,7 @@ namespace Academits.Karetskas.MatrixTask
             return columnVector;
         }
 
-        private static void CheckVectorsSize(Vector vector, int vectorSize)
+        private static void CheckVectorSize(Vector vector, int vectorSize)
         {
             if (vector.Size != vectorSize)
             {
@@ -199,12 +199,12 @@ namespace Academits.Karetskas.MatrixTask
             }
         }
 
-        private static void CheckMatricesSize(Matrix matrix1, Matrix matrix2)
+        private static void CheckMatricesSizeEquality(Matrix matrix1, Matrix matrix2)
         {
             if (matrix1.ColumnsCount != matrix2.ColumnsCount || matrix1.RowsCount != matrix2.RowsCount)
             {
                 throw new ArgumentException($"The matrix has different sizes. The \"{nameof(matrix1)}\" = ({matrix1.RowsCount}x{matrix1.ColumnsCount}) "
-                + $"and the \"{matrix2}\" = ({matrix2.RowsCount}x{matrix2.ColumnsCount}).", $"{nameof(matrix1)}, {nameof(matrix2)}");
+                    + $"and the \"{matrix2}\" = ({matrix2.RowsCount}x{matrix2.ColumnsCount}).", $"{nameof(matrix1)}, {nameof(matrix2)}");
             }
         }
 
@@ -221,13 +221,14 @@ namespace Academits.Karetskas.MatrixTask
             if (index < 0 || index >= maxRangeValue)
             {
                 throw new ArgumentOutOfRangeException(nameof(index), $"The argument \"{nameof(index)}\" = {index} is out of range. "
-                + $"Valid range is from 0 to {maxRangeValue - 1}.");
+                    + $"Valid range is from 0 to {maxRangeValue - 1}.");
             }
         }
+
         public void Add(Matrix matrix)
         {
             CheckForNull(matrix);
-            CheckMatricesSize(matrix, this);
+            CheckMatricesSizeEquality(this, matrix);
 
             for (int i = 0; i < _rows.Length; i++)
             {
@@ -238,7 +239,7 @@ namespace Academits.Karetskas.MatrixTask
         public void Subtract(Matrix matrix)
         {
             CheckForNull(matrix);
-            CheckMatricesSize(matrix, this);
+            CheckMatricesSizeEquality(this, matrix);
 
             for (int i = 0; i < _rows.Length; i++)
             {
@@ -274,11 +275,9 @@ namespace Academits.Karetskas.MatrixTask
 
                 for (int rowIndex = diagonalMatrixIndex + 1; rowIndex < matrix.RowsCount; rowIndex++)
                 {
-                    double commonMultiple = matrix[rowIndex][diagonalMatrixIndex]
-                        / matrix[diagonalMatrixIndex][diagonalMatrixIndex];
+                    double commonMultiple = matrix[rowIndex][diagonalMatrixIndex] / matrix[diagonalMatrixIndex][diagonalMatrixIndex];
 
-                    matrix[rowIndex] = matrix[rowIndex]
-                        - matrix[diagonalMatrixIndex] * commonMultiple;
+                    matrix[rowIndex] -= matrix[diagonalMatrixIndex] * commonMultiple;
                 }
             }
 
@@ -330,7 +329,7 @@ namespace Academits.Karetskas.MatrixTask
         {
             CheckForNull(matrix1);
             CheckForNull(matrix2);
-            CheckMatricesSize(matrix1, matrix2);
+            CheckMatricesSizeEquality(matrix1, matrix2);
 
             Matrix matricesSum = new Matrix(matrix1);
 
@@ -343,7 +342,7 @@ namespace Academits.Karetskas.MatrixTask
         {
             CheckForNull(matrix1);
             CheckForNull(matrix2);
-            CheckMatricesSize(matrix1, matrix2);
+            CheckMatricesSizeEquality(matrix1, matrix2);
 
             Matrix matricesDifference = new Matrix(matrix1);
 
