@@ -68,14 +68,14 @@ namespace Academits.Karetskas.ArrayListTask
 
             ArrayList<string> listForInsertingItem = new ArrayList<string>(0);
 
-            PrintToConsole(ConsoleColor.DarkYellow, "Insert item into the list:",
-                $"List before change: {listForInsertingItem}. Capacity = {listForInsertingItem.Capacity}; Count = {listForInsertingItem.Count}.", PrintType.Write);
-            Console.WriteLine();
-
             for (int i = 0; i < 4; i++)
             {
                 listForInsertingItem.Insert(i, Convert.ToString(i + 1));
             }
+
+            PrintToConsole(ConsoleColor.DarkYellow, "Insert item into the list:",
+                $"List before change: {listForInsertingItem}. Capacity = {listForInsertingItem.Capacity}; Count = {listForInsertingItem.Count}.", PrintType.Write);
+            Console.WriteLine();
 
             listForInsertingItem.Insert(3, "5");
 
