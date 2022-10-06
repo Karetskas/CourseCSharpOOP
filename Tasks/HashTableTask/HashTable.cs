@@ -7,8 +7,8 @@ namespace Academits.Karetskas.HashTableTask
 {
     public sealed class HashTable<T> : ICollection<T>
     {
-        private const int _initialCapacity = 10;
-        private readonly List<T>?[] _listsArray;
+        private const int DefaultCapacity = 10;
+        private readonly List<T>?[] _lists;
         private int _modCount;
 
         public int Count { get; private set; }
@@ -17,29 +17,29 @@ namespace Academits.Karetskas.HashTableTask
 
         public HashTable()
         {
-            _listsArray = new List<T>[_initialCapacity];
+            _lists = new List<T>[DefaultCapacity];
         }
 
         public HashTable(int capacity)
         {
             if (capacity <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(capacity), $"Argument out of range of table. Valid range is greater than or equal to 1.");
+                throw new ArgumentOutOfRangeException(nameof(capacity), "Argument out of range of table. Valid range is greater than or equal to 1.");
             }
 
-            _listsArray = new List<T>[capacity];
+            _lists = new List<T>[capacity];
         }
 
         public void Add(T item)
         {
             int index = GetIndex(item);
 
-            if (_listsArray[index] is null)
+            if (_lists[index] is null)
             {
-                _listsArray[index] = new List<T>();
+                _lists[index] = new List<T>();
             }
 
-            _listsArray[index]!.Add(item);
+            _lists[index]!.Add(item);
 
             Count++;
             _modCount++;
@@ -52,7 +52,7 @@ namespace Academits.Karetskas.HashTableTask
                 return 0;
             }
 
-            return Math.Abs(item.GetHashCode() % _listsArray.Length);
+            return Math.Abs(item.GetHashCode() % _lists.Length);
         }
 
         public void Clear()
@@ -62,7 +62,7 @@ namespace Academits.Karetskas.HashTableTask
                 return;
             }
 
-            Array.Clear(_listsArray);
+            Array.Clear(_lists);
 
             Count = 0;
             _modCount++;
@@ -72,7 +72,7 @@ namespace Academits.Karetskas.HashTableTask
         {
             int index = GetIndex(item);
 
-            return _listsArray[index] is null ? false : _listsArray[index]!.Contains(item);
+            return _lists[index]!.Contains(item);
         }
 
         public void CopyTo(T[] array, int arrayIndex)
@@ -108,12 +108,12 @@ namespace Academits.Karetskas.HashTableTask
         {
             int index = GetIndex(item);
 
-            if (_listsArray[index] is null || _listsArray[index]!.Count == 0)
+            if (_lists[index] is null || _lists[index]!.Count == 0)
             {
                 return false;
             }
 
-            bool isItemRemoved = _listsArray[index]!.Remove(item);
+            bool isItemRemoved = _lists[index]!.Remove(item);
 
             if (isItemRemoved)
             {
@@ -128,7 +128,7 @@ namespace Academits.Karetskas.HashTableTask
         {
             int initialModCount = _modCount;
 
-            foreach (List<T>? list in _listsArray)
+            foreach (List<T>? list in _lists)
             {
                 if (list is null)
                 {
@@ -158,7 +158,7 @@ namespace Academits.Karetskas.HashTableTask
 
             stringBuilder.Append('[');
 
-            foreach (List<T>? list in _listsArray)
+            foreach (List<T>? list in _lists)
             {
                 if (list is null || list.Count == 0)
                 {
