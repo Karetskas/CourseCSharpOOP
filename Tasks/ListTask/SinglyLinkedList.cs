@@ -16,7 +16,7 @@ namespace Academits.Karetskas.ListTask
         {
             get
             {
-                CheckThatListEmpty();
+                CheckListEmpty();
 
                 return head!.Data;
             }
@@ -43,12 +43,12 @@ namespace Academits.Karetskas.ListTask
                     throw new ArgumentOutOfRangeException(nameof(index), $"Any \"{nameof(index)}\" value is invalid because the list is empty.");
                 }
 
-                throw new ArgumentOutOfRangeException(nameof(index), $"Argument \"{nameof(index)}\" out of range \"ListTask\". "
+                throw new ArgumentOutOfRangeException(nameof(index), $"Argument \"{nameof(index)}\" = {index} is out of range. "
                     + $"Valid range is from 0 to {Count - 1}.");
             }
         }
 
-        private void CheckThatListEmpty()
+        private void CheckListEmpty()
         {
             if (head is null)
             {
@@ -96,7 +96,7 @@ namespace Academits.Karetskas.ListTask
 
             if (index < 0 || index > Count)
             {
-                throw new ArgumentOutOfRangeException(nameof(index), $"Argument \"{nameof(index)}\" out of range \"ListTask\". "
+                throw new ArgumentOutOfRangeException(nameof(index), $"Argument \"{nameof(index)}\" = {index} is out of range. "
                     + $"Valid range is from 0 to {Count}.");
             }
 
@@ -110,7 +110,7 @@ namespace Academits.Karetskas.ListTask
 
         public T? RemoveFirst()
         {
-            CheckThatListEmpty();
+            CheckListEmpty();
 
             T? data = head!.Data;
             head = head.Next;
@@ -246,11 +246,11 @@ namespace Academits.Karetskas.ListTask
 
         public IEnumerator<T> GetEnumerator()
         {
-            int currentModCount = modCount;
+            int initialModCount = modCount;
 
             for (ListItem<T>? listItem = head; listItem is not null; listItem = listItem.Next)
             {
-                if (currentModCount != modCount)
+                if (initialModCount != modCount)
                 {
                     throw new InvalidOperationException("The list has been modified during the iteration.");
                 }
