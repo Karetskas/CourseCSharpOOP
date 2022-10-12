@@ -53,18 +53,18 @@ namespace Academits.Karetskas.HashTableTask
             PrintToConsole(ConsoleColor.DarkYellow, "Check whether the hash table contains the numbers \"555\" and \"999\".",
                 $"Number \"555\" - {hashTableForSearch.Contains(555)}. Number \"999\" - {hashTableForSearch.Contains(999)}.");
 
-            HashTable<string> HashTableToArray = new HashTable<string>(3);
+            HashTable<string> hashTableToArray = new HashTable<string>(3);
 
-            HashTableToArray.Add("H4el");
-            HashTableToArray.Add("wo3r8");
-            HashTableToArray.Add("!!!!!");
+            hashTableToArray.Add("H4el");
+            hashTableToArray.Add("wo3r8");
+            hashTableToArray.Add("!!!!!");
 
-            PrintToConsole(ConsoleColor.DarkYellow, "Copying hash table to array:", $"Hash table: {HashTableToArray}.", PrintType.Write);
+            PrintToConsole(ConsoleColor.DarkYellow, "Copying hash table to array:", $"Hash table: {hashTableToArray}.", PrintType.Write);
             Console.WriteLine();
 
-            string[] array = new string[HashTableToArray.Count];
+            string[] array = new string[hashTableToArray.Count];
 
-            HashTableToArray.CopyTo(array, 0);
+            hashTableToArray.CopyTo(array, 0);
 
             PrintToConsole(ConsoleColor.Yellow, "", $"Array: [{string.Join(", ", array)}].");
 

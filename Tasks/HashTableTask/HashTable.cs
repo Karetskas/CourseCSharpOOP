@@ -72,7 +72,14 @@ namespace Academits.Karetskas.HashTableTask
         {
             int index = GetIndex(item);
 
-            return _lists[index]!.Contains(item);
+            bool isFound = false;
+
+            if (_lists[index] is not null)
+            {
+                isFound = _lists[index]!.Contains(item);
+            }
+
+            return isFound;
         }
 
         public void CopyTo(T[] array, int arrayIndex)
