@@ -80,7 +80,7 @@ namespace Academits.Karetskas.ArrayListTask
                     throw new ArgumentOutOfRangeException(nameof(index), $"Any \"{nameof(index)}\" value is invalid because the arrayList is empty.");
                 }
 
-                throw new ArgumentOutOfRangeException(nameof(index), $"The argument \"{nameof(index)}\" = {index} is out of range of list. "
+                throw new ArgumentOutOfRangeException(nameof(index), $"The argument \"{nameof(index)}\" = {index} is out of range. "
                     + $"Valid value is from 0 to {maxIndex}.");
             }
         }
@@ -164,13 +164,13 @@ namespace Academits.Karetskas.ArrayListTask
                 throw new ArgumentNullException(nameof(array), $"Argument \"{nameof(array)}\" is null.");
             }
 
+            CheckIndex(arrayIndex, array.Length - 1);
+
             if (array.Length - arrayIndex < Count)
             {
                 throw new ArgumentException("The number of elements in the ArrayList is greater than the available space from arrayindex to "
                     + $"the end of the destination array. Valid range is greater than or equal to {Count}.", $"{nameof(array)}, {nameof(arrayIndex)}");
             }
-
-            CheckIndex(arrayIndex, array.Length - 1);
 
             Array.Copy(items, 0, array, arrayIndex, Count);
         }
