@@ -4,48 +4,29 @@ namespace Academits.Karetskas.TreeTask
 {
     internal sealed class TreeNode<T>
     {
-        private TreeNode<T>? _leftChild;
-        private TreeNode<T>? _rightChild;
-
-        public int Count { get; private set; }
-
-        public TreeNode<T>? LeftChild
+        public int ChildrenCount
         {
-            get => _leftChild;
-
-            set
+            get
             {
-                if (_leftChild is null && value is not null)
+                int childrenCount = 0;
+
+                if (LeftChild is not null)
                 {
-                    Count++;
-                }
-                else if (_leftChild is not null && value is null)
-                {
-                    Count--;
+                    childrenCount++;
                 }
 
-                _leftChild = value;
+                if (RightChild is not null)
+                {
+                    childrenCount++;
+                }
+
+                return childrenCount;
             }
         }
 
-        public TreeNode<T>? RightChild
-        {
-            get => _rightChild;
+        public TreeNode<T>? LeftChild { get; set; }
 
-            set
-            {
-                if (_rightChild is null && value is not null)
-                {
-                    Count++;
-                }
-                else if (_rightChild is not null && value is null)
-                {
-                    Count--;
-                }
-
-                _rightChild = value;
-            }
-        }
+        public TreeNode<T>? RightChild { get; set; }
 
         public T? Data { get; set; }
 
@@ -54,7 +35,7 @@ namespace Academits.Karetskas.TreeTask
             Data = data;
         }
 
-        public TreeNode(TreeNode<T>? leftChild, TreeNode<T>? rightChild, T? data)
+        public TreeNode(T? data, TreeNode<T>? leftChild, TreeNode<T>? rightChild)
         {
             LeftChild = leftChild;
             RightChild = rightChild;
@@ -63,14 +44,28 @@ namespace Academits.Karetskas.TreeTask
 
         public IEnumerable<TreeNode<T>?> Children()
         {
-            yield return LeftChild;
-            yield return RightChild;
+            if (LeftChild is not null)
+            {
+                yield return LeftChild;
+            }
+
+            if (RightChild is not null)
+            {
+                yield return RightChild;
+            }
         }
 
         public IEnumerable<TreeNode<T>?> ChildrenInReverseOrder()
         {
-            yield return RightChild;
-            yield return LeftChild;
+            if (RightChild is not null)
+            {
+                yield return RightChild;
+            }
+
+            if (LeftChild is not null)
+            {
+                yield return LeftChild;
+            }
         }
     }
 }
