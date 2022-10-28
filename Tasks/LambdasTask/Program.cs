@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -7,12 +6,14 @@ namespace Academits.Karetskas.LambdasTask
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
+            var peopleList = GetPeopleList();
+
             Console.WriteLine("First task:");
 
-            var uniqueNamesList = GetPeopleList()
-                .Select(person => person.Name)
+            var uniqueNamesList = peopleList
+                .Select(p => p.Name)
                 .Distinct()
                 .ToList();
 
@@ -21,52 +22,52 @@ namespace Academits.Karetskas.LambdasTask
 
             PrintToConsole(titleForUniqueNames, textForUniqueNames, ConsoleColor.DarkGreen);
 
-            var middleAge = GetPeopleList()
-                .Where(person => person.Age < 18)
-                .Average(person => person.Age);
+            var averageAge = peopleList
+                .Where(p => p.Age < 18)
+                .Average(p => p.Age);
 
-            var titleForMiddleAge = "C). Get list of people under the age of 18 and calculate their middle age.";
-            var textForMiddleAge = $"Middle age for persons under the age of 18 is {middleAge}";
+            var titleForAverageAge = "C). Get list of people under the age of 18 and calculate their middle age.";
+            var textForAverageAge = $"Middle age for persons under the age of 18 is {averageAge}";
 
-            PrintToConsole(titleForMiddleAge, textForMiddleAge, ConsoleColor.DarkBlue);
+            PrintToConsole(titleForAverageAge, textForAverageAge, ConsoleColor.DarkBlue);
 
-            var groupPersonByName = GetPeopleList()
-                .GroupBy(person => person.Name)
-                .ToDictionary(groupName => groupName.Key, person => person.Average(person => person.Age));
+            var averageAgeGroupedByName = peopleList
+                .GroupBy(p => p.Name)
+                .ToDictionary(g => g.Key, g => g.Average(p => p.Age));
 
             var titleForGroupByName = "D). Using grouping, get a Dictionary in which the keys are the names and the values are the average age.";
-            var textForGroupByName = string.Join(Environment.NewLine, groupPersonByName.Select(persons => $"Group: {persons.Key}, Average: {persons.Value}"));
+            var textForGroupByName = string.Join(Environment.NewLine, averageAgeGroupedByName.Select(p => $"Name: {p.Key}, Average age: {p.Value}"));
 
             PrintToConsole(titleForGroupByName, textForGroupByName, ConsoleColor.DarkRed);
 
-            var peopleList = GetPeopleList()
-                .Where(person => person.Age >= 20 && person.Age <= 45)
-                .OrderByDescending(person => person.Age);
+            var sortedPeopleList = peopleList
+                .Where(p => p.Age >= 20 && p.Age <= 45)
+                .OrderByDescending(p => p.Age);
 
             var titleRangeAndOrder = "E). Get people whose age is from 20 to 45, output to the console their names in descending order of age.";
-            var textRangeAndOrder = string.Join(Environment.NewLine, peopleList);
+            var textRangeAndOrder = string.Join(Environment.NewLine, sortedPeopleList);
 
             PrintToConsole(titleRangeAndOrder, textRangeAndOrder, ConsoleColor.DarkYellow);
 
             Console.WriteLine($"{Environment.NewLine}Second task:{Environment.NewLine}");
 
             Console.Write("How many square roots do you want to get? Enter a positive integer: ");
-            int squareRootsCount = Convert.ToInt32(Console.ReadLine());
+            var squareRootsCount = Convert.ToInt32(Console.ReadLine());
 
-            StringBuilder stringBuilderSquareRootNumbers = GetGivenSequance(GetNumbersSquareRoots, squareRootsCount, "square root");
+            var squareRootsList = GetGivenSequence(GetNumbersSquareRoots(), squareRootsCount);
 
-            PrintToConsole("List of square roots:", stringBuilderSquareRootNumbers.ToString(), ConsoleColor.DarkGreen);
+            PrintToConsole("List of square roots:", squareRootsList.ToString(), ConsoleColor.DarkGreen);
 
             Console.WriteLine();
             Console.Write("How many fibonacci numbers do you want to get? Enter a positive integer: ");
-            int fibonacciNumbersCount = Convert.ToInt32(Console.ReadLine());
+            var fibonacciNumbersCount = Convert.ToInt32(Console.ReadLine());
 
-            StringBuilder stringBuilderFibonacciNumbers = GetGivenSequance(GetFibonacсiNumbers, fibonacciNumbersCount, "fibonacci number");
+            var fibonacciNumbersList = GetGivenSequence(GetFibonacсiNumbers(), fibonacciNumbersCount);
 
-            PrintToConsole("List of fibonacci numbers:", stringBuilderFibonacciNumbers.ToString(), ConsoleColor.DarkBlue);
+            PrintToConsole("List of fibonacci numbers:", fibonacciNumbersList.ToString(), ConsoleColor.DarkBlue);
         }
 
-        public static StringBuilder GetGivenSequance<T>(Func<IEnumerable<T>> function, int iterationsCount, string outputDataType)
+        public static string GetGivenSequence<T>(IEnumerable<T> squareRoots, int iterationsCount)
         {
             if (iterationsCount < 0)
             {
@@ -74,32 +75,12 @@ namespace Academits.Karetskas.LambdasTask
                     + $"Argument must be greater than or equal to zero.", nameof(iterationsCount));
             }
 
-            if (string.IsNullOrEmpty(outputDataType))
-            {
-                throw new ArgumentNullException(nameof(outputDataType), $"Argument \"{nameof(outputDataType)}\" is null or empty.");
-            }
-
-            StringBuilder stringBuilder = new StringBuilder();
-            int i = 0;
-
-            foreach (var result in function())
-            {
-                stringBuilder.AppendLine($"{i}). {outputDataType} = {result}");
-
-                if (i >= iterationsCount)
-                {
-                    break;
-                }
-
-                i++;
-            }
-
-            return stringBuilder;
+            return string.Join(Environment.NewLine, squareRoots.Take(iterationsCount));
         }
 
         public static IEnumerable<double> GetNumbersSquareRoots()
         {
-            for (int i = 0; ; i++)
+            for (var i = 0; ; i++)
             {
                 yield return Math.Sqrt(i);
             }
@@ -107,18 +88,20 @@ namespace Academits.Karetskas.LambdasTask
 
         public static IEnumerable<int> GetFibonacсiNumbers()
         {
-            int previousNumber = -1;
-            int fibonacciNumber = 0;
+            var previousNumber = 1;
+            var currentNumber = 0;
 
-            yield return fibonacciNumber;
+            yield return currentNumber;
 
             while (true)
             {
-                previousNumber = fibonacciNumber - previousNumber;
+                var temp = currentNumber;
 
-                fibonacciNumber += previousNumber;
+                currentNumber += previousNumber;
 
-                yield return fibonacciNumber;
+                yield return currentNumber;
+
+                previousNumber = temp;
             }
         }
 
@@ -139,30 +122,29 @@ namespace Academits.Karetskas.LambdasTask
 
         public static List<Person> GetPeopleList()
         {
-            var people = new List<Person>();
-
-            people.Add(new Person("Иван", 99));
-            people.Add(people[0]);
-            people.Add(new Person("Степан", 18));
-            people.Add(new Person("Иван", 28));
-            people.Add(new Person("Вика", 32));
-            people.Add(new Person("Генадий", 3));
-            people.Add(new Person("Карл", 45));
-            people.Add(new Person("Зоя", 0));
-            people.Add(new Person("Катя", 20));
-            people.Add(new Person("Шура", 86));
-            people.Add(new Person("Клава", 9));
-            people.Add(new Person("Петр", 22));
-            people.Add(new Person("Иван", 3));
-            people.Add(new Person("Генадий", 7));
-            people.Add(new Person("Шура", 77));
-            people.Add(new Person("Катя", 20));
-            people.Add(new Person("Вика", 22));
-            people.Add(new Person("Людвиг", 39));
-            people.Add(new Person("Зоя", 16));
-            people.Add(new Person("Павел", 99));
-
-            return people;
+            return new List<Person>()
+            {
+                new Person("Иван", 99),
+                new Person("Иван", 99),
+                new Person("Степан", 18),
+                new Person("Иван", 28),
+                new Person("Вика", 32),
+                new Person("Генадий", 3),
+                new Person("Карл", 45),
+                new Person("Зоя", 0),
+                new Person("Катя", 20),
+                new Person("Шура", 86),
+                new Person("Клава", 9),
+                new Person("Петр", 22),
+                new Person("Иван", 3),
+                new Person("Генадий", 7),
+                new Person("Шура", 77),
+                new Person("Катя", 20),
+                new Person("Вика", 22),
+                new Person("Людвиг", 39),
+                new Person("Зоя", 16),
+                new Person("Павел", 99)
+            };
         }
     }
 }
