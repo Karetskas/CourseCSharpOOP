@@ -1,48 +1,24 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Academits.Karetskas.TreeTask
 {
     internal sealed class TreeNode<T>
     {
-        public int ChildrenCount
-        {
-            get
-            {
-                int childrenCount = 0;
-
-                if (LeftChild is not null)
-                {
-                    childrenCount++;
-                }
-
-                if (RightChild is not null)
-                {
-                    childrenCount++;
-                }
-
-                return childrenCount;
-            }
-        }
+        public int ChildrenCount => Children().Count();
 
         public TreeNode<T>? LeftChild { get; set; }
 
         public TreeNode<T>? RightChild { get; set; }
 
-        public T? Data { get; set; }
+        public T Data { get; set; }
 
-        public TreeNode(T? data)
+        public TreeNode(T data)
         {
             Data = data;
         }
 
-        public TreeNode(T? data, TreeNode<T>? leftChild, TreeNode<T>? rightChild)
-        {
-            LeftChild = leftChild;
-            RightChild = rightChild;
-            Data = data;
-        }
-
-        public IEnumerable<TreeNode<T>?> Children()
+        public IEnumerable<TreeNode<T>> Children()
         {
             if (LeftChild is not null)
             {
@@ -55,7 +31,7 @@ namespace Academits.Karetskas.TreeTask
             }
         }
 
-        public IEnumerable<TreeNode<T>?> ChildrenInReverseOrder()
+        public IEnumerable<TreeNode<T>> ChildrenInReverseOrder()
         {
             if (RightChild is not null)
             {

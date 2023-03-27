@@ -1,11 +1,10 @@
 ﻿using System;
-using Academits.Karetskas.TreeTask;
 
-namespace TreeTask
+namespace Academits.Karetskas.TreeTask
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             BinaryTree<int> searchTree = GetBinaryTree();
 
@@ -33,7 +32,7 @@ namespace TreeTask
 
             string textForTreeBreadthFirstTraversal = "List of nodes: ";
 
-            binaryTreeBreadthFirstTraversal.BreadthFirstTraversal(data => textForTreeBreadthFirstTraversal += Convert.ToString(data) + ", ");
+            binaryTreeBreadthFirstTraversal.GetDataOnBreadthFirstTraversal(data => textForTreeBreadthFirstTraversal += Convert.ToString(data) + ", ");
 
             textForTreeBreadthFirstTraversal = textForTreeBreadthFirstTraversal.Remove(textForTreeBreadthFirstTraversal.Length - 2);
 
@@ -45,7 +44,7 @@ namespace TreeTask
 
             string textForTreeDepthFirstTraversal = "List of nodes: ";
 
-            binaryTreeDepthFirstTraversal.DepthFirstTraversal(data => textForTreeDepthFirstTraversal += Convert.ToString(data) + ", ");
+            binaryTreeDepthFirstTraversal.GetDataOnDepthFirstTraversal(data => textForTreeDepthFirstTraversal += Convert.ToString(data) + ", ");
 
             textForTreeDepthFirstTraversal = textForTreeDepthFirstTraversal.Remove(textForTreeDepthFirstTraversal.Length - 2);
 
@@ -57,7 +56,7 @@ namespace TreeTask
 
             string textForRecursiveDepthFirstTraversal = "List of nodes * 2: ";
 
-            binaryTreeRecursiveDepthFirstTraversal.RecursiveDepthFirstTraversal(data => textForRecursiveDepthFirstTraversal += Convert.ToString(data * 2) + ", ");
+            binaryTreeRecursiveDepthFirstTraversal.GetDataOnRecursiveDepthFirstTraversal(data => textForRecursiveDepthFirstTraversal += Convert.ToString(data * 2) + ", ");
 
             textForRecursiveDepthFirstTraversal = textForRecursiveDepthFirstTraversal.Remove(textForRecursiveDepthFirstTraversal.Length - 2);
 

@@ -13,66 +13,31 @@ namespace Academits.Karetskas.TreeTask
         }
 
         private TreeNode<T>? _root;
-        private IComparer<T>? _comparer;
+        private readonly IComparer<T> _comparer;
 
         public int Count { get; private set; }
 
-        public BinaryTree() { }
+        public BinaryTree()
+        {
+            _comparer = Comparer<T>.Default;
+        }
 
-        public BinaryTree(T? data) : this(data, null) { }
+        public BinaryTree(T data) : this(data, null) { }
 
-        public BinaryTree(T? data, IComparer<T>? comparer)
+        public BinaryTree(T data, IComparer<T>? comparer)
         {
             _root = new TreeNode<T>(data);
-            _comparer = comparer;
+            _comparer = comparer ?? Comparer<T>.Default;
 
             Count++;
         }
 
         private int Compare(T? data1, T? data2)
         {
-            if (_comparer is not null)
-            {
-                return _comparer.Compare(data1, data2);
-            }
-
-            if (data1 is null && data2 is null)
-            {
-                return 0;
-            }
-
-            IComparable<T>? comparable;
-            T? data;
-
-            if (data1 is null)
-            {
-                comparable = data2 as IComparable<T>;
-
-                CheckTypeIComparable(comparable, nameof(data2));
-
-                data = data1;
-            }
-            else
-            {
-                comparable = data1 as IComparable<T>;
-
-                CheckTypeIComparable(comparable, nameof(data1));
-
-                data = data2;
-            }
-
-            return comparable!.CompareTo(data);
+            return _comparer.Compare(data1, data2);
         }
 
-        private void CheckTypeIComparable(IComparable<T>? comparable, string paramName)
-        {
-            if (comparable is null)
-            {
-                throw new ArgumentException("The specified deneric type did not implement the \"IComparable\" interface.", paramName);
-            }
-        }
-
-        public void Add(T? data)
+        public void Add(T data)
         {
             if (_root is null)
             {
@@ -82,7 +47,9 @@ namespace Academits.Karetskas.TreeTask
                 return;
             }
 
-            for (TreeNode<T>? currentNode = _root; currentNode is not null;)
+            TreeNode<T> currentNode = _root;
+
+            while (currentNode is not null)
             {
                 if (Compare(data, currentNode.Data) < 0)
                 {
@@ -111,9 +78,16 @@ namespace Academits.Karetskas.TreeTask
             Count++;
         }
 
-        public bool Contains(T? data)
+        public bool Contains(T data)
         {
-            for (TreeNode<T>? currentNode = _root; currentNode is not null;)
+            if (_root is null)
+            {
+                return false;
+            }
+
+            TreeNode<T>? currentNode = _root;
+
+            while (currentNode is not null)
             {
                 int comparisonResult = Compare(data, currentNode.Data);
 
@@ -137,7 +111,7 @@ namespace Academits.Karetskas.TreeTask
             return false;
         }
 
-        public bool Remove(T? data)
+        public bool Remove(T data)
         {
             if (_root is null)
             {
@@ -148,7 +122,9 @@ namespace Academits.Karetskas.TreeTask
             ChildPosition childPosition = ChildPosition.Left;
             TreeNode<T>? nodeToRemove = null;
 
-            for (TreeNode<T>? currentNode = _root; currentNode is not null;)
+            TreeNode<T>? currentNode = _root;
+
+            while (currentNode is not null)
             {
                 int comparisonResult = Compare(data, currentNode.Data);
 
@@ -190,10 +166,10 @@ namespace Academits.Karetskas.TreeTask
             }
             else
             {
-                TreeNode<T>? minLeftNode = nodeToRemove.RightChild;
-                TreeNode<T>? minLeftNodeParent = nodeToRemove;
+                TreeNode<T> minLeftNode = nodeToRemove.RightChild!;
+                TreeNode<T> minLeftNodeParent = nodeToRemove;
 
-                while (minLeftNode!.LeftChild is not null)
+                while (minLeftNode.LeftChild is not null)
                 {
                     minLeftNodeParent = minLeftNode;
                     minLeftNode = minLeftNode.LeftChild;
@@ -221,50 +197,50 @@ namespace Academits.Karetskas.TreeTask
             return true;
         }
 
-        private void RemoveNode(TreeNode<T>? nodeParent, ChildPosition child, TreeNode<T>? node)
+        private void RemoveNode(TreeNode<T>? nodeParent, ChildPosition child, TreeNode<T>? parentsNewChild)
         {
             if (nodeParent is null)
             {
-                _root = node;
+                _root = parentsNewChild;
 
                 return;
             }
 
             if (child == ChildPosition.Left)
             {
-                nodeParent.LeftChild = node;
+                nodeParent.LeftChild = parentsNewChild;
 
                 return;
             }
 
-            nodeParent.RightChild = node;
+            nodeParent.RightChild = parentsNewChild;
         }
 
-        public void BreadthFirstTraversal(Action<T?> action)
+        public void GetDataOnBreadthFirstTraversal(Action<T> action)
         {
             if (_root is null)
             {
                 return;
             }
 
-            Queue<TreeNode<T>?> queue = new Queue<TreeNode<T>?>(Count);
+            Queue<TreeNode<T>> queue = new Queue<TreeNode<T>>(Count);
 
             queue.Enqueue(_root);
 
             while (queue.Count > 0)
             {
-                TreeNode<T>? treeNode = queue.Dequeue();
+                TreeNode<T> treeNode = queue.Dequeue();
 
-                action(treeNode!.Data);
+                action(treeNode.Data);
 
-                foreach (TreeNode<T>? node in treeNode.Children())
+                foreach (TreeNode<T> node in treeNode.Children())
                 {
                     queue.Enqueue(node);
                 }
             }
         }
 
-        public void DepthFirstTraversal(Action<T?> action)
+        public void GetDataOnDepthFirstTraversal(Action<T> action)
         {
             if (_root is null)
             {
@@ -281,30 +257,30 @@ namespace Academits.Karetskas.TreeTask
 
                 action(treeNode.Data);
 
-                foreach (TreeNode<T>? node in treeNode.ChildrenInReverseOrder())
+                foreach (TreeNode<T> node in treeNode.ChildrenInReverseOrder())
                 {
-                    stack.Push(node!);
+                    stack.Push(node);
                 }
             }
         }
 
-        public void RecursiveDepthFirstTraversal(Action<T?> action)
+        public void GetDataOnRecursiveDepthFirstTraversal(Action<T> action)
         {
             if (_root is null)
             {
                 return;
             }
 
-            RecursiveTraversal(_root!, action);
+            RecursiveTraversal(_root, action);
         }
 
-        private void RecursiveTraversal(TreeNode<T> node, Action<T?> action)
+        private void RecursiveTraversal(TreeNode<T> node, Action<T> action)
         {
             action(node.Data);
 
-            foreach (TreeNode<T>? child in node.Children())
+            foreach (TreeNode<T> child in node.Children())
             {
-                RecursiveTraversal(child!, action);
+                RecursiveTraversal(child, action);
             }
         }
 
@@ -315,10 +291,10 @@ namespace Academits.Karetskas.TreeTask
                 return "";
             }
 
-            Queue<TreeNode<T>?> nodesQueue = new Queue<TreeNode<T>?>(Count);
+            Queue<TreeNode<T>> nodesQueue = new Queue<TreeNode<T>>(Count);
             Queue<XElement> xmlNodesQueue = new Queue<XElement>(Count);
 
-            string? elementContent = _root!.Data is null ? "NULL" : _root.Data.ToString();
+            string? elementContent = _root.Data is null ? "NULL" : _root.Data.ToString();
             XElement xmlRoot = new XElement("root", new XElement("data", elementContent));
 
             nodesQueue.Enqueue(_root);
@@ -326,7 +302,7 @@ namespace Academits.Karetskas.TreeTask
 
             while (nodesQueue.Count > 0)
             {
-                TreeNode<T> treeNode = nodesQueue.Dequeue()!;
+                TreeNode<T> treeNode = nodesQueue.Dequeue();
                 XElement xmlNode = xmlNodesQueue.Dequeue();
 
                 if (treeNode.LeftChild is not null)
@@ -334,7 +310,7 @@ namespace Academits.Karetskas.TreeTask
                     elementContent = treeNode.LeftChild.Data is null ? "NULL" : treeNode.LeftChild.Data.ToString();
                     XAttribute data = new XAttribute("data", elementContent!);
 
-                    XElement leftChildNode = new XElement("node_L", data);
+                    XElement leftChildNode = new XElement("node_Left", data);
 
                     xmlNode.Add(leftChildNode);
 
@@ -347,7 +323,7 @@ namespace Academits.Karetskas.TreeTask
                     elementContent = treeNode.RightChild.Data is null ? "NULL" : treeNode.RightChild.Data.ToString();
                     XAttribute data = new XAttribute("data", elementContent!);
 
-                    XElement rightChildNode = new XElement("node_R", data);
+                    XElement rightChildNode = new XElement("node_Right", data);
 
                     xmlNode.Add(rightChildNode);
 
