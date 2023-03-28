@@ -31,12 +31,12 @@ namespace Academits.Karetskas.LambdasTask
 
             PrintToConsole(titleForAverageAge, textForAverageAge, ConsoleColor.DarkBlue);
 
-            var averageAgeGroupedByName = peopleList
+            var averageAgesByNames = peopleList
                 .GroupBy(p => p.Name)
                 .ToDictionary(g => g.Key, g => g.Average(p => p.Age));
 
             var titleForGroupByName = "D). Using grouping, get a Dictionary in which the keys are the names and the values are the average age.";
-            var textForGroupByName = string.Join(Environment.NewLine, averageAgeGroupedByName.Select(p => $"Name: {p.Key}, Average age: {p.Value}"));
+            var textForGroupByName = string.Join(Environment.NewLine, averageAgesByNames.Select(p => $"Name: {p.Key}, Average age: {p.Value}"));
 
             PrintToConsole(titleForGroupByName, textForGroupByName, ConsoleColor.DarkRed);
 
@@ -56,7 +56,7 @@ namespace Academits.Karetskas.LambdasTask
 
             var squareRootsList = GetGivenSequence(GetNumbersSquareRoots(), squareRootsCount);
 
-            PrintToConsole("List of square roots:", squareRootsList.ToString(), ConsoleColor.DarkGreen);
+            PrintToConsole("List of square roots:", squareRootsList, ConsoleColor.DarkGreen);
 
             Console.WriteLine();
             Console.Write("How many fibonacci numbers do you want to get? Enter a positive integer: ");
@@ -64,7 +64,7 @@ namespace Academits.Karetskas.LambdasTask
 
             var fibonacciNumbersList = GetGivenSequence(GetFibonacсiNumbers(), fibonacciNumbersCount);
 
-            PrintToConsole("List of fibonacci numbers:", fibonacciNumbersList.ToString(), ConsoleColor.DarkBlue);
+            PrintToConsole("List of fibonacci numbers:", fibonacciNumbersList, ConsoleColor.DarkBlue);
         }
 
         public static string GetGivenSequence<T>(IEnumerable<T> squareRoots, int iterationsCount)
@@ -72,7 +72,7 @@ namespace Academits.Karetskas.LambdasTask
             if (iterationsCount < 0)
             {
                 throw new ArgumentException($"Argument \"{nameof(iterationsCount)}\" = {iterationsCount}. "
-                    + $"Argument must be greater than or equal to zero.", nameof(iterationsCount));
+                    + "Argument must be greater than or equal to zero.", nameof(iterationsCount));
             }
 
             return string.Join(Environment.NewLine, squareRoots.Take(iterationsCount));
