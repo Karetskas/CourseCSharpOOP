@@ -11,9 +11,9 @@ namespace Academits.Karetskas.TreeTask
 
         public TreeNode<T>? RightChild { get; set; }
 
-        public T Data { get; set; }
+        public T? Data { get; set; }
 
-        public TreeNode(T data)
+        public TreeNode(T? data)
         {
             Data = data;
         }

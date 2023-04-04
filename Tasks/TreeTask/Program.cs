@@ -7,11 +7,8 @@ namespace Academits.Karetskas.TreeTask
         static void Main()
         {
             BinaryTree<int> searchTree = GetBinaryTree();
-
             string titleForSearchTree = "Search for nodes in a binary tree with values of 100 and 1000.";
-
             string textForSearchTree = $"Number 100 - {searchTree.Contains(100)};{Environment.NewLine}Number 1000 - {searchTree.Contains(1000)}";
-
             PrintToConsole(searchTree, titleForSearchTree, textForSearchTree, ConsoleColor.Green);
 
             BinaryTree<int> notEmptyTree = GetBinaryTree();
@@ -20,46 +17,29 @@ namespace Academits.Karetskas.TreeTask
             emptyTree.Remove(1);
 
             string title = "Count of nodes in the binary trees.";
-
             string text = $"Count of nodes in the {nameof(notEmptyTree)} = {notEmptyTree.Count};{Environment.NewLine}"
-                + $"Count of nodes in the {nameof(emptyTree)} = {emptyTree.Count}.";
-
+                          + $"Count of nodes in the {nameof(emptyTree)} = {emptyTree.Count}.";
             PrintToConsole(notEmptyTree, title, text, ConsoleColor.Red);
 
             BinaryTree<int> binaryTreeBreadthFirstTraversal = GetBinaryTree();
-
             string titleForTreeBreadthFirstTraversal = "Breadth-first traversal of binary tree.";
-
             string textForTreeBreadthFirstTraversal = "List of nodes: ";
-
-            binaryTreeBreadthFirstTraversal.GetDataOnBreadthFirstTraversal(data => textForTreeBreadthFirstTraversal += Convert.ToString(data) + ", ");
-
+            binaryTreeBreadthFirstTraversal.TraverseInBreadth(data => textForTreeBreadthFirstTraversal += data + ", ");
             textForTreeBreadthFirstTraversal = textForTreeBreadthFirstTraversal.Remove(textForTreeBreadthFirstTraversal.Length - 2);
-
             PrintToConsole(binaryTreeBreadthFirstTraversal, titleForTreeBreadthFirstTraversal, textForTreeBreadthFirstTraversal, ConsoleColor.Blue);
 
             BinaryTree<int> binaryTreeDepthFirstTraversal = GetBinaryTree();
-
             string titleForTreeDepthFirstTraversal = "Depth first traversal of binary tree.";
-
             string textForTreeDepthFirstTraversal = "List of nodes: ";
-
-            binaryTreeDepthFirstTraversal.GetDataOnDepthFirstTraversal(data => textForTreeDepthFirstTraversal += Convert.ToString(data) + ", ");
-
+            binaryTreeDepthFirstTraversal.TraverseInDepth(data => textForTreeDepthFirstTraversal += data + ", ");
             textForTreeDepthFirstTraversal = textForTreeDepthFirstTraversal.Remove(textForTreeDepthFirstTraversal.Length - 2);
-
             PrintToConsole(binaryTreeDepthFirstTraversal, titleForTreeDepthFirstTraversal, textForTreeDepthFirstTraversal, ConsoleColor.Yellow);
 
             BinaryTree<int> binaryTreeRecursiveDepthFirstTraversal = GetBinaryTree();
-
             string titleForRecursiveDepthFirstTraversal = "Recursive depth first traversal of binary tree.";
-
             string textForRecursiveDepthFirstTraversal = "List of nodes * 2: ";
-
-            binaryTreeRecursiveDepthFirstTraversal.GetDataOnRecursiveDepthFirstTraversal(data => textForRecursiveDepthFirstTraversal += Convert.ToString(data * 2) + ", ");
-
+            binaryTreeRecursiveDepthFirstTraversal.TraverseBinaryTreeRecursivelyInDepth(data => textForRecursiveDepthFirstTraversal += data * 2 + ", ");
             textForRecursiveDepthFirstTraversal = textForRecursiveDepthFirstTraversal.Remove(textForRecursiveDepthFirstTraversal.Length - 2);
-
             PrintToConsole(binaryTreeRecursiveDepthFirstTraversal, titleForRecursiveDepthFirstTraversal, textForRecursiveDepthFirstTraversal, ConsoleColor.DarkYellow);
 
             BinaryTree<int> binaryTreeRemovingRoot = new BinaryTree<int>(2);
@@ -68,7 +48,6 @@ namespace Academits.Karetskas.TreeTask
             binaryTreeRemovingRoot.Add(3);
 
             string titleTreeRemovingRoot = "Deleting a non-existent node.";
-
             string textTreeRemovingRoot = $"The node = 4 has been removed => {binaryTreeRemovingRoot.Remove(4)}.";
             PrintToConsole(binaryTreeRemovingRoot, titleTreeRemovingRoot, textTreeRemovingRoot, ConsoleColor.Green);
 
@@ -91,7 +70,6 @@ namespace Academits.Karetskas.TreeTask
             BinaryTree<int> binaryTreeRemovingNode = GetBinaryTree();
 
             string titleTreeRemovingNode = "Deleting a leaf of tree.";
-
             string textTreeRemovingNode = $"The node = 74 has been removed => {binaryTreeRemovingNode.Remove(74)}.";
             PrintToConsole(binaryTreeRemovingNode, titleTreeRemovingNode, textTreeRemovingNode, ConsoleColor.Cyan);
 
