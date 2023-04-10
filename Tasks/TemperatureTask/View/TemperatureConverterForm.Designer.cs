@@ -1,6 +1,6 @@
 ﻿namespace Academits.Karetskas.TemperatureTask.View
 {
-    partial class ConverterTemperatureForm
+    partial class TemperatureConverterForm
     {
         /// <summary>
         ///  Required designer variable.

@@ -1,8 +1,8 @@
 using System;
 using System.Windows.Forms;
-using Academits.Karetskas.TemperatureTask.Controller;
-using Academits.Karetskas.TemperatureTask.Model;
 using Academits.Karetskas.TemperatureTask.View;
+using Academits.Karetskas.TemperatureTask.Model;
+using Academits.Karetskas.TemperatureTask.Controller;
 
 namespace Academits.Karetskas.TemperatureTask
 {
@@ -13,19 +13,20 @@ namespace Academits.Karetskas.TemperatureTask
         {
             ApplicationConfiguration.Initialize();
 
-            IScale[] scales =
+            var scales = new IScale[]
             {
                 new CelsiusScale(),
                 new KelvinScale(),
                 new FahrenheitScale()
             };
 
-            TemperatureConverter model = new TemperatureConverter(scales);
+            var model = new TemperatureConverter(scales);
 
-            CommandsForView controller = new CommandsForView(model);
+            var controller = new TemperatureController(model);
 
-            ConverterTemperatureForm view = new ConverterTemperatureForm(controller);
-            view.GetScalesList();
+            var view = new TemperatureConverterForm(controller);
+            view.LoadScales();
+            view.CalculateTemperature();
 
             Application.Run(view);
         }
