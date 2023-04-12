@@ -264,23 +264,23 @@ namespace Academits.Karetskas.TreeTask
             }
         }
 
-        public void TraverseBinaryTreeRecursivelyInDepth(Action<T?> action)
+        public void TraverseInDepthRecursively(Action<T?> action)
         {
             if (_root is null)
             {
                 return;
             }
 
-            TraverseRecursivelyInDepth(_root, action);
+            TraverseInDepthRecursively(_root, action);
         }
 
-        private static void TraverseRecursivelyInDepth(TreeNode<T> node, Action<T?> action)
+        private static void TraverseInDepthRecursively(TreeNode<T> node, Action<T?> action)
         {
             action(node.Data);
 
             foreach (TreeNode<T> child in node.Children())
             {
-                TraverseRecursivelyInDepth(child, action);
+                TraverseInDepthRecursively(child, action);
             }
         }
 

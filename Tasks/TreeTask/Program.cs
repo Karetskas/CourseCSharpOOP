@@ -38,7 +38,7 @@ namespace Academits.Karetskas.TreeTask
             BinaryTree<int> binaryTreeRecursiveDepthFirstTraversal = GetBinaryTree();
             string titleForRecursiveDepthFirstTraversal = "Recursive depth first traversal of binary tree.";
             string textForRecursiveDepthFirstTraversal = "List of nodes * 2: ";
-            binaryTreeRecursiveDepthFirstTraversal.TraverseBinaryTreeRecursivelyInDepth(data => textForRecursiveDepthFirstTraversal += data * 2 + ", ");
+            binaryTreeRecursiveDepthFirstTraversal.TraverseInDepthRecursively(data => textForRecursiveDepthFirstTraversal += data * 2 + ", ");
             textForRecursiveDepthFirstTraversal = textForRecursiveDepthFirstTraversal.Remove(textForRecursiveDepthFirstTraversal.Length - 2);
             PrintToConsole(binaryTreeRecursiveDepthFirstTraversal, titleForRecursiveDepthFirstTraversal, textForRecursiveDepthFirstTraversal, ConsoleColor.DarkYellow);
 
