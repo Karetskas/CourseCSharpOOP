@@ -12,12 +12,9 @@ namespace Academits.Karetskas.TemperatureTask.Controller
             _model = model ?? throw new ArgumentNullException(nameof(model), $@"Argument ""{nameof(model)}"" is null.");
         }
 
-        public IScale[] GetScales()
-        {
-            return _model.Scales;
-        }
+        public IScale[] Scales => _model.Scales;
 
-        public double ConvertTemperature(IScale convertFromScale, IScale convertToScale, double temperature)
+        public double Convert(IScale convertFromScale, IScale convertToScale, double temperature)
         {
             return _model.Convert(convertFromScale, convertToScale, temperature);
         }

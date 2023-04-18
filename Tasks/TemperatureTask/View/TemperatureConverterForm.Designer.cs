@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TemperatureConverterForm));
             TemperatureBeforeConversionTextBox = new System.Windows.Forms.TextBox();
             EnterTemperatureLabel = new System.Windows.Forms.Label();
             ConvertButton = new System.Windows.Forms.Button();
@@ -40,9 +41,9 @@
             // TemperatureBeforeConversionTextBox
             // 
             TemperatureBeforeConversionTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            TemperatureBeforeConversionTextBox.Location = new System.Drawing.Point(142, 12);
+            TemperatureBeforeConversionTextBox.Location = new System.Drawing.Point(148, 12);
             TemperatureBeforeConversionTextBox.Name = "TemperatureBeforeConversionTextBox";
-            TemperatureBeforeConversionTextBox.Size = new System.Drawing.Size(121, 23);
+            TemperatureBeforeConversionTextBox.Size = new System.Drawing.Size(115, 23);
             TemperatureBeforeConversionTextBox.TabIndex = 0;
             TemperatureBeforeConversionTextBox.Text = "0";
             TemperatureBeforeConversionTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -99,15 +100,15 @@
             // TemperatureAfterConversionTextBox
             // 
             TemperatureAfterConversionTextBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            TemperatureAfterConversionTextBox.Location = new System.Drawing.Point(142, 81);
+            TemperatureAfterConversionTextBox.Location = new System.Drawing.Point(148, 81);
             TemperatureAfterConversionTextBox.Name = "TemperatureAfterConversionTextBox";
             TemperatureAfterConversionTextBox.ReadOnly = true;
-            TemperatureAfterConversionTextBox.Size = new System.Drawing.Size(121, 23);
+            TemperatureAfterConversionTextBox.Size = new System.Drawing.Size(115, 23);
             TemperatureAfterConversionTextBox.TabIndex = 4;
             TemperatureAfterConversionTextBox.Text = "0";
             TemperatureAfterConversionTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // ConvertureTemperatureForm
+            // TemperatureConverterForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -119,9 +120,10 @@
             Controls.Add(ConvertButton);
             Controls.Add(TemperatureBeforeConversionTextBox);
             Controls.Add(EnterTemperatureLabel);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimumSize = new System.Drawing.Size(470, 155);
-            Name = "ConverterTemperatureForm";
+            Name = "TemperatureConverterForm";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Temperature converter";
             ResumeLayout(false);

@@ -4,8 +4,8 @@ namespace Academits.Karetskas.TemperatureTask.Controller
 {
     public interface IController
     {
-        IScale[] GetScales();
+        IScale[] Scales { get; }
 
-        double ConvertTemperature(IScale convertFromScale, IScale convertToScale, double temperature);
+        double Convert(IScale convertFromScale, IScale convertToScale, double temperature);
     }
 }

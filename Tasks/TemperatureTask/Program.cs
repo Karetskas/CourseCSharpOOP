@@ -25,8 +25,6 @@ namespace Academits.Karetskas.TemperatureTask
             var controller = new TemperatureController(model);
 
             var view = new TemperatureConverterForm(controller);
-            view.LoadScales();
-            view.CalculateTemperature();
 
             Application.Run(view);
         }

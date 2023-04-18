@@ -29,7 +29,7 @@ namespace Academits.Karetskas.TemperatureTask.Model
             return convertToScale.ConvertFromCelsius(convertFromScale.ConvertToCelsius(temperature));
         }
 
-        private void CheckScaleArgument(IScale scale)
+        private static void CheckScaleArgument(IScale? scale)
         {
             if (scale is null)
             {
