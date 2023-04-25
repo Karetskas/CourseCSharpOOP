@@ -6,7 +6,7 @@ using Academits.Karetskas.TemperatureTask.Model;
 
 namespace Academits.Karetskas.TemperatureTask.View
 {
-    public partial class TemperatureConverterForm : Form, IView
+    public partial class TemperatureConverterForm : Form
     {
         private readonly IController _controller;
 
@@ -38,7 +38,7 @@ namespace Academits.Karetskas.TemperatureTask.View
             if (!double.TryParse(TemperatureBeforeConversionTextBox.Text, NumberStyles.Float, new CultureInfo("en-US"),
                     out var temperature))
             {
-                ShowMessage("The argument is not of type \"double\"");
+                ShowMessage("Please enter a valid real number.");
             }
 
             var conversionResult = _controller.Convert(convertFromScale, convertToScale, temperature);
@@ -49,7 +49,7 @@ namespace Academits.Karetskas.TemperatureTask.View
 
         private static void ShowMessage(string message)
         {
-            MessageBox.Show(message, @"Error message!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(message, "Error message!", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

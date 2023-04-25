@@ -23,18 +23,7 @@ namespace Academits.Karetskas.TemperatureTask.Model
 
         public double Convert(IScale convertFromScale, IScale convertToScale, double temperature)
         {
-            CheckScaleArgument(convertFromScale);
-            CheckScaleArgument(convertToScale);
-
             return convertToScale.ConvertFromCelsius(convertFromScale.ConvertToCelsius(temperature));
-        }
-
-        private static void CheckScaleArgument(IScale? scale)
-        {
-            if (scale is null)
-            {
-                throw new ArgumentNullException(nameof(scale), $@"Argument ""{nameof(scale)}"" is null.");
-            }
         }
     }
 }
