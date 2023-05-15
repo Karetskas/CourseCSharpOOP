@@ -1,4 +1,4 @@
-﻿namespace Minesweeper.Gui
+﻿namespace Academits.Karetskas.Minesweeper.Gui.Forms
 {
     partial class MainForm
     {
@@ -287,7 +287,6 @@
             // mapPanel
             // 
             mapPanel.AutoSize = true;
-            mapPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             mapPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             mapPanel.ColumnCount = 1;
             mapPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -296,7 +295,7 @@
             mapPanel.Name = "mapPanel";
             mapPanel.RowCount = 1;
             mapPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            mapPanel.Size = new System.Drawing.Size(0, 0);
+            mapPanel.Size = new System.Drawing.Size(100, 100);
             mapPanel.TabIndex = 0;
             // 
             // MainForm
@@ -317,7 +316,7 @@
             Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             MaximizeBox = false;
             MinimizeBox = false;
-            Name = "MForm";
+            Name = "MainForm";
             Padding = new System.Windows.Forms.Padding(10);
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Minesweeper";

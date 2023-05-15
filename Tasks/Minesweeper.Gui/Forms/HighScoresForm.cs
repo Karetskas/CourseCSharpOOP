@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
-using Minesweeper.Gui.Controller;
-using Minesweeper.Gui.PictureManagement;
+using Academits.Karetskas.Minesweeper.Gui.Controller;
+using Academits.Karetskas.Minesweeper.Gui.PictureManagement;
 
-namespace Minesweeper.Gui
+namespace Academits.Karetskas.Minesweeper.Gui
 {
     public partial class HighScoresForm : Form
     {
         private readonly PictureBoxManager _pictureBoxManager;
         private readonly IMinesweeperController _controller;
+        private readonly SoundManager _soundManager;
 
         public HighScoresForm(PictureBoxManager pictureBoxManager, IMinesweeperController controller)
         {
@@ -20,6 +22,7 @@ namespace Minesweeper.Gui
 
             _pictureBoxManager = pictureBoxManager;
             _controller = controller;
+            _soundManager = new SoundManager();
 
             LoadHighScores();
         }
@@ -36,28 +39,85 @@ namespace Minesweeper.Gui
         {
             var records = _controller.GetGameResults();
 
+            tableResultsPanel.SuspendLayout();
+
             if (records.Count == 0)
             {
-                highScoresLabel.Font = new Font("Ink Free", 20, FontStyle.Bold);
-                highScoresLabel.TextAlign = ContentAlignment.MiddleCenter;
-                highScoresLabel.Text = "No records!";
+                var label = CreateLabel("No records!", 20, FontStyle.Bold);
+                label.Size = tableResultsPanel.Size;
+                tableResultsPanel.CellBorderStyle = TableLayoutPanelCellBorderStyle.None;
+                tableResultsPanel.Controls.Add(label, 0, 0);
 
                 return;
             }
 
-            var i = 1;
+            const int columnsCount = 4;
+            tableResultsPanel.ColumnCount = columnsCount;
+            tableResultsPanel.RowCount = records.Count;
 
-            highScoresLabel.Font = new Font("Ink Free", 12, FontStyle.Bold);
-            highScoresLabel.TextAlign = ContentAlignment.MiddleLeft;
+            var tableHeaderColumnsNames = new string[]
+            {
+                "#",
+                "Size",
+                "Mines",
+                "Time"
+            };
+
+            CreateTableRow(tableHeaderColumnsNames, columnsCount,
+                (rowCell, column) =>
+                    tableResultsPanel.Controls.Add(CreateLabel(rowCell, 14, FontStyle.Bold), column, 0));
+
+            var rowNumber = 1;
 
             foreach (var gameResult in records)
             {
-                highScoresLabel.Text += $@"{i}. Size: {gameResult.Field.width}x{gameResult.Field.height}; "
-                                        + $@"Mines: {gameResult.MinesCount}; Time: {gameResult.GameTime:hh\:mm\:ss\:f}"
-                                        + Environment.NewLine;
+                tableResultsPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
 
-                i++;
+                var resultRowElements = new string[]
+                {
+                    rowNumber.ToString(),
+                    $"{gameResult.Field.width}x{gameResult.Field.height}",
+                    gameResult.MinesCount.ToString(),
+                    gameResult.GameTime.ToString(@"hh\:mm\:ss\.f")
+                };
+
+                CreateTableRow(resultRowElements, columnsCount,
+                    (rowCell, column) =>
+                        tableResultsPanel.Controls.Add(CreateLabel(rowCell, 11, FontStyle.Regular), column, rowNumber));
+
+                rowNumber++;
             }
+
+            tableResultsPanel.ResumeLayout();
+        }
+
+        private void CreateTableRow(string[] rowCells, int columnsCount, Action<string, int> addColumn)
+        {
+            for (var column = 0; column < columnsCount; column++)
+            {
+                tableResultsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+
+                addColumn(rowCells[column], column);
+
+                tableResultsPanel.GetControlFromPosition(column, 0).Margin = new Padding(0);
+            }
+        }
+
+        private static Label CreateLabel(string? text, float fontSize, FontStyle fontStyle)
+        {
+            var label = new Label
+            {
+                AutoSize = true,
+                BackColor = Color.Transparent,
+                Font = new Font("Ink Free", fontSize, fontStyle),
+                ForeColor = Color.White,
+                Margin = new Padding(0),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Dock = DockStyle.Fill,
+                Text = text ?? ""
+            };
+
+            return label;
         }
 
         private void ButtonOkPictureBox_MouseEnter(object sender, EventArgs e)
@@ -73,6 +133,9 @@ namespace Minesweeper.Gui
         private void ButtonOkPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.OkButtonDown);
+
+            _soundManager.PlayButtonPress();
+            Thread.Sleep(350);
         }
 
         private void ButtonOkPictureBox_MouseUp(object sender, MouseEventArgs e)

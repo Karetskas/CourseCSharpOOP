@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
-using Academits.Karetskas.Minesweeper.Logic.GameManager;
+using Academits.Karetskas.Minesweeper.Gui.Controller;
 using Academits.Karetskas.Minesweeper.Logic.Minefield;
-using Minesweeper.Gui.Controller;
-using Minesweeper.Gui.PictureManagement;
+using Academits.Karetskas.Minesweeper.Logic.GameManager;
+using Academits.Karetskas.Minesweeper.Gui.PictureManagement;
 
-namespace Minesweeper.Gui
+namespace Academits.Karetskas.Minesweeper.Gui.Forms
 {
     public partial class MainForm : Form
     {
         private GameOutcome _outcome;
 
         private readonly PictureBoxManager _pictureBoxManager;
-        private readonly IMinesweeperController _controller;
         private readonly ColorInterpolator _colorInterpolator;
+        private readonly IMinesweeperController _controller;
+        private readonly SoundManager _soundManager;
         private readonly Map _map;
 
         public MainForm(IMinesweeperController controller, IGameManager model)
@@ -32,14 +34,39 @@ namespace Minesweeper.Gui
             model.EndGame += EndGame;
 
             _pictureBoxManager = new PictureBoxManager();
+            _soundManager = new SoundManager();
 
-            var options = _controller.GetGameOptions();
-            _map = new Map(options.width, options.height, mapPanel, _pictureBoxManager);
+            var (width, height, _) = _controller.GetGameOptions();
+            _map = new Map(width, height, _controller.GetMaxFieldSize(), mapPanel, _pictureBoxManager);
             _controller.CreateNewGame();
 
+            _map.CellLeftMouseClick += (_, _) =>
+            {
+                if (_outcome == GameOutcome.None)
+                {
+                    _soundManager.PlayCheckCell();
+                }
+            };
             _map.CellLeftMouseClick += _controller.CheckCell;
+
+            _map.CellRightMouseClick += (_, _) =>
+            {
+                if (_outcome == GameOutcome.None)
+                {
+                    _soundManager.PlayMarkCell();
+                }
+            };
             _map.CellRightMouseClick += _controller.LeaveNote;
+
+            _map.CellMiddleMouseClick += (_, _) =>
+            {
+                if (_outcome == GameOutcome.None)
+                {
+                    _soundManager.PlayCheckCell();
+                }
+            };
             _map.CellMiddleMouseClick += _controller.CheckNearbyCells;
+
             _map.MouseCursorEnterCell += SetSoldierEmotion;
             _map.MouseChangeCell += SetSoldierEmotion;
 
@@ -103,13 +130,13 @@ namespace Minesweeper.Gui
             {
                 timeLabel.BeginInvoke(() =>
                 {
-                    timeLabel.Text = $"  Time: {currentGameTime.ToString(@"hh\:mm\:ss\.f")}";
+                    timeLabel.Text = $@"  Time: {currentGameTime:hh\:mm\:ss\.f}";
                 });
 
                 return;
             }
 
-            timeLabel.Text = $"  Time: {currentGameTime.ToString(@"hh\:mm\:ss\.f")}";
+            timeLabel.Text = $@"  Time: {currentGameTime:hh\:mm\:ss\.f}";
         }
 
         private void EndGame(GameOutcome outcome)
@@ -119,12 +146,16 @@ namespace Minesweeper.Gui
                 _outcome = GameOutcome.Defeat;
                 resultGameLabel.Text = "DEFEAT";
                 SetSoldierEmotion(0);
+
+                _soundManager.PlayDefeat();
             }
             else
             {
                 _outcome = GameOutcome.Victory;
                 resultGameLabel.Text = "VICTORY";
                 SetSoldierEmotion(0);
+
+                _soundManager.PlayVictoryGame();
             }
 
             colorTransfusionTimer.Start();
@@ -245,6 +276,7 @@ namespace Minesweeper.Gui
         private void NewGamePictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.NewGameButtonDown);
+            _soundManager.PlayButtonPress();
         }
 
         private void NewGamePictureBox_MouseUp(object sender, MouseEventArgs e)
@@ -256,8 +288,8 @@ namespace Minesweeper.Gui
 
         private void CreateNewGame()
         {
-            var options = _controller.GetGameOptions();
-            _map.CreateNewMap(options.width, options.height);
+            var (width, height, _) = _controller.GetGameOptions();
+            _map.CreateNewMap(width, height);
 
             ResetGameChanges();
 
@@ -267,6 +299,8 @@ namespace Minesweeper.Gui
         private void ExitPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.ExitButtonDown);
+            _soundManager.PlayButtonPress();
+            Thread.Sleep(350);
         }
 
         private void ExitPictureBox_MouseUp(object sender, MouseEventArgs e)
@@ -279,6 +313,7 @@ namespace Minesweeper.Gui
         private void HighScoresPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.HighScoresButtonDown);
+            _soundManager.PlayButtonPress();
         }
 
         private void HighScoresPictureBox_MouseUp(object sender, MouseEventArgs e)
@@ -292,6 +327,7 @@ namespace Minesweeper.Gui
         private void OptionsPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.OptionButtonDown);
+            _soundManager.PlayButtonPress();
         }
 
         private void OptionsPictureBox_MouseUp(object sender, MouseEventArgs e)
@@ -307,6 +343,7 @@ namespace Minesweeper.Gui
         private void AboutPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.AboutButtonDown);
+            _soundManager.PlayButtonPress();
         }
 
         private void AboutPictureBox_MouseUp(object sender, MouseEventArgs e)

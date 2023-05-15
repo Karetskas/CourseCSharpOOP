@@ -6,7 +6,12 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>Academits.Karetskas.$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Forms\nk4n25jx.ole~" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Minesweeper.Logic\Minesweeper.Logic.csproj" />

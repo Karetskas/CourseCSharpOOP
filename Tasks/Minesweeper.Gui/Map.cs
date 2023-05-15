@@ -1,26 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Drawing;
-using System.Drawing.Printing;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Academits.Karetskas.Minesweeper.Gui.PictureManagement;
 using Academits.Karetskas.Minesweeper.Logic.Minefield;
-using Minesweeper.Gui.PictureManagement;
 
-namespace Minesweeper.Gui
+namespace Academits.Karetskas.Minesweeper.Gui
 {
     public sealed class Map
     {
-        private int _width;
-        private int _height;
-        private (bool isSelected, AliasForPictures aliasForPictures)[,] _aliasesMap;
-
         private readonly TableLayoutPanel _mapPanel;
         private readonly PictureBoxManager _pictureBoxManager;
+        private readonly int _maxFieldSize;
+
+        private int _width;
+        private int _height;
+
+        private (bool isSelected, AliasForPictures aliasForPictures)[,] _aliasesMap;
 
         public event Action<int, int>? CellLeftMouseClick;
         public event Action<int, int>? CellRightMouseClick;
@@ -28,11 +22,11 @@ namespace Minesweeper.Gui
         public event Action<AliasForPictures>? MouseCursorEnterCell;
         public event Action<AliasForPictures>? MouseChangeCell;
 
-        public int Width
+        private int Width
         {
             get => _width;
 
-            private set
+            set
             {
                 CheckSize(value);
 
@@ -40,11 +34,11 @@ namespace Minesweeper.Gui
             }
         }
 
-        public int Height
+        private int Height
         {
             get => _height;
 
-            private set
+            set
             {
                 CheckSize(value);
 
@@ -52,16 +46,18 @@ namespace Minesweeper.Gui
             }
         }
 
-        public Map(int width, int height, TableLayoutPanel mapPanel, PictureBoxManager pictureBoxManager)
+        public Map(int width, int height, int maxFieldSize, TableLayoutPanel mapPanel, PictureBoxManager pictureBoxManager)
         {
             CheckObject(mapPanel);
             CheckObject(pictureBoxManager);
 
             _mapPanel = mapPanel;
             _pictureBoxManager = pictureBoxManager;
+            _maxFieldSize = maxFieldSize;
 
             _aliasesMap = new (bool isSelected, AliasForPictures aliasForPictures)[0, 0];
 
+            CreateMap();
             CreateNewMap(width, height);
         }
 
@@ -71,15 +67,39 @@ namespace Minesweeper.Gui
             {
                 throw new ArgumentNullException(nameof(obj), $@"The argument {nameof(obj)} is null.");
             }
-        } 
+        }
 
         private static void CheckSize(int value)
         {
             if (value < 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(value), 
+                throw new ArgumentOutOfRangeException(nameof(value),
                     $@"The argument {nameof(value)} = {value} and it is less than 0.");
             }
+        }
+
+        private void CreateMap()
+        {
+            _aliasesMap = new (bool, AliasForPictures)[_maxFieldSize, _maxFieldSize];
+
+            _mapPanel.Visible = false;
+            _mapPanel.SuspendLayout();
+
+            _mapPanel.ColumnCount = _maxFieldSize;
+            _mapPanel.RowCount = _maxFieldSize;
+
+            for (var i = 0; i < _maxFieldSize; i++)
+            {
+                for (var j = 0; j < _maxFieldSize; j++)
+                {
+                    _mapPanel.Controls.Add(CreatePictureBox(0), i, j);
+                    _mapPanel.GetControlFromPosition(i, j).Margin = new Padding(0);
+
+                    _aliasesMap[j, i] = (false, AliasForPictures.CellFullDown);
+                }
+            }
+
+            _mapPanel.ResumeLayout();
         }
 
         public void CreateNewMap(int width, int height)
@@ -93,58 +113,58 @@ namespace Minesweeper.Gui
 
             Width = width;
             Height = height;
-            _aliasesMap = new(bool, AliasForPictures)[height, width];
 
             var panel = _mapPanel.Parent as Panel;
             CheckObject(panel);
-            panel!.Visible = false;
 
+            _mapPanel.Visible = false;
             _mapPanel.SuspendLayout();
 
-            _mapPanel.Controls.Clear();
-
-            _mapPanel.ColumnCount = width;
-            _mapPanel.RowCount = height;
-
             var minCellSize = Math.Min(panel!.Size.Width / width, panel.Size.Height / height);
-            
-            for (var i = 0; i < width; i++)
-            {
-                for (var j = 0; j < height; j++)
-                {
-                    _mapPanel.Controls.Add(CreatePictureBox(minCellSize, minCellSize), i, j);
-                    _mapPanel.GetControlFromPosition(i, j).Margin = new Padding(0);
 
-                    _aliasesMap[j, i] = (false, AliasForPictures.CellFullDown);
-                }
-            }
-            
             var maxWidthMapPanel = width * minCellSize;
             var maxHeightMapPanel = height * minCellSize;
-
-            var mapPanelSize = _mapPanel.Size;
-            mapPanelSize.Width = maxWidthMapPanel;
-            mapPanelSize.Height = maxHeightMapPanel;
-            _mapPanel.Size = mapPanelSize;
 
             var mapPanelLocation = _mapPanel.Location;
             mapPanelLocation.X = (panel.Size.Width - maxWidthMapPanel) / 2;
             mapPanelLocation.Y = (panel.Size.Height - maxHeightMapPanel) / 2;
             _mapPanel.Location = mapPanelLocation;
 
-            _mapPanel.ResumeLayout();
+            for (var i = 0; i < _maxFieldSize; i++)
+            {
+                for (var j = 0; j < _maxFieldSize; j++)
+                {
+                    var pictureBox = (PictureBox)_mapPanel.GetControlFromPosition(i, j);
 
-            panel.Visible = true;
+                    if (i >= width || j >= height)
+                    {
+                        pictureBox.Visible = false;
+                    }
+                    else
+                    {
+                        pictureBox.Image = _pictureBoxManager.GetBitmap(AliasForPictures.CellFullDown);
+                        pictureBox.Width = minCellSize;
+                        pictureBox.Height = minCellSize;
+                        pictureBox.Visible = true;
+                    }
+
+                    _aliasesMap[j, i] = (false, AliasForPictures.CellFullDown);
+                }
+            }
+
+            _mapPanel.ResumeLayout();
+            _mapPanel.Visible = true;
         }
 
-        private PictureBox CreatePictureBox(int width, int height)
+        private PictureBox CreatePictureBox(int size)
         {
-            var pictureBox = new PictureBox();
-            pictureBox.BackColor = Color.Transparent;
-            pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBox.Image = _pictureBoxManager.GetBitmap(AliasForPictures.CellFullDown);
-            pictureBox.Width = width;
-            pictureBox.Height = height;
+            var pictureBox = new PictureBox
+            {
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                Image = _pictureBoxManager.GetBitmap(AliasForPictures.CellFullDown),
+                Width = size,
+                Height = size
+            };
 
             pictureBox.MouseEnter += CellPictureBox_MouseEnter!;
             pictureBox.MouseLeave += CellPictureBox_MouseLeave!;
@@ -191,7 +211,7 @@ namespace Minesweeper.Gui
             }
         }
 
-        public void ClearMap()
+        private void ClearMap()
         {
             for (var i = 0; i < _aliasesMap.GetLength(0); i++)
             {
@@ -266,7 +286,7 @@ namespace Minesweeper.Gui
                                 break;
                         }
                     }
-                    
+
                     _pictureBoxManager.ChangePicture(_mapPanel.GetControlFromPosition(i, j), _aliasesMap[j, i].aliasForPictures);
                 }
             }

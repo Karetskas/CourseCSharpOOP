@@ -1,4 +1,4 @@
-﻿namespace Minesweeper.Gui
+﻿namespace Academits.Karetskas.Minesweeper.Gui
 {
     partial class AboutForm
     {
@@ -104,7 +104,6 @@
             informationLabel.Name = "informationLabel";
             informationLabel.Size = new System.Drawing.Size(384, 237);
             informationLabel.TabIndex = 12;
-            informationLabel.Text = "The program was developed by Evgeny K.";
             informationLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // AboutForm

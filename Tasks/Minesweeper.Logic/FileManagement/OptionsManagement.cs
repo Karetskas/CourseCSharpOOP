@@ -6,24 +6,27 @@ namespace Academits.Karetskas.Minesweeper.Logic.FileManagement
     public sealed class OptionsManagement : XmlFileManagement
     {
         private const string FileName = "Options.xml";
-        private const int MaxFieldWidth = 17;
-        private const int MinFieldWidth = 9;
-        private const int MaxFieldHeight = 17;
-        private const int MinFieldHeight = 9;
-        private const int MinMinesCount = 10;
+
+        public int MaxFieldSize => 17;
+
+        public int MinFieldSize => 9;
+
+        public int MaxMinesCount => Convert.ToInt32(0.8 * FieldWidth * FieldHeight);
+
+        public int MinMinesCount => 10;
 
         public int FieldWidth
         {
-            get => GetOptionFromXml(_document?.Root?.Element("field")?.Element("width"), MaxFieldWidth, MinFieldWidth);
+            get => GetOptionFromXml(_document?.Root?.Element("field")?.Element("width"), MaxFieldSize, MinFieldSize);
 
-            set => ChangeElementValue(_document?.Root?.Element("field")?.Element("width"), value, MaxFieldWidth, MinFieldWidth);
+            set => ChangeElementValue(_document?.Root?.Element("field")?.Element("width"), value, MaxFieldSize, MinFieldSize);
         }
 
         public int FieldHeight
         {
-            get => GetOptionFromXml(_document?.Root?.Element("field")?.Element("height"), MaxFieldHeight, MinFieldHeight);
+            get => GetOptionFromXml(_document?.Root?.Element("field")?.Element("height"), MaxFieldSize, MinFieldSize);
 
-            set => ChangeElementValue(_document?.Root?.Element("field")?.Element("height"), value, MaxFieldHeight, MinFieldHeight);
+            set => ChangeElementValue(_document?.Root?.Element("field")?.Element("height"), value, MaxFieldSize, MinFieldSize);
         }
 
         public int MinesCount
@@ -32,8 +35,6 @@ namespace Academits.Karetskas.Minesweeper.Logic.FileManagement
 
             set => ChangeElementValue(_document?.Root?.Element("minesCount"), value, MaxMinesCount, MinMinesCount);
         }
-
-        public int MaxMinesCount => Convert.ToInt32(0.8 * FieldWidth * FieldHeight);
 
         public OptionsManagement() : base(FileName) { }
 
@@ -46,38 +47,16 @@ namespace Academits.Karetskas.Minesweeper.Logic.FileManagement
                 new XElement("minesCount", MinesCount)));
         }
 
-        public bool IsValidFieldWidth(int fieldWidth)
-        {
-            return IsValidValueOption(fieldWidth, MaxFieldWidth, MinFieldWidth);
-        }
-
-        public bool IsValidFieldHeight(int fieldHeight)
-        {
-            return IsValidValueOption(fieldHeight, MaxFieldHeight, MinFieldHeight);
-        }
-
-        public bool IsValidMinesCount(int fieldMinesCount)
-        {
-            return IsValidValueOption(fieldMinesCount, MaxMinesCount, MinMinesCount);
-        }
-
         private static int GetOptionFromXml(XElement? element, int maxValue, int minValue)
         {
             _ = int.TryParse(element?.Value, out var option);
 
-            if (!IsValidValueOption(option, maxValue, minValue))
-            {
-                return minValue;
-            }
-
-            return option;
+            return !IsValidValueOption(option, maxValue, minValue) ? minValue : option;
         }
 
         private static bool IsValidValueOption(int option, int maxValue, int minValue)
         {
-            var b = option >= minValue && option <= maxValue;
-
-            return b;
+            return option >= minValue && option <= maxValue;
         }
 
         private static void ChangeElementValue(XElement? element, int option, int maxValue, int minValue)

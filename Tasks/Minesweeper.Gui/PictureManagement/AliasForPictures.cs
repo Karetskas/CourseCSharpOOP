@@ -1,4 +1,4 @@
-﻿namespace Minesweeper.Gui.PictureManagement
+﻿namespace Academits.Karetskas.Minesweeper.Gui.PictureManagement
 {
     public enum AliasForPictures
     {

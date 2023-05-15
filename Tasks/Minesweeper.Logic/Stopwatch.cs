@@ -24,7 +24,7 @@ namespace Academits.Karetskas.Minesweeper.Logic
             _timer = new Timer((obj) =>
             {
                 TimeUpdate?.Invoke(TimeCounter);
-                
+
                 TimeCounter += TimeSpan.FromMilliseconds(100);
             }, null, 0, hundredMilliseconds);
         }
@@ -44,7 +44,7 @@ namespace Academits.Karetskas.Minesweeper.Logic
         public void Reset()
         {
             TimeCounter = TimeSpan.Zero;
-            
+
             TimeUpdate?.Invoke(TimeCounter);
         }
     }

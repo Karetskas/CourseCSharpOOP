@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Minesweeper.Gui
+namespace Academits.Karetskas.Minesweeper.Gui
 {
     public sealed class ColorInterpolator
     {

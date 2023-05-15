@@ -25,8 +25,8 @@ namespace Academits.Karetskas.Minesweeper.Logic.GameManager
 
         public GameManager(OptionsManagement optionsManagement)
         {
-            _optionsManagement = optionsManagement ?? throw new ArgumentNullException(nameof(optionsManagement), $@"The argument {nameof(optionsManagement)} is null.");
-            //_optionsManagement = new OptionsManagement();
+            _optionsManagement = optionsManagement ?? throw new ArgumentNullException(nameof(optionsManagement),
+                $@"The argument {nameof(optionsManagement)} is null.");
             _highScoresManagement = new HighScoresManagement();
             _map = new Map(_optionsManagement.FieldWidth, _optionsManagement.FieldHeight, _optionsManagement.MinesCount);
             _stopwatch = new Stopwatch();
@@ -123,7 +123,7 @@ namespace Academits.Karetskas.Minesweeper.Logic.GameManager
 
             _stopwatch.Stop();
 
-            if(_outcome == GameOutcome.Victory)
+            if (_outcome == GameOutcome.Victory)
             {
                 RecordGameResult();
             }

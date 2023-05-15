@@ -1,18 +1,20 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Forms;
-using Minesweeper.Gui.Controller;
-using Minesweeper.Gui.PictureManagement;
+using Academits.Karetskas.Minesweeper.Gui.Controller;
+using Academits.Karetskas.Minesweeper.Gui.PictureManagement;
 
-namespace Minesweeper.Gui
+namespace Academits.Karetskas.Minesweeper.Gui
 {
     public partial class OptionsForm : Form
     {
         private readonly PictureBoxManager _pictureBoxManager;
         private readonly IMinesweeperController _controller;
+        private readonly SoundManager _soundManager;
+        private readonly int _previousWidth;
+        private readonly int _previousHeight;
+        private readonly int _previousMinesCount;
 
-        private int previousWidth;
-        private int previousHeight;
-        private int previousMinesCount;
         private PictureBox? _pictureBox;
         private int _counterForTimer;
 
@@ -25,41 +27,30 @@ namespace Minesweeper.Gui
 
             _pictureBoxManager = pictureBoxManager;
             _controller = controller;
+            _soundManager = new SoundManager();
 
-            var options = _controller.GetGameOptions();
+            var (width, height, minesCount) = _controller.GetGameOptions();
 
-            previousWidth = options.width;
-            widthValueLabel.Text = previousWidth.ToString();
-            if (!_controller.IsValidFieldWidth(previousWidth - 1))
-            {
-                _pictureBoxManager.ChangePicture(leftButtonWidthPictureBox, AliasForPictures.LeftButtonDown);
-            }
-            else if (!_controller.IsValidFieldWidth(previousWidth + 1))
-            {
-                _pictureBoxManager.ChangePicture(rightButtonWidthPictureBox, AliasForPictures.RightButtonDown);
-            }
+            _previousWidth = width;
+            widthValueLabel.Text = _previousWidth.ToString();
+            CheckOptionLimit(_controller.GetMinFieldSize(), width, leftButtonWidthPictureBox,
+                AliasForPictures.LeftButtonDown);
+            CheckOptionLimit(_controller.GetMaxFieldSize(), width, rightButtonWidthPictureBox,
+                AliasForPictures.RightButtonDown);
 
-            previousHeight = options.height;
-            heightValueLabel.Text = previousHeight.ToString();
-            if (!_controller.IsValidFieldHeight(previousHeight - 1))
-            {
-                _pictureBoxManager.ChangePicture(leftButtonHeightPictureBox, AliasForPictures.LeftButtonDown);
-            }
-            else if (!_controller.IsValidFieldHeight(previousHeight + 1))
-            {
-                _pictureBoxManager.ChangePicture(rightButtonHeightPictureBox, AliasForPictures.RightButtonDown);
-            }
+            _previousHeight = height;
+            heightValueLabel.Text = _previousHeight.ToString();
+            CheckOptionLimit(_controller.GetMinFieldSize(), height, leftButtonHeightPictureBox,
+                AliasForPictures.LeftButtonDown);
+            CheckOptionLimit(_controller.GetMaxFieldSize(), height, rightButtonHeightPictureBox,
+                AliasForPictures.RightButtonDown);
 
-            previousMinesCount = options.minesCount;
-            minesValueLabel.Text = previousMinesCount.ToString();
-            if (!_controller.IsValidMinesCount(previousMinesCount - 1))
-            {
-                _pictureBoxManager.ChangePicture(leftButtonMinesPictureBox, AliasForPictures.LeftButtonDown);
-            }
-            else if (!_controller.IsValidMinesCount(previousMinesCount + 1))
-            {
-                _pictureBoxManager.ChangePicture(rightButtonMinesPictureBox, AliasForPictures.RightButtonDown);
-            }
+            _previousMinesCount = minesCount;
+            minesValueLabel.Text = _previousMinesCount.ToString();
+            CheckOptionLimit(_controller.GetMinMinesCount(), minesCount, leftButtonMinesPictureBox,
+                AliasForPictures.LeftButtonDown);
+            CheckOptionLimit(_controller.GetMaxMinesCount(), minesCount, rightButtonMinesPictureBox,
+                AliasForPictures.RightButtonDown);
         }
 
         private static void CheckObject(object obj)
@@ -70,9 +61,17 @@ namespace Minesweeper.Gui
             }
         }
 
+        private void CheckOptionLimit(int limitValue, int option, PictureBox pictureBox, AliasForPictures aliasForPictures)
+        {
+            if (option == limitValue)
+            {
+                _pictureBoxManager.ChangePicture(pictureBox, aliasForPictures);
+            }
+        }
+
         private void LeftButtonWidthPictureBox_MouseEnter(object sender, EventArgs e)
         {
-            if (_controller.IsValidFieldWidth(Convert.ToInt32(widthValueLabel.Text) - 1))
+            if (_controller.GetMinFieldSize() != Convert.ToInt32(widthValueLabel.Text))
             {
                 _pictureBoxManager.ChangePicture(sender, AliasForPictures.LeftButtonSelect);
             }
@@ -80,7 +79,7 @@ namespace Minesweeper.Gui
 
         private void LeftButtonWidthPictureBox_MouseLeave(object sender, EventArgs e)
         {
-            if (_controller.IsValidFieldWidth(Convert.ToInt32(widthValueLabel.Text) - 1))
+            if (_controller.GetMinFieldSize() != Convert.ToInt32(widthValueLabel.Text))
             {
                 _pictureBoxManager.ChangePicture(sender, AliasForPictures.LeftButtonUp);
             }
@@ -88,7 +87,7 @@ namespace Minesweeper.Gui
 
         private void RightButtonWidthPictureBox_MouseEnter(object sender, EventArgs e)
         {
-            if (_controller.IsValidFieldWidth(Convert.ToInt32(widthValueLabel.Text) + 1))
+            if (_controller.GetMaxFieldSize() != Convert.ToInt32(widthValueLabel.Text))
             {
                 _pictureBoxManager.ChangePicture(sender, AliasForPictures.RightButtonSelect);
             }
@@ -96,7 +95,7 @@ namespace Minesweeper.Gui
 
         private void RightButtonWidthPictureBox_MouseLeave(object sender, EventArgs e)
         {
-            if (_controller.IsValidFieldWidth(Convert.ToInt32(widthValueLabel.Text) + 1))
+            if (_controller.GetMaxFieldSize() != Convert.ToInt32(widthValueLabel.Text))
             {
                 _pictureBoxManager.ChangePicture(sender, AliasForPictures.RightButtonUp);
             }
@@ -104,7 +103,7 @@ namespace Minesweeper.Gui
 
         private void LeftButtonHeightPictureBox_MouseEnter(object sender, EventArgs e)
         {
-            if (_controller.IsValidFieldHeight(Convert.ToInt32(heightValueLabel.Text) - 1))
+            if (_controller.GetMinFieldSize() != Convert.ToInt32(heightValueLabel.Text))
             {
                 _pictureBoxManager.ChangePicture(sender, AliasForPictures.LeftButtonSelect);
             }
@@ -112,7 +111,7 @@ namespace Minesweeper.Gui
 
         private void LeftButtonHeightPictureBox_MouseLeave(object sender, EventArgs e)
         {
-            if (_controller.IsValidFieldHeight(Convert.ToInt32(heightValueLabel.Text) - 1))
+            if (_controller.GetMinFieldSize() != Convert.ToInt32(heightValueLabel.Text))
             {
                 _pictureBoxManager.ChangePicture(sender, AliasForPictures.LeftButtonUp);
             }
@@ -120,7 +119,7 @@ namespace Minesweeper.Gui
 
         private void RightButtonHeightPictureBox_MouseEnter(object sender, EventArgs e)
         {
-            if (_controller.IsValidFieldHeight(Convert.ToInt32(heightValueLabel.Text) + 1))
+            if (_controller.GetMaxFieldSize() != Convert.ToInt32(heightValueLabel.Text))
             {
                 _pictureBoxManager.ChangePicture(sender, AliasForPictures.RightButtonSelect);
             }
@@ -128,7 +127,7 @@ namespace Minesweeper.Gui
 
         private void RightButtonHeightPictureBox_MouseLeave(object sender, EventArgs e)
         {
-            if (_controller.IsValidFieldHeight(Convert.ToInt32(heightValueLabel.Text) + 1))
+            if (_controller.GetMaxFieldSize() != Convert.ToInt32(heightValueLabel.Text))
             {
                 _pictureBoxManager.ChangePicture(sender, AliasForPictures.RightButtonUp);
             }
@@ -136,7 +135,7 @@ namespace Minesweeper.Gui
 
         private void LeftButtonMinesPictureBox_MouseEnter(object sender, EventArgs e)
         {
-            if (_controller.IsValidMinesCount(Convert.ToInt32(minesValueLabel.Text) - 1))
+            if (_controller.GetMinMinesCount() != Convert.ToInt32(minesValueLabel.Text))
             {
                 _pictureBoxManager.ChangePicture(sender, AliasForPictures.LeftButtonSelect);
             }
@@ -144,7 +143,7 @@ namespace Minesweeper.Gui
 
         private void LeftButtonMinesPictureBox_MouseLeave(object sender, EventArgs e)
         {
-            if (_controller.IsValidMinesCount(Convert.ToInt32(minesValueLabel.Text) - 1))
+            if (_controller.GetMinMinesCount() != Convert.ToInt32(minesValueLabel.Text))
             {
                 _pictureBoxManager.ChangePicture(sender, AliasForPictures.LeftButtonUp);
             }
@@ -152,7 +151,7 @@ namespace Minesweeper.Gui
 
         private void RightButtonMinesPictureBox_MouseEnter(object sender, EventArgs e)
         {
-            if (_controller.IsValidMinesCount(Convert.ToInt32(minesValueLabel.Text) + 1))
+            if (_controller.GetMaxMinesCount() != Convert.ToInt32(minesValueLabel.Text))
             {
                 _pictureBoxManager.ChangePicture(sender, AliasForPictures.RightButtonSelect);
             }
@@ -160,7 +159,7 @@ namespace Minesweeper.Gui
 
         private void RightButtonMinesPictureBox_MouseLeave(object sender, EventArgs e)
         {
-            if (_controller.IsValidMinesCount(Convert.ToInt32(minesValueLabel.Text) + 1))
+            if (_controller.GetMaxMinesCount() != Convert.ToInt32(minesValueLabel.Text))
             {
                 _pictureBoxManager.ChangePicture(sender, AliasForPictures.RightButtonUp);
             }
@@ -190,135 +189,132 @@ namespace Minesweeper.Gui
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.LeftButtonDown);
 
+            _soundManager.PlayButtonPress();
+
             PressButton(widthValueLabel, rightButtonWidthPictureBox, AliasForPictures.RightButtonUp, _controller.SetFieldWidth,
-                _controller.IsValidFieldWidth, ParameterAdjustmentDirection.Decrease);
+                _controller.GetMinFieldSize(), ParameterAdjustmentDirection.Decrease);
             AdjustMinesCount();
 
-            _pictureBox = (PictureBox)sender;
-            _counterForTimer = 0;
-            automaticValueChangeTimer.Interval = 250;
-            automaticValueChangeTimer.Start();
+            StartTimerToAutomaticallyChangeValues(sender);
         }
 
         private void LeftButtonWidthPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             automaticValueChangeTimer.Stop();
 
-            SelectPictureInPictureBox(Convert.ToInt32(widthValueLabel.Text), _controller.IsValidFieldWidth, (PictureBox)sender,
-                AliasForPictures.LeftButtonDown, ParameterAdjustmentDirection.Decrease);
+            SelectPictureInPictureBox(Convert.ToInt32(widthValueLabel.Text), _controller.GetMinFieldSize(), (PictureBox)sender,
+                AliasForPictures.LeftButtonDown);
         }
 
         private void RightButtonWidthPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.RightButtonDown);
 
+            _soundManager.PlayButtonPress();
+
             PressButton(widthValueLabel, leftButtonWidthPictureBox, AliasForPictures.LeftButtonUp, _controller.SetFieldWidth,
-                _controller.IsValidFieldWidth, ParameterAdjustmentDirection.Increase);
+                _controller.GetMaxFieldSize(), ParameterAdjustmentDirection.Increase);
             AdjustMinesCount();
 
-            _pictureBox = (PictureBox)sender;
-            _counterForTimer = 0;
-            automaticValueChangeTimer.Interval = 250;
-            automaticValueChangeTimer.Start();
+            StartTimerToAutomaticallyChangeValues(sender);
         }
 
         private void RightButtonWidthPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             automaticValueChangeTimer.Stop();
 
-            SelectPictureInPictureBox(Convert.ToInt32(widthValueLabel.Text), _controller.IsValidFieldWidth, (PictureBox)sender,
-                AliasForPictures.RightButtonDown, ParameterAdjustmentDirection.Increase);
+            SelectPictureInPictureBox(Convert.ToInt32(widthValueLabel.Text), _controller.GetMaxFieldSize(), (PictureBox)sender,
+                AliasForPictures.RightButtonDown);
         }
 
         private void LeftButtonHeightPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.LeftButtonDown);
 
+            _soundManager.PlayButtonPress();
+
             PressButton(heightValueLabel, rightButtonHeightPictureBox, AliasForPictures.RightButtonUp, _controller.SetFieldHeight,
-                _controller.IsValidFieldHeight, ParameterAdjustmentDirection.Decrease);
+                _controller.GetMinFieldSize(), ParameterAdjustmentDirection.Decrease);
             AdjustMinesCount();
 
-            _pictureBox = (PictureBox)sender;
-            _counterForTimer = 0;
-            automaticValueChangeTimer.Interval = 250;
-            automaticValueChangeTimer.Start();
+            StartTimerToAutomaticallyChangeValues(sender);
         }
 
         private void LeftButtonHeightPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             automaticValueChangeTimer.Stop();
 
-            SelectPictureInPictureBox(Convert.ToInt32(heightValueLabel.Text), _controller.IsValidFieldHeight, (PictureBox)sender,
-                AliasForPictures.LeftButtonDown, ParameterAdjustmentDirection.Decrease);
+            SelectPictureInPictureBox(Convert.ToInt32(heightValueLabel.Text), _controller.GetMinFieldSize(), (PictureBox)sender,
+                AliasForPictures.LeftButtonDown);
         }
 
         private void RightButtonHeightPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.RightButtonDown);
 
+            _soundManager.PlayButtonPress();
+
             PressButton(heightValueLabel, leftButtonHeightPictureBox, AliasForPictures.LeftButtonUp, _controller.SetFieldHeight,
-                _controller.IsValidFieldHeight, ParameterAdjustmentDirection.Increase);
+                _controller.GetMaxFieldSize(), ParameterAdjustmentDirection.Increase);
             AdjustMinesCount();
 
-            _pictureBox = (PictureBox)sender;
-            _counterForTimer = 0;
-            automaticValueChangeTimer.Interval = 250;
-            automaticValueChangeTimer.Start();
+            StartTimerToAutomaticallyChangeValues(sender);
         }
 
         private void RightButtonHeightPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             automaticValueChangeTimer.Stop();
 
-            SelectPictureInPictureBox(Convert.ToInt32(heightValueLabel.Text), _controller.IsValidFieldHeight, (PictureBox)sender,
-                AliasForPictures.RightButtonDown, ParameterAdjustmentDirection.Increase);
+            SelectPictureInPictureBox(Convert.ToInt32(heightValueLabel.Text), _controller.GetMaxFieldSize(), (PictureBox)sender,
+                AliasForPictures.RightButtonDown);
         }
 
         private void LeftButtonMinesPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.LeftButtonDown);
 
-            PressButton(minesValueLabel, rightButtonMinesPictureBox, AliasForPictures.RightButtonUp, _controller.SetMinesCount,
-                _controller.IsValidMinesCount, ParameterAdjustmentDirection.Decrease);
+            _soundManager.PlayButtonPress();
 
-            _pictureBox = (PictureBox)sender;
-            _counterForTimer = 0;
-            automaticValueChangeTimer.Interval = 250;
-            automaticValueChangeTimer.Start();
+            PressButton(minesValueLabel, rightButtonMinesPictureBox, AliasForPictures.RightButtonUp, _controller.SetMinesCount,
+                _controller.GetMinMinesCount(), ParameterAdjustmentDirection.Decrease);
+
+            StartTimerToAutomaticallyChangeValues(sender);
         }
 
         private void LeftButtonMinesPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             automaticValueChangeTimer.Stop();
 
-            SelectPictureInPictureBox(Convert.ToInt32(minesValueLabel.Text), _controller.IsValidMinesCount, (PictureBox)sender,
-                AliasForPictures.LeftButtonDown, ParameterAdjustmentDirection.Decrease);
+            SelectPictureInPictureBox(Convert.ToInt32(minesValueLabel.Text), _controller.GetMinMinesCount(), (PictureBox)sender,
+                AliasForPictures.LeftButtonDown);
         }
 
         private void RightButtonMinesPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.RightButtonDown);
 
-            PressButton(minesValueLabel, leftButtonMinesPictureBox, AliasForPictures.LeftButtonUp, _controller.SetMinesCount,
-                _controller.IsValidMinesCount, ParameterAdjustmentDirection.Increase);
+            _soundManager.PlayButtonPress();
 
-            _pictureBox = (PictureBox)sender;
-            _counterForTimer = 0;
-            automaticValueChangeTimer.Interval = 250;
-            automaticValueChangeTimer.Start();
+            PressButton(minesValueLabel, leftButtonMinesPictureBox, AliasForPictures.LeftButtonUp, _controller.SetMinesCount,
+                _controller.GetMaxMinesCount(), ParameterAdjustmentDirection.Increase);
+
+            StartTimerToAutomaticallyChangeValues(sender);
         }
 
         private void RightButtonMinesPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             automaticValueChangeTimer.Stop();
 
-            SelectPictureInPictureBox(Convert.ToInt32(minesValueLabel.Text), _controller.IsValidMinesCount, (PictureBox)sender,
-                AliasForPictures.RightButtonDown, ParameterAdjustmentDirection.Increase);
+            SelectPictureInPictureBox(Convert.ToInt32(minesValueLabel.Text), _controller.GetMaxMinesCount(), (PictureBox)sender,
+                AliasForPictures.RightButtonDown);
         }
 
         private void ButtonOkPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.OkButtonDown);
+
+            _soundManager.PlayButtonPress();
+            Thread.Sleep(350);
         }
 
         private void ButtonOkPictureBox_MouseUp(object sender, MouseEventArgs e)
@@ -332,17 +328,28 @@ namespace Minesweeper.Gui
         private void ButtonCancelPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.CancelButtonDown);
+
+            _soundManager.PlayButtonPress();
+            Thread.Sleep(350);
         }
 
         private void ButtonCancelPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.CancelButtonSelect);
 
-            _controller.SetFieldWidth(previousWidth);
-            _controller.SetFieldHeight(previousHeight);
-            _controller.SetMinesCount(previousMinesCount);
+            _controller.SetFieldWidth(_previousWidth);
+            _controller.SetFieldHeight(_previousHeight);
+            _controller.SetMinesCount(_previousMinesCount);
 
             Close();
+        }
+
+        private void StartTimerToAutomaticallyChangeValues(object obj)
+        {
+            _pictureBox = (PictureBox)obj;
+            _counterForTimer = 0;
+            automaticValueChangeTimer.Interval = 250;
+            automaticValueChangeTimer.Start();
         }
 
         private void AutomaticValueChangeTimer_Tick(object sender, EventArgs e)
@@ -366,45 +373,48 @@ namespace Minesweeper.Gui
                 automaticValueChangeTimer.Interval = 50;
             }
 
+            if (_counterForTimer > 100)
+            {
+                automaticValueChangeTimer.Interval = 25;
+            }
+
             if (_pictureBox.Equals(leftButtonWidthPictureBox))
             {
                 PressButton(widthValueLabel, rightButtonWidthPictureBox, AliasForPictures.RightButtonUp, _controller.SetFieldWidth,
-                    _controller.IsValidFieldWidth, ParameterAdjustmentDirection.Decrease);
+                    _controller.GetMinFieldSize(), ParameterAdjustmentDirection.Decrease);
                 AdjustMinesCount();
             }
             else if (_pictureBox.Equals(leftButtonHeightPictureBox))
             {
                 PressButton(heightValueLabel, rightButtonHeightPictureBox, AliasForPictures.RightButtonUp, _controller.SetFieldHeight,
-                    _controller.IsValidFieldHeight, ParameterAdjustmentDirection.Decrease);
+                    _controller.GetMinFieldSize(), ParameterAdjustmentDirection.Decrease);
                 AdjustMinesCount();
             }
             else if (_pictureBox.Equals(leftButtonMinesPictureBox))
             {
                 PressButton(minesValueLabel, rightButtonMinesPictureBox, AliasForPictures.RightButtonUp, _controller.SetMinesCount,
-                    _controller.IsValidMinesCount, ParameterAdjustmentDirection.Decrease);
+                    _controller.GetMinMinesCount(), ParameterAdjustmentDirection.Decrease);
             }
             else if (_pictureBox.Equals(rightButtonWidthPictureBox))
             {
                 PressButton(widthValueLabel, leftButtonWidthPictureBox, AliasForPictures.LeftButtonUp, _controller.SetFieldWidth,
-                    _controller.IsValidFieldWidth, ParameterAdjustmentDirection.Increase);
+                    _controller.GetMaxFieldSize(), ParameterAdjustmentDirection.Increase);
             }
             else if (_pictureBox.Equals(rightButtonHeightPictureBox))
             {
                 PressButton(heightValueLabel, leftButtonHeightPictureBox, AliasForPictures.LeftButtonUp, _controller.SetFieldHeight,
-                    _controller.IsValidFieldHeight, ParameterAdjustmentDirection.Increase);
+                    _controller.GetMaxFieldSize(), ParameterAdjustmentDirection.Increase);
             }
             else if (_pictureBox.Equals(rightButtonMinesPictureBox))
             {
                 PressButton(minesValueLabel, leftButtonMinesPictureBox, AliasForPictures.LeftButtonUp, _controller.SetMinesCount,
-                    _controller.IsValidMinesCount, ParameterAdjustmentDirection.Increase);
+                    _controller.GetMaxMinesCount(), ParameterAdjustmentDirection.Increase);
             }
         }
 
-        private void SelectPictureInPictureBox(int value, Predicate<int> checkLimit, PictureBox pictureBox, AliasForPictures aliasButtonDown, ParameterAdjustmentDirection direction)
+        private void SelectPictureInPictureBox(int value, int limitValue, PictureBox pictureBox, AliasForPictures aliasButtonDown)
         {
-            value = direction == ParameterAdjustmentDirection.Increase ? value + 1 : value - 1;
-
-            if (checkLimit(value))
+            if (value != limitValue)
             {
                 _pictureBoxManager.ChangePicture(pictureBox, aliasButtonDown + 2);
             }
@@ -414,13 +424,16 @@ namespace Minesweeper.Gui
             }
         }
 
-        private void PressButton(Label label, PictureBox oppositeButton, AliasForPictures oppositeButtonUpAlias, Action<int> functionSetOption, Predicate<int> checkLimit, ParameterAdjustmentDirection direction)
+        private void PressButton(Label label, PictureBox oppositeButton, AliasForPictures oppositeButtonUpAlias, Action<int> functionSetOption, int limitValue, ParameterAdjustmentDirection direction)
         {
             var currentValue = Convert.ToInt32(label.Text);
 
-            currentValue = direction == ParameterAdjustmentDirection.Increase ? currentValue + 1 : currentValue - 1;
+            currentValue = direction == ParameterAdjustmentDirection.Increase
+                ? currentValue + 1
+                : currentValue - 1;
 
-            if (!checkLimit(currentValue))
+            if ((direction == ParameterAdjustmentDirection.Increase && currentValue > limitValue)
+                || (direction == ParameterAdjustmentDirection.Decrease && currentValue < limitValue))
             {
                 return;
             }

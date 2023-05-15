@@ -9,7 +9,7 @@ namespace Academits.Karetskas.Minesweeper.Logic.FileManagement
     {
         private const string FileName = "HighScores.xml";
 
-        private List<GameResult> _gameResults = new(10);
+        private readonly List<GameResult> _gameResults = new(10);
 
         public IReadOnlyCollection<GameResult> GameResults
         {
@@ -28,18 +28,7 @@ namespace Academits.Karetskas.Minesweeper.Logic.FileManagement
 
         private void UpdateGameResultsList()
         {
-            //var maxTime = new TimeSpan(23, 59, 59);
             var gameResultsElements = _document?.Root?.Elements("gameResult");
-
-            /*if (gameResultsElements is null)
-            {
-                for (var i = 0; i < 10; i++)
-                {
-                    _gameResults.Add(new GameResult((0, 0), 0, maxTime));
-                }
-
-                return;
-            }*/
 
             _gameResults.Clear();
 
@@ -48,21 +37,15 @@ namespace Academits.Karetskas.Minesweeper.Logic.FileManagement
                 return;
             }
 
-            foreach (XElement gameResultElement in gameResultsElements)
+            foreach (var gameResultElement in gameResultsElements)
             {
                 _ = int.TryParse(gameResultElement.Element("field")?.Element("width")?.Value, out var width);
                 _ = int.TryParse(gameResultElement.Element("field")?.Element("height")?.Value, out var height);
                 _ = int.TryParse(gameResultElement.Element("minesCount")?.Value, out var minesCount);
-                //_ = TimeSpan.TryParse(gameResultElement.Element("gameTime")?.Value, out var gameTime);
 
                 var time = gameResultElement.Element("gameTime")?.Value ?? TimeSpan.Zero.ToString();
 
                 var gameTime = TimeSpan.ParseExact(time, @"hh\:mm\:ss\:fff", null);
-
-                /*if (gameTime == TimeSpan.Zero)
-                {
-                    gameTime = maxTime;
-                }*/
 
                 var gameResult = new GameResult((width, height), minesCount, gameTime);
 
@@ -72,15 +55,8 @@ namespace Academits.Karetskas.Minesweeper.Logic.FileManagement
 
         protected override void CreateDefaultXmlDocument()
         {
-            //UpdateGameResultsList();
-
             var highScores = new XElement("highScores");
-
-            /*foreach (var gameResult in _gameResults)
-            {
-                highScores.Add(CreateGameResultElement(gameResult));
-            }*/
-
+            
             _document = new XDocument(highScores);
         }
 
@@ -97,7 +73,6 @@ namespace Academits.Karetskas.Minesweeper.Logic.FileManagement
                 _document?.Root?.ReplaceNodes(gameResults);
             }
 
-            /*gameResults.Last().Remove();*/
             _document?.Root?.ReplaceNodes(gameResults);
             
             UpdateGameResultsList();

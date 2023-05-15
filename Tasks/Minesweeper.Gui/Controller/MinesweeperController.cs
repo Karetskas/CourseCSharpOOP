@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Academits.Karetskas.Minesweeper.Logic.FileManagement;
 using Academits.Karetskas.Minesweeper.Logic.GameManager;
 
-namespace Minesweeper.Gui.Controller
+namespace Academits.Karetskas.Minesweeper.Gui.Controller
 {
     public sealed class MinesweeperController : IMinesweeperController
     {
@@ -17,11 +16,10 @@ namespace Minesweeper.Gui.Controller
             CheckObject(optionsManagement);
 
             _model = model;
-            //_optionsManager = new OptionsManagement();
             _optionsManager = optionsManagement;
         }
 
-        private void CheckObject(object obj)
+        private static void CheckObject(object obj)
         {
             if (obj is null)
             {
@@ -54,24 +52,24 @@ namespace Minesweeper.Gui.Controller
             return (_optionsManager.FieldWidth, _optionsManager.FieldHeight, _optionsManager.MinesCount);
         }
 
-        public bool IsValidFieldWidth(int fieldWidth)
+        public int GetMaxFieldSize()
         {
-            return _optionsManager.IsValidFieldWidth(fieldWidth);
+            return _optionsManager.MaxFieldSize;
         }
 
-        public bool IsValidFieldHeight(int fieldHeight)
+        public int GetMinFieldSize()
         {
-            return _optionsManager.IsValidFieldHeight(fieldHeight);
-        }
-
-        public bool IsValidMinesCount(int minesCount)
-        {
-            return _optionsManager.IsValidMinesCount(minesCount);
+            return _optionsManager.MinFieldSize;
         }
 
         public int GetMaxMinesCount()
         {
             return _optionsManager.MaxMinesCount;
+        }
+
+        public int GetMinMinesCount()
+        {
+            return _optionsManager.MinMinesCount;
         }
 
         public void SetFieldWidth(int fieldWidth)

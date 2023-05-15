@@ -1,10 +1,11 @@
 using System;
 using System.Windows.Forms;
-using Academits.Karetskas.Minesweeper.Logic.FileManagement;
+using Academits.Karetskas.Minesweeper.Gui.Forms;
+using Academits.Karetskas.Minesweeper.Gui.Controller;
 using Academits.Karetskas.Minesweeper.Logic.GameManager;
-using Minesweeper.Gui.Controller;
+using Academits.Karetskas.Minesweeper.Logic.FileManagement;
 
-namespace Minesweeper.Gui
+namespace Academits.Karetskas.Minesweeper.Gui
 {
     internal static class Program
     {
@@ -13,10 +14,10 @@ namespace Minesweeper.Gui
         {
             ApplicationConfiguration.Initialize();
 
-            OptionsManagement optionsManagement = new OptionsManagement();
+            var optionsManagement = new OptionsManagement();
             IGameManager model = new GameManager(optionsManagement);
 
-            IMinesweeperController  controller = new MinesweeperController(model, optionsManagement);
+            IMinesweeperController controller = new MinesweeperController(model, optionsManagement);
 
             var mainForm = new MainForm(controller, model);
 

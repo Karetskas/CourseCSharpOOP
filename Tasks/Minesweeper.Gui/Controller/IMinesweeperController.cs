@@ -1,8 +1,7 @@
-﻿using Academits.Karetskas.Minesweeper.Logic.FileManagement;
-using System.Collections.Generic;
-using System.Runtime.InteropServices.ComTypes;
+﻿using System.Collections.Generic;
+using Academits.Karetskas.Minesweeper.Logic.FileManagement;
 
-namespace Minesweeper.Gui.Controller
+namespace Academits.Karetskas.Minesweeper.Gui.Controller
 {
     public interface IMinesweeperController
     {
@@ -16,13 +15,13 @@ namespace Minesweeper.Gui.Controller
 
         (int width, int height, int minesCount) GetGameOptions();
 
-        bool IsValidFieldWidth(int fieldWidth);
+        int GetMaxFieldSize();
 
-        bool IsValidFieldHeight(int fieldHeight);
-
-        bool IsValidMinesCount(int minesCount);
+        int GetMinFieldSize();
 
         int GetMaxMinesCount();
+
+        int GetMinMinesCount();
 
         void SetFieldWidth(int fieldWidth);
 

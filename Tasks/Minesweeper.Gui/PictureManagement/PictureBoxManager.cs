@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
-namespace Minesweeper.Gui.PictureManagement
+namespace Academits.Karetskas.Minesweeper.Gui.PictureManagement
 {
     public sealed class PictureBoxManager
     {
@@ -109,7 +109,7 @@ namespace Minesweeper.Gui.PictureManagement
             }
             catch (Exception e)
             {
-                throw new ArgumentException("Failed to load pictures.", e); // TODO: Подумать над тем может сделать сообщение для пользователя в виде MessageBox
+                throw new ArgumentException("Failed to load pictures.", e);
             }
         }
 

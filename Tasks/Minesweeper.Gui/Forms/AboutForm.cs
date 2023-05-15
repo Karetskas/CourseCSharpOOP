@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Forms;
-using Minesweeper.Gui.PictureManagement;
+using Academits.Karetskas.Minesweeper.Gui.PictureManagement;
 
-namespace Minesweeper.Gui
+namespace Academits.Karetskas.Minesweeper.Gui
 {
     public partial class AboutForm : Form
     {
         private readonly PictureBoxManager _pictureBoxManager;
         private readonly ColorInterpolator _colorInterpolator;
+        private readonly SoundManager _soundManager;
 
         public AboutForm(PictureBoxManager pictureBoxManager)
         {
@@ -17,6 +19,10 @@ namespace Minesweeper.Gui
                 $@"The argument {nameof(pictureBoxManager)} is null.");
 
             _colorInterpolator = new ColorInterpolator();
+            _soundManager = new SoundManager();
+
+            informationLabel.Text = $"The program was developed by{Environment.NewLine}Evgeny Kаretskas." +
+                                    $"{Environment.NewLine}{Environment.NewLine} Version: 1.0.0.0";
 
             colorTransfusionTimer.Start();
         }
@@ -34,6 +40,9 @@ namespace Minesweeper.Gui
         private void ButtonOkPictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.OkButtonDown);
+
+            _soundManager.PlayButtonPress();
+            Thread.Sleep(350);
         }
 
         private void ButtonOkPictureBox_MouseUp(object sender, MouseEventArgs e)

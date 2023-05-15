@@ -1,4 +1,4 @@
-﻿namespace Minesweeper.Gui
+﻿namespace Academits.Karetskas.Minesweeper.Gui
 {
     public enum ParameterAdjustmentDirection
     {
