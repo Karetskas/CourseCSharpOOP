@@ -7,10 +7,16 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>disable</ImplicitUsings>
     <AssemblyName>Academits.Karetskas.$(MSBuildProjectName)</AssemblyName>
+    <IsPublishable>True</IsPublishable>
+    <ApplicationIcon>Pictures\Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Forms\nk4n25jx.ole~" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Pictures\Icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
