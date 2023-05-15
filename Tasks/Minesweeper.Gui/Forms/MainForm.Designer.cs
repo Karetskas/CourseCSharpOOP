@@ -274,7 +274,8 @@
             // 
             // panelForMap
             // 
-            panelForMap.BackColor = System.Drawing.Color.Transparent;
+            panelForMap.AutoSize = true;
+            panelForMap.BackColor = System.Drawing.Color.FromArgb(148, 193, 30);
             panelForMap.Controls.Add(mapPanel);
             panelForMap.Dock = System.Windows.Forms.DockStyle.Fill;
             panelForMap.Location = new System.Drawing.Point(223, 70);
@@ -287,6 +288,7 @@
             // mapPanel
             // 
             mapPanel.AutoSize = true;
+            mapPanel.BackColor = System.Drawing.Color.FromArgb(148, 193, 30);
             mapPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             mapPanel.ColumnCount = 1;
             mapPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -334,6 +336,7 @@
             panelForMap.ResumeLayout(false);
             panelForMap.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion

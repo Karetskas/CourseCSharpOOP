@@ -92,7 +92,7 @@ namespace Academits.Karetskas.Minesweeper.Gui
             {
                 for (var j = 0; j < _maxFieldSize; j++)
                 {
-                    _mapPanel.Controls.Add(CreatePictureBox(0), i, j);
+                    _mapPanel.Controls.Add(CreatePictureBox(20), i, j);
                     _mapPanel.GetControlFromPosition(i, j).Margin = new Padding(0);
 
                     _aliasesMap[j, i] = (false, AliasForPictures.CellFullDown);
