@@ -6,17 +6,19 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>disable</ImplicitUsings>
-    <AssemblyName>Academits.Karetskas.$(MSBuildProjectName)</AssemblyName>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <IsPublishable>True</IsPublishable>
-    <ApplicationIcon>Pictures\Icon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Pictures\Icon.ico</ApplicationIcon>
+    <RootNamespace>Academits.Karetskas.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Forms\MainForm.Designer.cs~RF13d58b9.TMP" />
     <None Remove="Forms\nk4n25jx.ole~" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Pictures\Icon.ico" />
+    <Content Include="Resources\Pictures\Icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,5 +39,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="xcopy /E /I /Y &quot;$(ProjectDir)Resources\Pictures&quot; &quot;$(ProjectDir)bin\Debug\net6.0-windows\Pictures&quot;" />
+  </Target>
 
 </Project>

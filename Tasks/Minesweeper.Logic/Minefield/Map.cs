@@ -129,14 +129,14 @@ namespace Academits.Karetskas.Minesweeper.Logic.Minefield
                         return;
                     }
 
-                    if (cell.Info == Information.Zero)
-                    {
-                        emptyCells.Push(cell);
-                    }
-
                     if (cell.Note == Note.Flag)
                     {
                         return;
+                    }
+
+                    if (cell.Info == Information.Zero)
+                    {
+                        emptyCells.Push(cell);
                     }
 
                     cell.Status = Status.Checked;
