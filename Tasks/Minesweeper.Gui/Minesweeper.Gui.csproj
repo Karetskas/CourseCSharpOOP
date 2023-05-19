@@ -41,7 +41,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="xcopy /E /I /Y &quot;$(ProjectDir)Resources\Pictures&quot; &quot;$(ProjectDir)bin\Debug\net6.0-windows\Pictures&quot;" />
+    <Exec Command="xcopy /E /I /Y &quot;$(ProjectDir)Resources\Pictures&quot; &quot;$(ProjectDir)$(OutDir)\Pictures&quot;" />
   </Target>
 
 </Project>
