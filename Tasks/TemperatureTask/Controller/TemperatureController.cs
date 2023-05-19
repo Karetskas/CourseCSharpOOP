@@ -5,9 +5,9 @@ namespace Academits.Karetskas.TemperatureTask.Controller
 {
     internal sealed class TemperatureController : IController
     {
-        private readonly IModel _model;
+        private readonly ITemperatureConverter _model;
 
-        public TemperatureController(IModel model)
+        public TemperatureController(ITemperatureConverter model)
         {
             _model = model ?? throw new ArgumentNullException(nameof(model), $@"Argument ""{nameof(model)}"" is null.");
         }

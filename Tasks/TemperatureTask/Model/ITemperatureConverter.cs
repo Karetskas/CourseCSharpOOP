@@ -1,6 +1,6 @@
 ﻿namespace Academits.Karetskas.TemperatureTask.Model
 {
-    public interface IModel
+    public interface ITemperatureConverter
     {
         IScale[] Scales { get; }
 

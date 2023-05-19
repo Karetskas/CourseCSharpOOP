@@ -2,7 +2,7 @@
 
 namespace Academits.Karetskas.TemperatureTask.Model
 {
-    internal sealed class TemperatureConverter : IModel
+    internal sealed class TemperatureConverter : ITemperatureConverter
     {
         public IScale[] Scales { get; }
 
