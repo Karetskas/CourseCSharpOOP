@@ -60,7 +60,7 @@
             // 
             // colorTransfusionTimer
             // 
-            colorTransfusionTimer.Tick += СolorTransfusionTimer_Tick;
+            colorTransfusionTimer.Tick += ColorTransfusionTimer_Tick;
             // 
             // leftFlowLayoutPanel
             // 

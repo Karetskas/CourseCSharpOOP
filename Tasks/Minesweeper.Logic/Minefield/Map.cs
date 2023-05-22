@@ -13,12 +13,7 @@ namespace Academits.Karetskas.Minesweeper.Logic.Minefield
             {
                 var fieldClone = new Cell[Height, Width];
 
-                WorkWithTwoDimensionalArray((x, y) =>
-                {
-                    fieldClone[x, y] = (Cell)_field[x, y].Clone();
-
-                    return true;
-                });
+                WorkWithTwoDimensionalArray((x, y) => fieldClone[x, y] = (Cell)_field[x, y].Clone());
 
                 return fieldClone;
             }
@@ -59,12 +54,7 @@ namespace Academits.Karetskas.Minesweeper.Logic.Minefield
             MinesCount = minesCount;
             _field = new Cell[height, width];
 
-            WorkWithTwoDimensionalArray((x, y) =>
-            {
-                _field[x, y] = new Cell(x, y);
-
-                return true;
-            });
+            WorkWithTwoDimensionalArray((x, y) => _field[x, y] = new Cell(x, y));
         }
 
         private static void CheckFieldSize(int length)
@@ -249,7 +239,7 @@ namespace Academits.Karetskas.Minesweeper.Logic.Minefield
             {
                 if (_field[x, y].Note == Note.Flag && _field[x, y].Info != Information.Mine)
                 {
-                    return false;
+                    return;
                 }
 
                 if (_field[x, y].Note != Note.Flag && _field[x, y].Info == Information.Mine && _field[x, y].Status == Status.Checked)
@@ -258,19 +248,12 @@ namespace Academits.Karetskas.Minesweeper.Logic.Minefield
                 }
 
                 _field[x, y].Status = Status.Checked;
-
-                return true;
             });
         }
 
         public void Clear()
         {
-            WorkWithTwoDimensionalArray((x, y) =>
-            {
-                _field[x, y].Clear();
-
-                return true;
-            });
+            WorkWithTwoDimensionalArray((x, y) => _field[x, y].Clear());
 
             CellsCheckedCount = 0;
             MinesFoundCount = 0;
@@ -300,7 +283,7 @@ namespace Academits.Karetskas.Minesweeper.Logic.Minefield
             }
         }
 
-        private void WorkWithTwoDimensionalArray(Func<int, int, bool> task)
+        private void WorkWithTwoDimensionalArray(Action<int, int> task)
         {
             CheckForNull(task);
 
@@ -308,10 +291,7 @@ namespace Academits.Karetskas.Minesweeper.Logic.Minefield
             {
                 for (var j = 0; j < Width; j++)
                 {
-                    if (!task(i, j))
-                    {
-                        continue;
-                    }
+                    task(i, j);
                 }
             }
         }

@@ -12,6 +12,7 @@ namespace Academits.Karetskas.Minesweeper.Gui.Forms
     public partial class MainForm : Form
     {
         private GameOutcome _outcome;
+        private bool _isGameStart;
 
         private readonly PictureBoxManager _pictureBoxManager;
         private readonly ColorInterpolator _colorInterpolator;
@@ -27,6 +28,7 @@ namespace Academits.Karetskas.Minesweeper.Gui.Forms
             CheckObject(model);
 
             _controller = controller;
+            _isGameStart = false;
 
             model.RefreshMap += RefreshMap;
             model.MinesFoundCount += RefreshMinesFoundCount;
@@ -46,6 +48,8 @@ namespace Academits.Karetskas.Minesweeper.Gui.Forms
                 {
                     _soundManager.PlayCheckCell();
                 }
+
+                _isGameStart = true;
             };
             _map.CellLeftMouseClick += _controller.CheckCell;
 
@@ -130,11 +134,16 @@ namespace Academits.Karetskas.Minesweeper.Gui.Forms
             {
                 timeLabel.BeginInvoke(() =>
                 {
-                    timeLabel.Text = $@"  Time: {currentGameTime:hh\:mm\:ss\.f}";
+                    if (_isGameStart)
+                    {
+                        timeLabel.Text = $@"  Time: {currentGameTime:hh\:mm\:ss\.f}";
+                    }
                 });
 
                 return;
             }
+
+            _isGameStart = false;
 
             timeLabel.Text = $@"  Time: {currentGameTime:hh\:mm\:ss\.f}";
         }
@@ -354,7 +363,7 @@ namespace Academits.Karetskas.Minesweeper.Gui.Forms
             aboutForm.ShowDialog();
         }
 
-        private void СolorTransfusionTimer_Tick(object sender, EventArgs e)
+        private void ColorTransfusionTimer_Tick(object sender, EventArgs e)
         {
             if (_outcome == GameOutcome.None)
             {

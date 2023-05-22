@@ -21,7 +21,7 @@ namespace Academits.Karetskas.Minesweeper.Logic
         {
             const int hundredMilliseconds = 100;
 
-            _timer = new Timer((obj) =>
+            _timer = new Timer(_ =>
             {
                 TimeUpdate?.Invoke(TimeCounter);
 

@@ -6,10 +6,12 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>disable</ImplicitUsings>
-    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+    <AssemblyName>Minesweeper</AssemblyName>
     <IsPublishable>True</IsPublishable>
-    <ApplicationIcon>Resources\Pictures\Icon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Pictures\icon.ico</ApplicationIcon>
     <RootNamespace>Academits.Karetskas.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <PackageIcon></PackageIcon>
+    <Company>$(Authors)</Company>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resources\Pictures\Icon.ico" />
+    <Content Include="Resources\Pictures\icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
