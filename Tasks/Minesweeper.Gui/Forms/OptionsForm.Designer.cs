@@ -1,4 +1,4 @@
-﻿namespace Academits.Karetskas.Minesweeper.Gui
+﻿namespace Academits.Karetskas.Minesweeper.Gui.Forms
 {
     partial class OptionsForm
     {
@@ -372,6 +372,7 @@
             Name = "OptionsForm";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Options";
+            FormClosing += OptionsForm_FormClosing;
             ((System.ComponentModel.ISupportInitialize)leftButtonWidthPictureBox).EndInit();
             ((System.ComponentModel.ISupportInitialize)rightButtonWidthPictureBox).EndInit();
             widthFlowLayoutPanel.ResumeLayout(false);

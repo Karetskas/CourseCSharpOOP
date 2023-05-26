@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using Academits.Karetskas.Minesweeper.Gui.Controller;
 using Academits.Karetskas.Minesweeper.Gui.PictureManagement;
 
-namespace Academits.Karetskas.Minesweeper.Gui
+namespace Academits.Karetskas.Minesweeper.Gui.Forms
 {
     public partial class OptionsForm : Form
     {
@@ -17,6 +17,7 @@ namespace Academits.Karetskas.Minesweeper.Gui
 
         private PictureBox? _pictureBox;
         private int _counterForTimer;
+        private bool _isSaved;
 
         public OptionsForm(PictureBoxManager pictureBoxManager, IMinesweeperController controller)
         {
@@ -51,6 +52,8 @@ namespace Academits.Karetskas.Minesweeper.Gui
                 AliasForPictures.LeftButtonDown);
             CheckOptionLimit(_controller.GetMaxMinesCount(), minesCount, rightButtonMinesPictureBox,
                 AliasForPictures.RightButtonDown);
+
+            _isSaved = false;
         }
 
         private static void CheckObject(object obj)
@@ -322,6 +325,8 @@ namespace Academits.Karetskas.Minesweeper.Gui
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.OkButtonSelect);
 
             _controller.SaveGameOptions();
+            _isSaved = true;
+
             Close();
         }
 
@@ -336,12 +341,20 @@ namespace Academits.Karetskas.Minesweeper.Gui
         private void ButtonCancelPictureBox_MouseUp(object sender, MouseEventArgs e)
         {
             _pictureBoxManager.ChangePicture(sender, AliasForPictures.CancelButtonSelect);
+            
+            Close();
+        }
+        
+        private void OptionsForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_isSaved)
+            {
+                return;
+            }
 
             _controller.SetFieldWidth(_previousWidth);
             _controller.SetFieldHeight(_previousHeight);
             _controller.SetMinesCount(_previousMinesCount);
-
-            Close();
         }
 
         private void StartTimerToAutomaticallyChangeValues(object obj)

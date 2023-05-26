@@ -1,4 +1,4 @@
-﻿namespace Academits.Karetskas.Minesweeper.Gui
+﻿namespace Academits.Karetskas.Minesweeper.Gui.Forms
 {
     partial class HighScoresForm
     {

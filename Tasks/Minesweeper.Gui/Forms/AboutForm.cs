@@ -3,7 +3,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Academits.Karetskas.Minesweeper.Gui.PictureManagement;
 
-namespace Academits.Karetskas.Minesweeper.Gui
+namespace Academits.Karetskas.Minesweeper.Gui.Forms
 {
     public partial class AboutForm : Form
     {
